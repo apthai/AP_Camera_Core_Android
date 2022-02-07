@@ -1,6 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext.ktlint_version = '0.43.2'
+    ext.camerax_version = '1.0.2'
 }
 
 plugins {
