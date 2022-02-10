@@ -27,7 +27,7 @@
         <activity
             android:name="com.apthai.apcameraxcore.galahad.ApCameraActivity"
             android:exported="false"
-            android:theme="@style/Theme.GalahadCameraCore"/>
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"/>
     </application>
 
 </manifest>

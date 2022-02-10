@@ -1,14 +1,15 @@
 package com.apthai.apcameraxcore.galahad
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.view.Window
-import android.view.WindowInsets
-import android.view.WindowManager
+import android.os.Handler
+import android.view.*
 import android.widget.Toast
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -22,7 +23,8 @@ import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavigator, View.OnClickListener {
+class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavigator,
+    View.OnClickListener {
 
     companion object {
 
@@ -75,10 +77,11 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
     override fun setUpView() {}
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun initial() {
-        if (isCameraPermissionsGranted()){
+        if (isCameraPermissionsGranted()) {
             startCamera()
-        }else{
+        } else {
             ActivityCompat.requestPermissions(
                 this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
             )
@@ -96,7 +99,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     override fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            val cameraProvider : ProcessCameraProvider = cameraProviderFuture.get()
+            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
             val preview = Preview.Builder()
                 .build()
                 .also {
@@ -107,7 +110,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             try {
                 cameraProvider.unbindAll()
                 cameraProvider.bindToLifecycle(this, cameraSelector, preview)
-            }catch (exception : Exception){
+            } catch (exception: Exception) {
                 Toast.makeText(this, exception.toString(), Toast.LENGTH_SHORT).show()
             }
         }, ContextCompat.getMainExecutor(this))
@@ -116,7 +119,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     override fun takePhoto() {}
 
     override fun onClick(view: View?) {
-        when(view?.id){
+        when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
                 takePhoto()
             }
@@ -137,12 +140,23 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             if (isCameraPermissionsGranted()) {
                 startCamera()
             } else {
-                Toast.makeText(this,
+                Toast.makeText(
+                    this,
                     "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT).show()
+                    Toast.LENGTH_SHORT
+                ).show()
                 finish()
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
