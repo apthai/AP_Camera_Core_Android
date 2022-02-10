@@ -26,7 +26,8 @@
         </activity>
         <activity
             android:name="com.apthai.apcameraxcore.galahad.ApCameraActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.GalahadCameraCore"/>
     </application>
 
 </manifest>

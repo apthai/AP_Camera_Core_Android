@@ -14,8 +14,8 @@
 
     <ImageButton
         android:id="@+id/ap_camera_view_capture_button"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
         android:adjustViewBounds="true"
         android:background="@android:color/transparent"
         app:layout_constraintLeft_toLeftOf="parent"
