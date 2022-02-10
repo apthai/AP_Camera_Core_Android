@@ -18,7 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
-import com.apthai.apcameraxcore.galahad.databinding.ActivityApCameraBinding
+import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -38,7 +38,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
     override fun tag(): String = ApCameraActivity::class.java.simpleName
 
-    private var activityApCameraBinding: ActivityApCameraBinding? = null
+    private var activityApCameraBinding: ActivityGalahadCameraBinding? = null
     private val binding get() = activityApCameraBinding
 
     private var apCameraViewModel: ApCameraViewModel? = null
@@ -60,7 +60,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             )
         }
 
-        activityApCameraBinding = ActivityApCameraBinding.inflate(layoutInflater)
+        activityApCameraBinding = ActivityGalahadCameraBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
         apCameraViewModel =
