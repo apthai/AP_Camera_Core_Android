@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ApCameraXCore</string>
+    <string name="main_open_camera_activity_button">Launch Camera Activity</string>
 </resources>
