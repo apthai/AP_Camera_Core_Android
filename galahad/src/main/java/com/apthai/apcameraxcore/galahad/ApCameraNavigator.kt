@@ -6,4 +6,6 @@ interface ApCameraNavigator {
 
     fun startCamera()
     fun takePhoto()
+
+    fun flipCameraFacing()
 }

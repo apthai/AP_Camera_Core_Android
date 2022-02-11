@@ -42,6 +42,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
                 add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }.toTypedArray()
+        private const val MIME_IMAGE_TYPE = "image/jpeg"
     }
 
     override fun tag(): String = ApCameraActivity::class.java.simpleName
@@ -55,18 +56,10 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
     lateinit var cameraExecutor: ExecutorService
 
+    private var cameraFacing : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //requestWindowFeature(Window.FEATURE_NO_TITLE)
-        /*@Suppress("Deprecation")
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }*/
 
         activityApCameraBinding = ActivityGalahadCameraBinding.inflate(layoutInflater)
         setContentView(binding?.root)
@@ -94,6 +87,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         }
 
         binding?.apCameraViewCaptureButton?.setOnClickListener(this)
+        binding?.apCameraViewSwitchButton?.setOnClickListener(this)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -105,19 +99,17 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     override fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    it.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
-                }
-
             imageCapture = ImageCapture.Builder().build()
 
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
             try {
+                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+                val preview = Preview.Builder()
+                    .build()
+                    .also {
+                        it.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
+                    }
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+                cameraProvider.bindToLifecycle(this, cameraFacing, preview, imageCapture)
             } catch (exception: Exception) {
                 Toast.makeText(this, exception.toString(), Toast.LENGTH_SHORT).show()
             }
@@ -129,7 +121,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         val fileName = getFileName()
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(MediaStore.MediaColumns.MIME_TYPE, MIME_IMAGE_TYPE)
             if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
                 put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ApCamera-Image")
             }
@@ -154,12 +146,21 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             })
     }
 
+    override fun flipCameraFacing() {
+        if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing = CameraSelector.DEFAULT_FRONT_CAMERA
+        else if (cameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) cameraFacing = CameraSelector.DEFAULT_BACK_CAMERA
+        startCamera()
+    }
+
     private fun getFileName() : String = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
                 takePhoto()
+            }
+            R.id.ap_camera_view_switch_button->{
+                flipCameraFacing()
             }
         }
     }
