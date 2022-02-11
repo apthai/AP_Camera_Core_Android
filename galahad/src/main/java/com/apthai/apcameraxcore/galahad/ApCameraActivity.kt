@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -52,6 +53,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     private lateinit var cameraExecutor: ExecutorService
     private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
+    private var cameraAspectRatio : Int = AspectRatio.RATIO_4_3
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -62,6 +64,8 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
         activityApCameraBinding = ActivityGalahadCameraBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         apCameraViewModel =
             ViewModelProvider.NewInstanceFactory().create(ApCameraViewModel::class.java)
@@ -240,14 +244,16 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         return super.onOptionsItemSelected(item)
     }
 
-    override fun initializePreviewSurface(): Preview = Preview.Builder().build().also { preview ->
+    override fun initializePreviewSurface(): Preview = Preview.Builder()
+        .setTargetAspectRatio(cameraAspectRatio).build().also { preview ->
         preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
     }
 
     override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder().build()
 
     override fun initializeImageCapture(): ImageCapture = ImageCapture.Builder()
-        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY).build().also { imgCapture ->
+        .setTargetAspectRatio(cameraAspectRatio)
+        .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY).build().also { imgCapture ->
             imgCapture.flashMode = cameraFlashMode
         }
 
