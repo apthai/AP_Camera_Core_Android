@@ -12,7 +12,8 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/ap_camera_view_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:scaleType="fitCenter"/>
 
     <ImageButton
         android:id="@+id/ap_camera_view_capture_button"
@@ -54,5 +55,19 @@
         android:contentDescription="@string/ap_camera_view_take_photo_button_text"
         android:layout_marginBottom="@dimen/ap_camera_take_photo_button_bottom_dimen"
         android:src="@drawable/ic_ap_camera_toggle_flash_off" />
+
+    <ImageButton
+        android:id="@+id/ap_camera_view_aspect_ratio_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="@id/ap_camera_view_flash_button"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_extra_large"
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_huge"
+        android:contentDescription="@string/ap_camera_view_take_photo_button_text"
+        android:layout_marginBottom="@dimen/ap_camera_take_photo_button_bottom_dimen"
+        android:src="@drawable/ic_ap_camera_toggle_aspect_ratio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

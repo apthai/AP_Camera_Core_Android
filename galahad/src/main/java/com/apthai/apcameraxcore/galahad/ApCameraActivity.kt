@@ -53,7 +53,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     private lateinit var cameraExecutor: ExecutorService
     private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
-    private var cameraAspectRatio : Int = AspectRatio.RATIO_4_3
+    private var cameraAspectRatio: Int = AspectRatio.RATIO_4_3
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -92,6 +92,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         binding?.apCameraViewCaptureButton?.setOnClickListener(this)
         binding?.apCameraViewSwitchButton?.setOnClickListener(this)
         binding?.apCameraViewFlashButton?.setOnClickListener(this)
+        binding?.apCameraViewAspectRatioButton?.setOnClickListener(this)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -152,6 +153,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             .show()
     }
 
+
     override fun flipCameraFacing() {
         if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing =
             CameraSelector.DEFAULT_FRONT_CAMERA
@@ -207,6 +209,9 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             R.id.ap_camera_view_flash_button -> {
                 toggleCameraFlashMode()
             }
+            R.id.ap_camera_view_aspect_ratio_button ->{
+                toggleAspectRatio()
+            }
         }
     }
 
@@ -246,8 +251,8 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
     override fun initializePreviewSurface(): Preview = Preview.Builder()
         .setTargetAspectRatio(cameraAspectRatio).build().also { preview ->
-        preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
-    }
+            preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
+        }
 
     override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder().build()
 
@@ -273,4 +278,17 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
                 contentValue
             )
             .build()
+
+    override fun toggleAspectRatio() {
+        when (cameraAspectRatio) {
+            AspectRatio.RATIO_4_3 -> {
+                cameraAspectRatio = AspectRatio.RATIO_16_9
+
+            }
+            AspectRatio.RATIO_16_9 -> {
+                cameraAspectRatio = AspectRatio.RATIO_4_3
+            }
+        }
+        startCamera()
+    }
 }

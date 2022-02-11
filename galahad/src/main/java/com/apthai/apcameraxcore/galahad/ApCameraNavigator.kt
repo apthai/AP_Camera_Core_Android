@@ -22,4 +22,5 @@ interface ApCameraNavigator {
 
     fun flipCameraFacing()
     fun toggleCameraFlashMode()
+    fun toggleAspectRatio()
 }
