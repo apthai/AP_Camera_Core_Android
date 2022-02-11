@@ -4,32 +4,27 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
-import android.view.*
+import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageCapture
-import androidx.camera.core.ImageCaptureException
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.google.common.util.concurrent.ListenableFuture
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavigator,
-    View.OnClickListener {
+    View.OnClickListener, ImageCapture.OnImageSavedCallback {
 
     companion object {
 
@@ -51,13 +46,16 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     private val binding get() = activityApCameraBinding
 
     private var apCameraViewModel: ApCameraViewModel? = null
+    private var cameraProcessFuture: ListenableFuture<ProcessCameraProvider>? = null
+    private var currentCameraImageCapture: ImageCapture? = null
+    private var currentCameraImageAnalysis: ImageAnalysis? = null
+    private lateinit var cameraExecutor: ExecutorService
+    private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
 
-    private var imageCapture: ImageCapture? = null
-
-    lateinit var cameraExecutor: ExecutorService
-
-    private var cameraFacing : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-    private var cameraFlashMode : Int = ImageCapture.FLASH_MODE_OFF
+    private val cameraRunnable: Runnable = Runnable {
+        bindCamera()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,103 +97,110 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     }
 
     override fun startCamera() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
-        cameraProviderFuture.addListener({
-            val previewRotation = binding?.apCameraViewPreview?.display?.rotation
-            previewRotation?.let { rotation->
-                imageCapture = ImageCapture.Builder()
-                    .setTargetRotation(rotation)
-                    .setFlashMode(cameraFlashMode)
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                    .build()
-            }?: kotlin.run {
-                imageCapture = ImageCapture.Builder()
-                    .setFlashMode(cameraFlashMode)
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
-                    .build()
-            }
+        cameraProcessFuture = ProcessCameraProvider.getInstance(this).apply {
+            addListener(cameraRunnable, ContextCompat.getMainExecutor(this@ApCameraActivity))
+        }
+    }
 
-
+    override fun bindCamera() {
+        val cameraProvider = cameraProcessFuture?.get()
+        cameraProvider?.let { provider ->
             try {
-                val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
-                val preview = Preview.Builder()
-                    .build()
-                    .also {
-                        it.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
-                    }
-                cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(this, cameraFacing, preview, imageCapture)
+                val cameraPreview = initializePreviewSurface()
+                currentCameraImageAnalysis = initializeImageAnalysis()
+                currentCameraImageCapture = initializeImageCapture()
+
+                provider.unbindAll()
+                provider.bindToLifecycle(
+                    this,
+                    cameraFacing,
+                    cameraPreview,
+                    currentCameraImageAnalysis,
+                    currentCameraImageCapture
+                )
             } catch (exception: Exception) {
-                Toast.makeText(this, exception.toString(), Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    "Camera bind exception from ${exception.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }, ContextCompat.getMainExecutor(this))
+        } ?: kotlin.run {
+            Toast.makeText(this, "Camera provider is unavailable", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun takePhoto() {
-        val imageCapture = imageCapture ?: return
+        val imageCapture = currentCameraImageCapture ?: return
         val fileName = getFileName()
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-            put(MediaStore.MediaColumns.MIME_TYPE, MIME_IMAGE_TYPE)
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ApCamera-Image")
-            }
-        }
+        val contentValues = getContentValue(fileName)
+        val outputOptions = getOutputFileOption(contentValues)
+        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), this)
+    }
 
-        val outputOptions = ImageCapture.OutputFileOptions
-            .Builder(contentResolver,
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                contentValues)
-            .build()
+    override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+        val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
+        Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
+    }
 
-        imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this),
-            object : ImageCapture.OnImageSavedCallback {
-                override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
-                    Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onError(exception: ImageCaptureException) {
-                    Toast.makeText(this@ApCameraActivity, exception.message, Toast.LENGTH_SHORT).show()
-                }
-            })
+    override fun onError(exception: ImageCaptureException) {
+        Toast.makeText(this@ApCameraActivity, exception.message, Toast.LENGTH_SHORT)
+            .show()
     }
 
     override fun flipCameraFacing() {
-        if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing = CameraSelector.DEFAULT_FRONT_CAMERA
-        else if (cameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) cameraFacing = CameraSelector.DEFAULT_BACK_CAMERA
+        if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing =
+            CameraSelector.DEFAULT_FRONT_CAMERA
+        else if (cameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) cameraFacing =
+            CameraSelector.DEFAULT_BACK_CAMERA
         startCamera()
     }
 
     override fun toggleCameraFlashMode() {
         when (cameraFlashMode) {
-            ImageCapture.FLASH_MODE_AUTO ->{
+            ImageCapture.FLASH_MODE_AUTO -> {
                 cameraFlashMode = ImageCapture.FLASH_MODE_ON
-                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_on))
+                binding?.apCameraViewFlashButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.ic_ap_camera_toggle_flash_on
+                    )
+                )
             }
             ImageCapture.FLASH_MODE_ON -> {
                 cameraFlashMode = ImageCapture.FLASH_MODE_OFF
-                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_off))
+                binding?.apCameraViewFlashButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.ic_ap_camera_toggle_flash_off
+                    )
+                )
             }
             ImageCapture.FLASH_MODE_OFF -> {
                 cameraFlashMode = ImageCapture.FLASH_MODE_AUTO
-                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_auto))
+                binding?.apCameraViewFlashButton?.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        this,
+                        R.drawable.ic_ap_camera_toggle_flash_auto
+                    )
+                )
             }
         }
         startCamera()
     }
 
-    private fun getFileName() : String = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
+    private fun getFileName(): String =
+        SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
                 takePhoto()
             }
-            R.id.ap_camera_view_switch_button->{
+            R.id.ap_camera_view_switch_button -> {
                 flipCameraFacing()
             }
-            R.id.ap_camera_view_flash_button->{
+            R.id.ap_camera_view_flash_button -> {
                 toggleCameraFlashMode()
             }
         }
@@ -234,4 +239,32 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         }
         return super.onOptionsItemSelected(item)
     }
+
+    override fun initializePreviewSurface(): Preview = Preview.Builder().build().also { preview ->
+        preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
+    }
+
+    override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder().build()
+
+    override fun initializeImageCapture(): ImageCapture = ImageCapture.Builder()
+        .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY).build().also { imgCapture ->
+            imgCapture.flashMode = cameraFlashMode
+        }
+
+    override fun getContentValue(outputFileName: String): ContentValues = ContentValues().apply {
+        put(MediaStore.MediaColumns.DISPLAY_NAME, outputFileName)
+        put(MediaStore.MediaColumns.MIME_TYPE, MIME_IMAGE_TYPE)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ApCamera-Image")
+        }
+    }
+
+    override fun getOutputFileOption(contentValue: ContentValues): ImageCapture.OutputFileOptions =
+        ImageCapture.OutputFileOptions
+            .Builder(
+                contentResolver,
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                contentValue
+            )
+            .build()
 }

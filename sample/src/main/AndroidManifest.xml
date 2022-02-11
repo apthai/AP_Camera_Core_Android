@@ -17,7 +17,8 @@
         android:theme="@style/Theme.ApCameraXCore">
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +28,8 @@
         <activity
             android:name="com.apthai.apcameraxcore.galahad.ApCameraActivity"
             android:exported="false"
-            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"/>
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
