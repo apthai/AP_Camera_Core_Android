@@ -8,4 +8,5 @@ interface ApCameraNavigator {
     fun takePhoto()
 
     fun flipCameraFacing()
+    fun toggleCameraFlashMode()
 }

@@ -35,9 +35,24 @@
         android:background="@android:color/transparent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="@dimen/ap_camera_view_item_padding_extra_large"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_extra_large"
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_extra_large"
         android:contentDescription="@string/ap_camera_view_take_photo_button_text"
         android:layout_marginBottom="@dimen/ap_camera_take_photo_button_bottom_dimen"
         android:src="@drawable/ic_ap_camera_switch_camera" />
+
+    <ImageButton
+        android:id="@+id/ap_camera_view_flash_button"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:adjustViewBounds="true"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="@id/ap_camera_view_switch_button"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_extra_large"
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_huge"
+        android:contentDescription="@string/ap_camera_view_take_photo_button_text"
+        android:layout_marginBottom="@dimen/ap_camera_take_photo_button_bottom_dimen"
+        android:src="@drawable/ic_ap_camera_toggle_flash_off" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

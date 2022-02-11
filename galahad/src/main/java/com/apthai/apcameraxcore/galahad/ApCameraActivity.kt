@@ -57,6 +57,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     lateinit var cameraExecutor: ExecutorService
 
     private var cameraFacing : CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var cameraFlashMode : Int = ImageCapture.FLASH_MODE_OFF
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +89,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
         binding?.apCameraViewCaptureButton?.setOnClickListener(this)
         binding?.apCameraViewSwitchButton?.setOnClickListener(this)
+        binding?.apCameraViewFlashButton?.setOnClickListener(this)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -99,7 +101,20 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     override fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
-            imageCapture = ImageCapture.Builder().build()
+            val previewRotation = binding?.apCameraViewPreview?.display?.rotation
+            previewRotation?.let { rotation->
+                imageCapture = ImageCapture.Builder()
+                    .setTargetRotation(rotation)
+                    .setFlashMode(cameraFlashMode)
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .build()
+            }?: kotlin.run {
+                imageCapture = ImageCapture.Builder()
+                    .setFlashMode(cameraFlashMode)
+                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+                    .build()
+            }
+
 
             try {
                 val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
@@ -152,6 +167,24 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         startCamera()
     }
 
+    override fun toggleCameraFlashMode() {
+        when (cameraFlashMode) {
+            ImageCapture.FLASH_MODE_AUTO ->{
+                cameraFlashMode = ImageCapture.FLASH_MODE_ON
+                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_on))
+            }
+            ImageCapture.FLASH_MODE_ON -> {
+                cameraFlashMode = ImageCapture.FLASH_MODE_OFF
+                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_off))
+            }
+            ImageCapture.FLASH_MODE_OFF -> {
+                cameraFlashMode = ImageCapture.FLASH_MODE_AUTO
+                binding?.apCameraViewFlashButton?.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.ic_ap_camera_toggle_flash_auto))
+            }
+        }
+        startCamera()
+    }
+
     private fun getFileName() : String = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     override fun onClick(view: View?) {
@@ -161,6 +194,9 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             }
             R.id.ap_camera_view_switch_button->{
                 flipCameraFacing()
+            }
+            R.id.ap_camera_view_flash_button->{
+                toggleCameraFlashMode()
             }
         }
     }
