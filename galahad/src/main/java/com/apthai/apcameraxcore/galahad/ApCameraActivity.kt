@@ -1,15 +1,14 @@
 package com.apthai.apcameraxcore.galahad
 
 import android.Manifest
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -54,6 +53,8 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
     private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
     private var cameraAspectRatio: Int = AspectRatio.RATIO_4_3
+
+    private var currentCamera: Camera? = null
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -116,13 +117,14 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
                 currentCameraImageCapture = initializeImageCapture()
 
                 provider.unbindAll()
-                provider.bindToLifecycle(
+                currentCamera = provider.bindToLifecycle(
                     this,
                     cameraFacing,
                     cameraPreview,
                     currentCameraImageAnalysis,
                     currentCameraImageCapture
                 )
+                initialAutoFocus()
             } catch (exception: Exception) {
                 Toast.makeText(
                     this,
@@ -209,7 +211,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             R.id.ap_camera_view_flash_button -> {
                 toggleCameraFlashMode()
             }
-            R.id.ap_camera_view_aspect_ratio_button ->{
+            R.id.ap_camera_view_aspect_ratio_button -> {
                 toggleAspectRatio()
             }
         }
@@ -290,5 +292,83 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             }
         }
         startCamera()
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    override fun initialAutoFocus() {
+        binding?.apCameraViewPreview?.let { previewView ->
+            previewView.afterMeasured {
+                previewView.setOnTouchListener { _, motionEvent ->
+                    return@setOnTouchListener when (motionEvent.action) {
+                        MotionEvent.ACTION_DOWN -> {
+                            true
+                        }
+                        MotionEvent.ACTION_UP -> {
+                            val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
+                                previewView.width.toFloat(),
+                                previewView.height.toFloat()
+                            )
+                            val autoFocusPoint = factory.createPoint(motionEvent.x, motionEvent.y)
+                            try {
+                                animateAutofocusEvent(motionEvent.x, motionEvent.y)
+                                currentCamera?.cameraControl?.startFocusAndMetering(
+                                    FocusMeteringAction.Builder(
+                                        autoFocusPoint,
+                                        FocusMeteringAction.FLAG_AF
+                                    ).apply {
+                                        disableAutoCancel()
+                                    }.build()
+                                )
+                            } catch (exception: CameraInfoUnavailableException) {
+                                Toast.makeText(this, exception.message, Toast.LENGTH_SHORT).show()
+                            }
+                            true
+                        }
+                        else -> false
+                    }
+                }
+            }
+        }
+    }
+
+    private inline fun View.afterMeasured(crossinline block: () -> Unit) {
+        if (measuredWidth > 0 && measuredHeight > 0) {
+            block()
+        } else {
+            viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
+                    }
+                }
+            })
+        }
+    }
+
+    override fun animateAutofocusEvent(positionX: Float, positionY: Float) {
+        val width = binding?.apCameraFocusCircleImageView?.width ?: 0
+        val height = binding?.apCameraFocusCircleImageView?.height ?: 0
+        binding?.apCameraFocusCircleImageView?.x = (positionX - width /2)
+        binding?.apCameraFocusCircleImageView?.y = (positionY - height /2)
+        binding?.apCameraFocusCircleImageView?.visibility = View.VISIBLE
+        binding?.apCameraFocusCircleImageView?.alpha = 1F
+        binding?.apCameraFocusCircleImageView?.animate()?.apply {
+            startDelay = 500
+            duration = 300
+            alpha(0F)
+            setListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(p0: Animator?) {}
+
+                override fun onAnimationEnd(p0: Animator?) {
+                    binding?.apCameraFocusCircleImageView?.visibility = View.INVISIBLE
+                }
+
+                override fun onAnimationCancel(p0: Animator?) {}
+
+                override fun onAnimationRepeat(p0: Animator?) {}
+            })
+        }
     }
 }

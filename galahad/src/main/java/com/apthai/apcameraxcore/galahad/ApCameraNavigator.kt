@@ -23,4 +23,7 @@ interface ApCameraNavigator {
     fun flipCameraFacing()
     fun toggleCameraFlashMode()
     fun toggleAspectRatio()
+
+    fun initialAutoFocus()
+    fun animateAutofocusEvent(positionX : Float, positionY : Float)
 }

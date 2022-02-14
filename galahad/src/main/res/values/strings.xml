@@ -1,6 +1,5 @@
 <resources>
     <string name="ap_camera_view_take_photo_button_text">Take Photo</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="ap_camera_view_circle_focus_button_description">autofocus</string>
 </resources>
