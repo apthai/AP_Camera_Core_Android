@@ -4,13 +4,30 @@ import android.Manifest
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.ContentValues
+import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.*
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.widget.Toast
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfoUnavailableException
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.MeteringPointFactory
+import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -19,12 +36,15 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.google.common.util.concurrent.ListenableFuture
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavigator,
-    View.OnClickListener, ImageCapture.OnImageSavedCallback {
+class ApCameraActivity :
+    ApCameraBaseActivity<ApCameraViewModel>(),
+    ApCameraNavigator,
+    View.OnClickListener,
+    ImageCapture.OnImageSavedCallback {
 
     companion object {
 
@@ -142,6 +162,7 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         val fileName = getFileName()
         val contentValues = getContentValue(fileName)
         val outputOptions = getOutputFileOption(contentValues)
+        playShutterSound()
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), this)
     }
 
@@ -154,7 +175,6 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         Toast.makeText(this@ApCameraActivity, exception.message, Toast.LENGTH_SHORT)
             .show()
     }
-
 
     override fun flipCameraFacing() {
         if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing =
@@ -285,7 +305,6 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
         when (cameraAspectRatio) {
             AspectRatio.RATIO_4_3 -> {
                 cameraAspectRatio = AspectRatio.RATIO_16_9
-
             }
             AspectRatio.RATIO_16_9 -> {
                 cameraAspectRatio = AspectRatio.RATIO_4_3
@@ -336,22 +355,22 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    if (measuredWidth > 0 && measuredHeight > 0) {
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        block()
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        if (measuredWidth > 0 && measuredHeight > 0) {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            block()
+                        }
                     }
-                }
-            })
+                })
         }
     }
 
     override fun animateAutofocusEvent(positionX: Float, positionY: Float) {
         val width = binding?.apCameraFocusCircleImageView?.width ?: 0
         val height = binding?.apCameraFocusCircleImageView?.height ?: 0
-        binding?.apCameraFocusCircleImageView?.x = (positionX - width /2)
-        binding?.apCameraFocusCircleImageView?.y = (positionY - height /2)
+        binding?.apCameraFocusCircleImageView?.x = (positionX - width / 2)
+        binding?.apCameraFocusCircleImageView?.y = (positionY - height / 2)
         binding?.apCameraFocusCircleImageView?.visibility = View.VISIBLE
         binding?.apCameraFocusCircleImageView?.alpha = 1F
         binding?.apCameraFocusCircleImageView?.animate()?.apply {
@@ -369,6 +388,18 @@ class ApCameraActivity : ApCameraBaseActivity<ApCameraViewModel>(), ApCameraNavi
 
                 override fun onAnimationRepeat(p0: Animator?) {}
             })
+        }
+    }
+
+    override fun playShutterSound() {
+        val audioManager: AudioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        when (audioManager.ringerMode) {
+            AudioManager.RINGER_MODE_NORMAL -> {
+                MediaActionSound().apply {
+                    play(MediaActionSound.SHUTTER_CLICK)
+                }
+            }
+            else -> {}
         }
     }
 }
