@@ -11,11 +11,7 @@ import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewTreeObserver
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
@@ -96,6 +92,16 @@ class ApCameraActivity :
             setUpView()
             initial()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        this.orientationEventListener.enable()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        this.orientationEventListener.disable()
     }
 
     override fun setUpView() {}
@@ -214,7 +220,9 @@ class ApCameraActivity :
                 )
             }
         }
-        startCamera()
+        currentCameraImageCapture?.let {
+            it.flashMode = cameraFlashMode
+        }
     }
 
     private fun getFileName(): String =
@@ -355,14 +363,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (measuredWidth > 0 && measuredHeight > 0) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            block()
-                        }
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -400,6 +408,28 @@ class ApCameraActivity :
                 }
             }
             else -> {}
+        }
+    }
+
+    private val orientationEventListener by lazy {
+        object : OrientationEventListener(this) {
+            override fun onOrientationChanged(orientation: Int) {
+                if (orientation == ORIENTATION_UNKNOWN) {
+                    return
+                }
+                val rotation = when (orientation) {
+                    in 45 until 135 -> Surface.ROTATION_270
+                    in 135 until 225 -> Surface.ROTATION_180
+                    in 225 until 315 -> Surface.ROTATION_90
+                    else -> Surface.ROTATION_0
+                }
+                currentCameraImageAnalysis?.let {
+                    it.targetRotation = rotation
+                }
+                currentCameraImageCapture?.let {
+                    it.targetRotation = rotation
+                }
+            }
         }
     }
 }

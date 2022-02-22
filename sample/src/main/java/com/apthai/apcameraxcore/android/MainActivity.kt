@@ -3,7 +3,6 @@ package com.apthai.apcameraxcore.android
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.android.databinding.ActivityMainBinding
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
