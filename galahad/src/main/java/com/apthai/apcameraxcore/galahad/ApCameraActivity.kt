@@ -250,8 +250,8 @@ class ApCameraActivity :
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
-//                takePhoto()
-                takePhotoWithOutSave()
+                takePhoto()
+//                takePhotoWithOutSave()
             }
             R.id.ap_camera_view_switch_button -> {
                 flipCameraFacing()
