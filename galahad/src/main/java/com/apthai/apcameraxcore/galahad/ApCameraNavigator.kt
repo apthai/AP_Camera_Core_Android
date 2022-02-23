@@ -24,7 +24,7 @@ interface ApCameraNavigator {
     fun toggleCameraFlashMode()
     fun toggleAspectRatio()
 
-    fun initialAutoFocus()
+    fun initialAutoFocusAndPinchToZoom()
     fun animateAutofocusEvent(positionX: Float, positionY: Float)
 
     fun playShutterSound()

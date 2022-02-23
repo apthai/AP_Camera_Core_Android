@@ -6,11 +6,7 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.media.AudioManager
-import android.media.Image
 import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
@@ -25,9 +21,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
-import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
-import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -137,6 +131,7 @@ class ApCameraActivity :
         val cameraProvider = cameraProcessFuture?.get()
         cameraProvider?.let { provider ->
             try {
+
                 val cameraPreview = initializePreviewSurface()
                 currentCameraImageAnalysis = initializeImageAnalysis()
                 currentCameraImageCapture = initializeImageCapture()
@@ -149,7 +144,7 @@ class ApCameraActivity :
                     currentCameraImageAnalysis,
                     currentCameraImageCapture
                 )
-                initialAutoFocus()
+                initialAutoFocusAndPinchToZoom()
             } catch (exception: Exception) {
                 Toast.makeText(
                     this,
@@ -173,6 +168,7 @@ class ApCameraActivity :
 
     override fun takePhotoWithOutSave() {
         val imageCapture = currentCameraImageCapture ?: return
+
         imageCapture.takePicture(ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
 
@@ -346,10 +342,24 @@ class ApCameraActivity :
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun initialAutoFocus() {
+    override fun initialAutoFocusAndPinchToZoom() {
+
+        val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
+            override fun onScale(detector: ScaleGestureDetector?): Boolean {
+                val currentZoomRatio =
+                    currentCamera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0.0f
+                val delta = detector?.scaleFactor ?: 0.0f
+                val zoomRatio = currentZoomRatio * delta
+                currentCamera?.cameraControl?.setZoomRatio(zoomRatio)
+                return true
+            }
+        }
+        val scaleGestureDetector = ScaleGestureDetector(this, listener)
+
         binding?.apCameraViewPreview?.let { previewView ->
             previewView.afterMeasured {
                 previewView.setOnTouchListener { _, motionEvent ->
+                    scaleGestureDetector.onTouchEvent(motionEvent)
                     return@setOnTouchListener when (motionEvent.action) {
                         MotionEvent.ACTION_DOWN -> {
                             true
@@ -454,36 +464,6 @@ class ApCameraActivity :
                     it.targetRotation = rotation
                 }
             }
-        }
-    }
-
-    private fun convertImageToBitmap(
-        image: Image?,
-        flipNeeded: Boolean
-    ): Bitmap? {
-        return image?.let {
-            val byteBuffer: ByteBuffer = it.planes[0].buffer
-            byteBuffer.rewind()
-            val bytes = ByteArray(byteBuffer.capacity())
-            byteBuffer.get(bytes)
-            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-            val decodeOptions = BitmapFactory.Options()
-            decodeOptions.inPreferredConfig = Bitmap.Config.ARGB_8888
-            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, decodeOptions)
-            val matrix = Matrix()
-//            if (flipNeeded) {
-//                matrix.postRotate(this.getRotation(rotationDegree))
-//                if (flipNeeded) matrix.preScale(1.0f, -1.0f)
-//            }
-            //หมุนรูป
-            // matrix.postRotate(this.getRotation(rotationDegree))
-            //กลับรูป
-            if (flipNeeded) matrix.preScale(-1.0f, 1.0f)
-            val width = it.width.coerceAtMost(bitmap.width)
-            val height = it.height.coerceAtMost(bitmap.height)
-            Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
-        } ?: kotlin.run {
-            null
         }
     }
 
