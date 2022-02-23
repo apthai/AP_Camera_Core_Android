@@ -6,22 +6,28 @@ import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.media.AudioManager
+import android.media.Image
 import android.media.MediaActionSound
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.camera.core.*
-import androidx.camera.core.CameraSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
+import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -59,6 +65,7 @@ class ApCameraActivity :
     private var currentCameraImageAnalysis: ImageAnalysis? = null
     private lateinit var cameraExecutor: ExecutorService
     private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var cameraLensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
     private var cameraAspectRatio: Int = AspectRatio.RATIO_4_3
 
@@ -164,6 +171,25 @@ class ApCameraActivity :
         imageCapture.takePicture(outputOptions, ContextCompat.getMainExecutor(this), this)
     }
 
+    override fun takePhotoWithOutSave() {
+        val imageCapture = currentCameraImageCapture ?: return
+        imageCapture.takePicture(ContextCompat.getMainExecutor(this),
+            object : ImageCapture.OnImageCapturedCallback() {
+
+                @RequiresApi(Build.VERSION_CODES.R)
+                @SuppressLint("UnsafeOptInUsageError")
+                override fun onCaptureSuccess(imageProxy: ImageProxy) {
+                    super.onCaptureSuccess(imageProxy)
+
+//                    val imageBitmap = convertImageToBitmap(
+//                        imageProxy.image,
+//                        cameraLensFacing == CameraSelector.LENS_FACING_FRONT
+//                    )
+
+                }
+            })
+    }
+
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
         val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
         Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
@@ -175,10 +201,15 @@ class ApCameraActivity :
     }
 
     override fun flipCameraFacing() {
-        if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) cameraFacing =
-            CameraSelector.DEFAULT_FRONT_CAMERA
-        else if (cameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) cameraFacing =
-            CameraSelector.DEFAULT_BACK_CAMERA
+        if (cameraFacing == CameraSelector.DEFAULT_BACK_CAMERA) {
+            cameraFacing = CameraSelector.DEFAULT_FRONT_CAMERA
+            this.cameraLensFacing = CameraSelector.LENS_FACING_FRONT
+        } else if (cameraFacing == CameraSelector.DEFAULT_FRONT_CAMERA) {
+            cameraFacing =
+                CameraSelector.DEFAULT_BACK_CAMERA
+            this.cameraLensFacing = CameraSelector.LENS_FACING_BACK
+        }
+
         startCamera()
     }
 
@@ -223,7 +254,8 @@ class ApCameraActivity :
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
-                takePhoto()
+//                takePhoto()
+                takePhotoWithOutSave()
             }
             R.id.ap_camera_view_switch_button -> {
                 flipCameraFacing()
@@ -424,4 +456,35 @@ class ApCameraActivity :
             }
         }
     }
+
+    private fun convertImageToBitmap(
+        image: Image?,
+        flipNeeded: Boolean
+    ): Bitmap? {
+        return image?.let {
+            val byteBuffer: ByteBuffer = it.planes[0].buffer
+            byteBuffer.rewind()
+            val bytes = ByteArray(byteBuffer.capacity())
+            byteBuffer.get(bytes)
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            val decodeOptions = BitmapFactory.Options()
+            decodeOptions.inPreferredConfig = Bitmap.Config.ARGB_8888
+            val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size, decodeOptions)
+            val matrix = Matrix()
+//            if (flipNeeded) {
+//                matrix.postRotate(this.getRotation(rotationDegree))
+//                if (flipNeeded) matrix.preScale(1.0f, -1.0f)
+//            }
+            //หมุนรูป
+            // matrix.postRotate(this.getRotation(rotationDegree))
+            //กลับรูป
+            if (flipNeeded) matrix.preScale(-1.0f, 1.0f)
+            val width = it.width.coerceAtMost(bitmap.width)
+            val height = it.height.coerceAtMost(bitmap.height)
+            Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
+        } ?: kotlin.run {
+            null
+        }
+    }
+
 }

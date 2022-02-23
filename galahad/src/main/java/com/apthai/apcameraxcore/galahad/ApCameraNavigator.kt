@@ -28,4 +28,6 @@ interface ApCameraNavigator {
     fun animateAutofocusEvent(positionX: Float, positionY: Float)
 
     fun playShutterSound()
+
+    fun takePhotoWithOutSave()
 }

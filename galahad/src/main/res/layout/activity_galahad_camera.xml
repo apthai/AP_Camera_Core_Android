@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ap_camera_view_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/ap_camera_view_root_view"
     android:background="@color/black"
     android:theme="@style/ThemeOverlay.GalahadCameraCore.FullscreenContainer"
     tools:context=".ApCameraActivity">
@@ -13,18 +13,18 @@
         android:id="@+id/ap_camera_top_console_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
         android:background="@android:color/transparent"
         android:gravity="end"
-        android:padding="@dimen/ap_camera_view_item_padding"
-        android:layout_alignParentTop="true">
+        android:orientation="horizontal"
+        android:padding="@dimen/ap_camera_view_item_padding">
 
         <ImageButton
             android:id="@+id/ap_camera_view_aspect_ratio_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:adjustViewBounds="true"
             android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
+            android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/ap_camera_view_take_photo_button_text"
             android:src="@drawable/ic_ap_camera_toggle_aspect_ratio" />
@@ -33,9 +33,9 @@
             android:id="@+id/ap_camera_view_flash_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
-            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:contentDescription="@string/ap_camera_view_take_photo_button_text"
             android:src="@drawable/ic_ap_camera_toggle_flash_off" />
 
@@ -43,9 +43,9 @@
             android:id="@+id/ap_camera_view_switch_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:adjustViewBounds="true"
             android:background="@android:color/transparent"
-            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:contentDescription="@string/ap_camera_view_take_photo_button_text"
             android:src="@drawable/ic_ap_camera_switch_camera" />
 
@@ -62,7 +62,7 @@
             android:id="@+id/ap_camera_view_preview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:scaleType="fitCenter"/>
+            app:scaleType="fitCenter" />
 
         <ImageView
             android:id="@+id/ap_camera_focus_circle_image_view"
@@ -70,22 +70,22 @@
             android:layout_height="@dimen/ap_camera_circle_auto_focus_button_size"
             android:contentDescription="@string/ap_camera_view_circle_focus_button_description"
             android:src="@drawable/ic_ap_camera_focus_circle_view"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/ap_camera_bottom_console_view"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@android:color/transparent"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent">
 
         <ImageButton
             android:id="@+id/ap_camera_view_capture_button"
             android:layout_width="72dp"
             android:layout_height="72dp"
-            android:adjustViewBounds="true"
             android:layout_gravity="center"
+            android:adjustViewBounds="true"
             android:background="@android:color/transparent"
             android:contentDescription="@string/ap_camera_view_take_photo_button_text"
             android:src="@drawable/ic_ap_camera_view_capture_button" />
