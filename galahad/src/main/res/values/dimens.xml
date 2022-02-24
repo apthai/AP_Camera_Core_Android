@@ -13,4 +13,10 @@
     <dimen name="ap_camera_take_photo_button_bottom_dimen">50dp</dimen>
     <dimen name="ap_camera_circle_auto_focus_button_border_size">2dp</dimen>
     <dimen name="ap_camera_circle_auto_focus_button_size">64dp</dimen>
+
+
+    <!--  fragment_main_edit_picture_tools.xml  -->
+    <dimen name="frm_main_edit_picture_tools_ic_base_size">42dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_send_size">42dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_send_padding">14dp</dimen>
 </resources>

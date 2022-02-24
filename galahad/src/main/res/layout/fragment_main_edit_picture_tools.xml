@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/frm_main_edit_picture_tools_ic_back"
+        android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
+        android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
+        android:layout_marginStart="@dimen/ap_camera_view_item_padding_double"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_normal_half"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_arrow_back_ios_24" />
+
+
+    <RelativeLayout
+        android:id="@+id/frm_main_edit_picture_tools_container_image_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_extra_large"
+        android:layout_marginBottom="@dimen/ap_camera_view_item_padding_large"
+        android:background="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/frm_main_edit_picture_tools_container_ic_send"
+        app:layout_constraintTop_toBottomOf="@+id/frm_main_edit_picture_tools_ic_back">
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/frm_main_edit_picture_tools_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/frm_main_edit_picture_tools_container_tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_normal_half"
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_ap_circle_view_transparent"
+            android:padding="@dimen/ap_camera_view_item_padding_double">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/frm_main_edit_picture_tools_ic_crop"
+                android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                app:srcCompat="@drawable/ic_baseline_crop_rotate_24" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/ap_camera_view_item_padding"
+            android:background="@drawable/background_ap_circle_view_transparent"
+            android:padding="@dimen/ap_camera_view_item_padding_double">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/frm_main_edit_picture_tools_ic_write"
+                android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_centerInParent="true"
+                app:srcCompat="@drawable/ic_baseline_edit_24" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <RelativeLayout
+        android:id="@+id/frm_main_edit_picture_tools_container_ic_send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+        android:layout_marginBottom="@dimen/ap_camera_view_item_padding_normal_half"
+        android:background="@drawable/background_ap_circle_view_white"
+        android:padding="@dimen/frm_main_edit_picture_tools_ic_send_padding"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/frm_main_edit_picture_tools_ic_send"
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_send_size"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_send_size"
+            android:layout_centerInParent="true"
+            app:srcCompat="@drawable/ic_baseline_send_24" />
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
