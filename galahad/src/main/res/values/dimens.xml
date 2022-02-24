@@ -16,7 +16,9 @@
 
 
     <!--  fragment_main_edit_picture_tools.xml  -->
-    <dimen name="frm_main_edit_picture_tools_ic_base_size">42dp</dimen>
-    <dimen name="frm_main_edit_picture_tools_ic_send_size">42dp</dimen>
-    <dimen name="frm_main_edit_picture_tools_ic_send_padding">14dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_base_size">24dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_base_size_container">42dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_send_size">24dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_send_size_container">45dp</dimen>
+    <dimen name="frm_main_edit_picture_tools_ic_send_padding">2dp</dimen>
 </resources>

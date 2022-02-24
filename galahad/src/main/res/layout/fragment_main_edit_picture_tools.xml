@@ -21,16 +21,17 @@
         android:id="@+id/frm_main_edit_picture_tools_container_image_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="@dimen/ap_camera_view_item_padding_extra_large"
-        android:layout_marginBottom="@dimen/ap_camera_view_item_padding_large"
-        android:background="@color/white"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_double"
+        android:layout_marginBottom="@dimen/ap_camera_view_item_padding_normal_half"
         app:layout_constraintBottom_toTopOf="@+id/frm_main_edit_picture_tools_container_ic_send"
         app:layout_constraintTop_toBottomOf="@+id/frm_main_edit_picture_tools_ic_back">
 
-        <androidx.appcompat.widget.AppCompatImageButton
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/frm_main_edit_picture_tools_image_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:scaleType="fitCenter"
             tools:ignore="SpeakableTextPresentCheck" />
 
     </RelativeLayout>
@@ -46,30 +47,31 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/background_ap_circle_view_transparent"
-            android:padding="@dimen/ap_camera_view_item_padding_double">
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
+            android:background="@drawable/background_ap_circle_view_transparent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/frm_main_edit_picture_tools_ic_crop"
                 android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
                 android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_centerInParent="true"
+                android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_crop_rotate_24" />
         </RelativeLayout>
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
             android:layout_marginTop="@dimen/ap_camera_view_item_padding"
-            android:background="@drawable/background_ap_circle_view_transparent"
-            android:padding="@dimen/ap_camera_view_item_padding_double">
+            android:background="@drawable/background_ap_circle_view_transparent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/frm_main_edit_picture_tools_ic_write"
                 android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
                 android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
                 android:layout_centerInParent="true"
+                android:padding="2dp"
                 app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         </RelativeLayout>
@@ -77,8 +79,8 @@
 
     <RelativeLayout
         android:id="@+id/frm_main_edit_picture_tools_container_ic_send"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
+        android:layout_height="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
         android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
         android:layout_marginBottom="@dimen/ap_camera_view_item_padding_normal_half"
         android:background="@drawable/background_ap_circle_view_white"

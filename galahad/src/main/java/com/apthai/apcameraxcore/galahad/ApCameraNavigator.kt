@@ -30,4 +30,8 @@ interface ApCameraNavigator {
     fun playShutterSound()
 
     fun takePhotoWithOutSave()
+
+    fun loadDing(isLoading: Boolean)
+
+    fun saveImageToLocalSuccess(currentPathFile: String)
 }

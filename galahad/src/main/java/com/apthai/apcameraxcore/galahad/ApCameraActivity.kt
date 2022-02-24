@@ -13,14 +13,15 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
+import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.tools.ApCameraToolMainActivityResultContract
 import com.google.common.util.concurrent.ListenableFuture
 import java.text.SimpleDateFormat
 import java.util.*
@@ -64,6 +65,7 @@ class ApCameraActivity :
     private var cameraAspectRatio: Int = AspectRatio.RATIO_4_3
 
     private var currentCamera: Camera? = null
+    private var rootDir: String = ""
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -81,6 +83,7 @@ class ApCameraActivity :
             ViewModelProvider.NewInstanceFactory().create(ApCameraViewModel::class.java)
         apCameraViewModel?.setNavigator(this)
 
+        this.rootDir = this.externalCacheDir!!.absolutePath
         if (savedInstanceState == null) {
             setUpView()
             initial()
@@ -172,23 +175,38 @@ class ApCameraActivity :
         imageCapture.takePicture(ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
 
-                @RequiresApi(Build.VERSION_CODES.R)
                 @SuppressLint("UnsafeOptInUsageError")
                 override fun onCaptureSuccess(imageProxy: ImageProxy) {
                     super.onCaptureSuccess(imageProxy)
 
-//                    val imageBitmap = convertImageToBitmap(
-//                        imageProxy.image,
-//                        cameraLensFacing == CameraSelector.LENS_FACING_FRONT
-//                    )
+                    imageProxy.image?.let {
 
+                        val imageBitmap = ImageUtil.convertImagePoxyToBitmap(
+                            it,
+                            cameraLensFacing == CameraSelector.LENS_FACING_FRONT
+                        )
+
+                        imageBitmap?.let { itemBitmap ->
+                            apCameraViewModel?.saveImageToLocal(
+                                "$rootDir/${ImageUtil.BASE_IMAGE_FOLDER}",
+                                "ap_camera_make.jpeg",
+                                itemBitmap
+                            )
+                        }
+
+                    }
                 }
             })
+    }
+
+    override fun saveImageToLocalSuccess(currentPathFile: String) {
+
     }
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
         val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
         Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
+        apCameraToolMainActResultContract.launch(outputFileResults.savedUri.toString())
     }
 
     override fun onError(exception: ImageCaptureException) {
@@ -445,6 +463,10 @@ class ApCameraActivity :
         }
     }
 
+    override fun loadDing(isLoading: Boolean) {
+
+    }
+
     private val orientationEventListener by lazy {
         object : OrientationEventListener(this) {
             override fun onOrientationChanged(orientation: Int) {
@@ -466,5 +488,10 @@ class ApCameraActivity :
             }
         }
     }
+
+    private val apCameraToolMainActResultContract =
+        registerForActivityResult(ApCameraToolMainActivityResultContract()) {
+
+        }
 
 }
