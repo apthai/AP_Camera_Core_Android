@@ -36,6 +36,18 @@ object ImageUtil {
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
     }
 
+    fun bitmapFromFilePath(fullPathFile: String, flipNeeded: Boolean = false): Bitmap? {
+        val mFile = File(fullPathFile)
+        val option = BitmapFactory.Options()
+        option.inPreferredConfig = Bitmap.Config.ARGB_8888
+        val bitmap = BitmapFactory.decodeFile(mFile.absolutePath, option)
+        val matrix = Matrix()
+        if (flipNeeded) {
+            matrix.preScale(1.0f, -1.0f)
+        }
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+    }
+
     fun saveImageBitmap(absolutePath: String, fileName: String, imageBitmap: Bitmap) {
         if (isExternalStorageWritable()) {
             val rootDir = "$absolutePath/$BASE_IMAGE_FOLDER"

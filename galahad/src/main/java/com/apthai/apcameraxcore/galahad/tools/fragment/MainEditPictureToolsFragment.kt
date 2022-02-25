@@ -49,6 +49,13 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
     }
 
     override fun setUpView() {
+        this.viewBinding.frmMainEditPictureToolsIcCrop.setOnClickListener {
+
+        }
+        this.viewBinding.frmMainEditPictureToolsIcWrite.setOnClickListener {
+
+        }
+
         Glide.with(this).load(this.getPathFileFromArg())
             .into(this.viewBinding.frmMainEditPictureToolsImageView)
     }
