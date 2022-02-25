@@ -2,7 +2,7 @@
 buildscript {
     ext.ktlint_version = '0.43.2'
     ext.camerax_version = '1.1.0-beta01'
-    ext.lifecycle_version = '2.4.0'
+    ext.lifecycle_version = '2.4.1'
     ext.coroutine_version = '1.6.0'
     ext.timber_version = '5.0.1'
     ext.fragment_ktx_version = '1.4.1'
