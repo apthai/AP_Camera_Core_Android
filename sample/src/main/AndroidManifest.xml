@@ -30,6 +30,10 @@
             android:exported="false"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
             android:screenOrientation="portrait"/>
+        <activity android:name="com.apthai.apcameraxcore.galahad.previewer.ApPreviewActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
+            android:screenOrientation="fullSensor"/>
     </application>
 
 </manifest>

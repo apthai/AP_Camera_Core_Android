@@ -1,6 +1,7 @@
 package com.apthai.apcameraxcore.galahad
 
 import android.content.ContentValues
+import android.net.Uri
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -30,4 +31,6 @@ interface ApCameraNavigator {
     fun playShutterSound()
 
     fun takePhotoWithOutSave()
+
+    fun launchPreviewPhotoActivity(photoUri : Uri)
 }

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaActionSound
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -21,6 +22,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.google.common.util.concurrent.ListenableFuture
 import java.text.SimpleDateFormat
 import java.util.*
@@ -67,6 +69,10 @@ class ApCameraActivity :
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
+    }
+
+    private val previewActivityContract = registerForActivityResult(ApPreviewResultContract()) { photoUriStr ->
+        Toast.makeText(this, "Return from preview screen $photoUriStr", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -187,8 +193,13 @@ class ApCameraActivity :
     }
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-        val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
-        Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
+        outputFileResults.savedUri?.let { photoUri->
+            val msg = "Photo capture succeeded: $photoUri"
+            launchPreviewPhotoActivity(photoUri)
+            Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
+        } ?: kotlin.run {
+            Toast.makeText(this@ApCameraActivity, "failed from saved photo", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onError(exception: ImageCaptureException) {
@@ -467,4 +478,7 @@ class ApCameraActivity :
         }
     }
 
+    override fun launchPreviewPhotoActivity(photoUri: Uri) {
+        previewActivityContract.launch(photoUri.toString())
+    }
 }
