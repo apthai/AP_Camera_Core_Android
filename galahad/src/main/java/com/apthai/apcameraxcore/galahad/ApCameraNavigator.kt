@@ -33,4 +33,6 @@ interface ApCameraNavigator {
     fun takePhotoWithOutSave()
 
     fun launchPreviewPhotoActivity(photoUri : Uri)
+    fun loadDing(isLoading: Boolean)
+    fun saveImageToLocalSuccess(currentPathFile: String)
 }

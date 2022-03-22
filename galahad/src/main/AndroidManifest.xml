@@ -1,3 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.apthai.apcameraxcore.galahad"/>
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.apthai.apcameraxcore.galahad">
+
+    <application
+        android:supportsRtl="true"
+        tools:targetApi="n">
+        <activity
+            android:name=".tools.ApCameraToolMainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity" />
+    </application>
+</manifest>
