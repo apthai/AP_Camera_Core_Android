@@ -24,6 +24,7 @@ import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.tools.ApCameraToolMainActivityResultContract
+import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
 import java.text.SimpleDateFormat
 import java.util.*
@@ -68,14 +69,17 @@ class ApCameraActivity :
 
     private var currentCamera: Camera? = null
     private var rootDir: String = ""
+    private var currentPhotoUri: Uri? = null
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
     }
 
-    private val previewActivityContract = registerForActivityResult(ApPreviewResultContract()) { photoUriStr ->
-        Toast.makeText(this, "Return from preview screen $photoUriStr", Toast.LENGTH_SHORT).show()
-    }
+    private val previewActivityContract =
+        registerForActivityResult(ApPreviewResultContract()) { photoUriStr ->
+            Toast.makeText(this, "Return from preview screen $photoUriStr", Toast.LENGTH_SHORT)
+                .show()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -122,6 +126,7 @@ class ApCameraActivity :
         binding?.apCameraViewSwitchButton?.setOnClickListener(this)
         binding?.apCameraViewFlashButton?.setOnClickListener(this)
         binding?.apCameraViewAspectRatioButton?.setOnClickListener(this)
+        binding?.apCameraViewGalleryButton?.setOnClickListener(this)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
@@ -210,16 +215,14 @@ class ApCameraActivity :
     }
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-        /*outputFileResults.savedUri?.let { photoUri->
-            val msg = "Photo capture succeeded: $photoUri"
-            launchPreviewPhotoActivity(photoUri)
-            Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
-        } ?: kotlin.run {
-            Toast.makeText(this@ApCameraActivity, "failed from saved photo", Toast.LENGTH_SHORT).show()
-        }*/
         val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
         Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
-        apCameraToolMainActResultContract.launch(outputFileResults.savedUri.toString())
+        outputFileResults.savedUri?.let { photoUri ->
+            currentPhotoUri = photoUri
+            binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+            }
+        }
     }
 
     override fun onError(exception: ImageCaptureException) {
@@ -282,7 +285,6 @@ class ApCameraActivity :
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
                 takePhoto()
-//                takePhotoWithOutSave()
             }
             R.id.ap_camera_view_switch_button -> {
                 flipCameraFacing()
@@ -292,6 +294,9 @@ class ApCameraActivity :
             }
             R.id.ap_camera_view_aspect_ratio_button -> {
                 toggleAspectRatio()
+            }
+            R.id.ap_camera_view_gallery_button -> {
+                launchPreviewPhotoActivity()
             }
         }
     }
@@ -502,9 +507,13 @@ class ApCameraActivity :
         }
     }
 
-    override fun launchPreviewPhotoActivity(photoUri: Uri) {
-        previewActivityContract.launch(photoUri.toString())
+    override fun launchPreviewPhotoActivity() {
+        currentPhotoUri?.let { photoUri->
+            val photoUriStr = photoUri.toString()
+            apCameraToolMainActResultContract.launch(photoUriStr)
+        }
     }
+
     private val apCameraToolMainActResultContract =
         registerForActivityResult(ApCameraToolMainActivityResultContract()) {
 

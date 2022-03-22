@@ -78,6 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
+        android:gravity="center_vertical"
         android:background="@android:color/transparent">
 
         <ImageButton
@@ -89,6 +90,18 @@
             android:background="@android:color/transparent"
             android:contentDescription="@string/ap_camera_view_take_photo_button_text"
             android:src="@drawable/ic_ap_camera_view_capture_button" />
+
+        <ImageView
+            android:id="@+id/ap_camera_view_gallery_button"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:adjustViewBounds="true"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="@dimen/ap_camera_view_item_padding_huge"
+            android:background="@drawable/background_ap_circle_view_transparent_with_white_border"
+            android:contentDescription="@string/ap_camera_view_gallery_thumbnail_button_text"
+            android:padding="@dimen/ap_camera_view_item_padding_small"
+            android:src="@drawable/ic_ap_camera_toggle_gallery" />
     </FrameLayout>
 
 </RelativeLayout>

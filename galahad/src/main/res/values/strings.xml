@@ -2,4 +2,5 @@
     <string name="ap_camera_view_take_photo_button_text">Take Photo</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="ap_camera_view_circle_focus_button_description">autofocus</string>
+    <string name="ap_camera_view_gallery_thumbnail_button_text">Gallery</string>
 </resources>
