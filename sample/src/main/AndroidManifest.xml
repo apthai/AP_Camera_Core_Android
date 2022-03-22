@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -34,6 +35,10 @@
             android:exported="false"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
             android:screenOrientation="fullSensor"/>
+        <activity android:name="com.apthai.apcameraxcore.galahad.editor.ApEditorActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

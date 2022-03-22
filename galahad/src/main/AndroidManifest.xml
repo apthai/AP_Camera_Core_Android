@@ -4,6 +4,7 @@
     package="com.apthai.apcameraxcore.galahad">
 
     <application
+        android:name=".editor.PhotoApp"
         android:supportsRtl="true"
         tools:targetApi="n">
         <activity

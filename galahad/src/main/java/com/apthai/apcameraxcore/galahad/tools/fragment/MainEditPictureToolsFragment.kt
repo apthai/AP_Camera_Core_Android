@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseFragment
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.FragmentMainEditPictureToolsBinding
+import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.bumptech.glide.Glide
 
 class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsViewModel>(),
@@ -28,6 +28,10 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
 
     private lateinit var viewBinding: FragmentMainEditPictureToolsBinding
     private lateinit var viewModel: MainEditPictureToolsViewModel
+
+    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri->
+
+    }
 
 
     override fun tag(): String = MainEditPictureToolsFragment::class.java.simpleName
@@ -58,8 +62,7 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
 
     override fun initial() {
         this.viewBinding.frmMainEditPictureToolsIcBack.setOnClickListener(this)
-        this.viewBinding.frmMainEditPictureToolsIcCrop.setOnClickListener(this)
-        this.viewBinding.frmMainEditPictureToolsIcWrite.setOnClickListener(this)
+        this.viewBinding.frmMainEditPictureToolsIcEditMode.setOnClickListener(this)
     }
 
     override fun onClick(view: View?) {
@@ -67,11 +70,12 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
             R.id.frm_main_edit_picture_tools_ic_back ->{
                 activity?.finish()
             }
-            R.id.frm_main_edit_picture_tools_ic_crop ->{
-                Toast.makeText(activity, "Crop is coming soon", Toast.LENGTH_SHORT).show()
-            }
-            R.id.frm_main_edit_picture_tools_ic_write ->{
-                Toast.makeText(activity, "Write or draw is coming soon", Toast.LENGTH_SHORT).show()
+            R.id.frm_main_edit_picture_tools_ic_edit_mode ->{
+                val photoPathUriStr = getPathFileFromArg()
+                if (photoPathUriStr.isEmpty()){
+                    return
+                }
+                apEditorActivityContract.launch(photoPathUriStr)
             }
             else ->{
 
