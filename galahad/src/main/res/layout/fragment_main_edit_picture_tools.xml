@@ -84,6 +84,7 @@
         android:layout_marginBottom="@dimen/ap_camera_view_item_padding_normal_half"
         android:background="@drawable/background_ap_circle_view_white"
         android:padding="@dimen/frm_main_edit_picture_tools_ic_send_padding"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
