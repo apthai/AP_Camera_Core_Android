@@ -49,8 +49,8 @@ class ApCameraToolMainActivity : ApCameraBaseActivity<ApCameraToolMainViewModel>
                 MainEditPictureToolsFragment.TAG_FRAGMENT_NAME
             )
             .setReorderingAllowed(true)
-            .addToBackStack(MainEditPictureToolsFragment.TAG_FRAGMENT_NAME)
             .commit()
+
         sharedViewModel.customImageBitmap.observe(this) {
             it?.let {
 
