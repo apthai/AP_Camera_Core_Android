@@ -14,7 +14,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.apthai.apcameraxcore.galahad.R
-import com.apthai.apcameraxcore.galahad.editor.PhotoApp.Companion.photoApp
+import com.apthai.apcameraxcore.galahad.ApCameraApp.Companion.apCameraApp
 import java.lang.NumberFormatException
 import java.util.ArrayList
 
@@ -89,7 +89,7 @@ class EmojiBSFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        private var emojisList = getEmojis(photoApp)
+        private var emojisList = getEmojis(apCameraApp)
 
         /**
          * Provide the list of emoji in form of unicode string

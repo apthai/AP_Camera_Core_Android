@@ -11,6 +11,7 @@ import android.media.MediaActionSound
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.*
 import android.widget.Toast
@@ -22,10 +23,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApMultiplePreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.tools.ApCameraToolMainActivityResultContract
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -80,6 +83,11 @@ class ApCameraActivity :
             Toast.makeText(this, "Return from preview screen $photoUriStr", Toast.LENGTH_SHORT)
                 .show()
         }
+
+    private val multiplePreviewContract = registerForActivityResult(ApMultiplePreviewResultContract()){ output->
+        Toast.makeText(this, "Return from multiple screen $output", Toast.LENGTH_SHORT)
+            .show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -349,10 +357,26 @@ class ApCameraActivity :
         }
 
     override fun getContentValue(outputFileName: String): ContentValues = ContentValues().apply {
+        val dirFile = File("${getExternalFilesDir(Environment.DIRECTORY_PICTURES)}/${ApCameraUtil.General.AP_CAMERA_DEFAULT_IMAGE_PATH}")
+        if (!dirFile.exists()){
+            dirFile.mkdirs()
+        }
         put(MediaStore.MediaColumns.DISPLAY_NAME, outputFileName)
         put(MediaStore.MediaColumns.MIME_TYPE, MIME_IMAGE_TYPE)
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ApCamera-Image")
+        put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis())
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            put(MediaStore.Images.Media.RELATIVE_PATH, ApCameraUtil.General.AP_CAMERA_DEFAULT_IMAGE_PATH)
+        }else{
+            val file = File("${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/${ApCameraUtil.General.AP_CAMERA_DEFAULT_IMAGE_PATH}")
+            if (!file.exists()){
+                if (!file.mkdirs()){
+                    Toast.makeText(this@ApCameraActivity, "create folder failed", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(this@ApCameraActivity, "create folder success", Toast.LENGTH_SHORT).show()
+                }
+            }
+            val path = "${Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)}/${ApCameraUtil.General.AP_CAMERA_DEFAULT_IMAGE_PATH}/$outputFileName"
+            put(MediaStore.Images.Media.DATA, path);
         }
     }
 
@@ -510,7 +534,8 @@ class ApCameraActivity :
     override fun launchPreviewPhotoActivity() {
         currentPhotoUri?.let { photoUri->
             val photoUriStr = photoUri.toString()
-            apCameraToolMainActResultContract.launch(photoUriStr)
+            //apCameraToolMainActResultContract.launch(photoUriStr)
+            multiplePreviewContract.launch(photoUriStr)
         }
     }
 

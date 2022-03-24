@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.apthai.apcameraxcore.android">
 
     <uses-feature android:name="android.hardware.camera.any" />
@@ -19,26 +20,14 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.apthai.apcameraxcore.galahad.ApCameraActivity"
-            android:exported="false"
-            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            android:screenOrientation="portrait"/>
-        <activity android:name="com.apthai.apcameraxcore.galahad.previewer.ApPreviewActivity"
-            android:exported="false"
-            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            android:screenOrientation="fullSensor"/>
-        <activity android:name="com.apthai.apcameraxcore.galahad.editor.ApEditorActivity"
-            android:exported="false"
-            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

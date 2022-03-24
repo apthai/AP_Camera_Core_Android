@@ -428,4 +428,7 @@
         <item>u+1f4cd</item>
         <item>u+1f6a9</item>
     </string-array>
+
+    <!--Multiple Preview Screen-->
+    <string name="ap_multiple_preview_item_image_view_description">Item Imageview</string>
 </resources>

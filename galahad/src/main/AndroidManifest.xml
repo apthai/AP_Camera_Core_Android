@@ -3,10 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.apthai.apcameraxcore.galahad">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
-        android:name=".editor.PhotoApp"
+        android:name=".ApCameraApp"
         android:supportsRtl="true"
         tools:targetApi="n">
+        <activity
+            android:name=".ApCameraActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.ApPreviewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.ApMultiplePreviewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".editor.ApEditorActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".tools.ApCameraToolMainActivity"
             android:launchMode="singleTask"
