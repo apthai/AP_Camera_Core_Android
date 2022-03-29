@@ -76,10 +76,7 @@ class ApCameraActivity :
     }
 
     private val previewActivityContract =
-        registerForActivityResult(ApPreviewResultContract()) { photoUriStr ->
-            Toast.makeText(this, "Return from preview screen $photoUriStr", Toast.LENGTH_SHORT)
-                .show()
-        }
+        registerForActivityResult(ApPreviewResultContract()) {}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

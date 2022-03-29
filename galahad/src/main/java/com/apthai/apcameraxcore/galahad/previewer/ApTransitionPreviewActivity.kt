@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPreviewTransitionBinding
@@ -41,6 +42,8 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
     }
 
     override fun setUpView() {
+        setSupportActionBar(binding?.apTransitionPreviewToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         getImagePathPayload()?.let { imagePath->
             binding?.apPreviewTransitionView?.let { photoPreview->
@@ -53,4 +56,11 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
     override fun initial() {}
 
     override fun getImagePathPayload(): String? = intent?.getStringExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }

@@ -48,9 +48,6 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
 
     private var apPhotoViewListAdapter: ApPhotoViewListAdapter? = null
 
-    private val apTransitionPreviewContract =
-        registerForActivityResult(ApTransitionPreviewResultContract()) {}
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activityGalahadPreviewBinding = ActivityGalahadPreviewBinding.inflate(layoutInflater)
