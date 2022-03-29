@@ -508,10 +508,7 @@ class ApCameraActivity :
     }
 
     override fun launchPreviewPhotoActivity() {
-        currentPhotoUri?.let { photoUri->
-            val photoUriStr = photoUri.toString()
-            apCameraToolMainActResultContract.launch(photoUriStr)
-        }
+        previewActivityContract.launch(tag())
     }
 
     private val apCameraToolMainActResultContract =

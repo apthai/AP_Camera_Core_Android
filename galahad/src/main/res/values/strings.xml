@@ -428,4 +428,7 @@
         <item>u+1f4cd</item>
         <item>u+1f6a9</item>
     </string-array>
+
+    <!--Preview screen sector-->
+    <string name="ap_galahad_preview_item_photo_view_description">Photo view</string>
 </resources>

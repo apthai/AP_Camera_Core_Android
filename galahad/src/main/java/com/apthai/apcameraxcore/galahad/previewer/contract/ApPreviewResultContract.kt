@@ -14,7 +14,7 @@ class ApPreviewResultContract : ActivityResultContract<String, String?>() {
         const val AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST = "ap_preview_contract_uri_payload_cls"
     }
 
-    override fun createIntent(context: Context, input: String): Intent = Intent(context, ApPreviewActivity::class.java).apply {
+    override fun createIntent(context: Context, input: String): Intent = ApPreviewActivity.getInstance(context).apply {
         putExtra(AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST, input)
     }
 
