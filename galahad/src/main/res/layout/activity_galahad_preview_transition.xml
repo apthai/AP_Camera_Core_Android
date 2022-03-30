@@ -14,10 +14,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </com.google.android.material.appbar.AppBarLayout>
-<com.github.chrisbanes.photoview.PhotoView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="center"
-    android:src="@drawable/background_ap_placeholder"
-    android:id="@+id/ap_preview_transition_view"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.github.chrisbanes.photoview.PhotoView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:src="@drawable/background_ap_placeholder"
+            android:id="@+id/ap_preview_transition_view"/>
+    </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

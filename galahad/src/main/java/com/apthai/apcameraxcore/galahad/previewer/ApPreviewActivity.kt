@@ -39,7 +39,6 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
 
     private var viewModel: ApPreviewViewModel? = null
 
-    private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
     private var mediaCollection: Uri? = null
     private var mediaProjection: Array<String>? = null
     private var mediaSelection: String? = null
@@ -73,67 +72,11 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
             adapter = apPhotoViewListAdapter
         }
 
-        mediaCollection = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            MediaStore.Images.Media.getContentUri(MediaStore.VOLUME_EXTERNAL)
-        } else {
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        }
-
-        mediaProjection = arrayOf(
-            MediaStore.Images.Media._ID,
-            MediaStore.Images.Media.DISPLAY_NAME,
-            MediaStore.Images.Media.SIZE,
-            MediaStore.Images.Media.DATE_ADDED,
-            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-            MediaStore.Images.Media.BUCKET_ID
-        )
-
-        mediaSelection = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME} = ?"
-        mediaSelectionArgs = arrayOf(
-            "ApCamera-Image"
-        )
-
-        mediaSortOrder = "${MediaStore.Images.Media.DISPLAY_NAME} ASC"
-
-        val mediaQuery = contentResolver.query(
-            checkNotNull(mediaCollection),
-            mediaProjection,
-            mediaSelection,
-            mediaSelectionArgs,
-            mediaSortOrder
-        )
-        mediaQuery?.use { cursor ->
-            val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-            val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-            val sizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
-            val dateAddedColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
-            val bucketIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-            val bucketNameColumn =
-                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
-
-            while (cursor.moveToNext()) {
-                val id = cursor.getLong(idColumn)
-                val name = cursor.getString(nameColumn)
-                val size = cursor.getInt(sizeColumn)
-                val dateAdded = cursor.getLong(dateAddedColumn)
-                val bucketId = cursor.getLong(bucketIdColumn)
-                val bucketName = cursor.getString(bucketNameColumn)
-
-                val contentUri: Uri = ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                currentPhotoList += ApPhoto(
-                    uri = contentUri,
-                    name = name,
-                    size = size,
-                    createdAt = dateAdded,
-                    bucketId = bucketId,
-                    bucketName = bucketName
-                )
-            }
-            apPhotoViewListAdapter?.updateData(currentPhotoList)
+        val currentPhotoList = fetchCurrentPhotos()
+        if (currentPhotoList.isEmpty()){
+            Toast.makeText(this, "Photos is empty", Toast.LENGTH_SHORT).show()
+        } else{
+            Toast.makeText(this, "Photos is not empty", Toast.LENGTH_SHORT).show()
         }
     }
 
