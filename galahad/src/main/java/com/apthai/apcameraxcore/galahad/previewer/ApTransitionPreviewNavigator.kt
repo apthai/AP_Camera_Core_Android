@@ -1,6 +1,8 @@
 package com.apthai.apcameraxcore.galahad.previewer
 
+import com.apthai.apcameraxcore.common.model.ApPhoto
+
 interface ApTransitionPreviewNavigator {
 
-    fun getImagePathPayload() : String?
+    fun getSelectedApPhotoPayload() : ApPhoto?
 }

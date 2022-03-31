@@ -1,7 +1,10 @@
 package com.apthai.apcameraxcore.common.model
 
 import android.net.Uri
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ApPhoto(
     val id : Long,
     val uriPath : Uri,
@@ -12,4 +15,4 @@ data class ApPhoto(
     val folderId : Long,
     val folderName : String,
     val mimeType : String
-)
+) : Parcelable

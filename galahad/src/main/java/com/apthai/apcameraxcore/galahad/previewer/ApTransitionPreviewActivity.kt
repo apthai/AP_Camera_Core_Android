@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
+import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPreviewTransitionBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
 import com.bumptech.glide.Glide
@@ -17,8 +18,8 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
 
     companion object{
 
-        fun getInstance(context : Context, imagePath : String) : Intent = Intent(context, ApTransitionPreviewActivity::class.java).apply {
-            putExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD, imagePath)
+        fun getInstance(context : Context, selectedApPhoto : ApPhoto) : Intent = Intent(context, ApTransitionPreviewActivity::class.java).apply {
+            putExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD, selectedApPhoto)
         }
     }
 
@@ -45,17 +46,17 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
         setSupportActionBar(binding?.apTransitionPreviewToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        getImagePathPayload()?.let { imagePath->
+        getSelectedApPhotoPayload()?.let { selectedApPhoto->
+            supportActionBar?.title = selectedApPhoto.fileName
             binding?.apPreviewTransitionView?.let { photoPreview->
-                val uriImagePath = Uri.parse(imagePath)
-                Glide.with(this).load(uriImagePath).into(photoPreview)
+                Glide.with(this).load(selectedApPhoto.uriPath).into(photoPreview)
             }
         }
     }
 
     override fun initial() {}
 
-    override fun getImagePathPayload(): String? = intent?.getStringExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
+    override fun getSelectedApPhotoPayload(): ApPhoto? = intent?.getParcelableExtra<ApPhoto>(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){

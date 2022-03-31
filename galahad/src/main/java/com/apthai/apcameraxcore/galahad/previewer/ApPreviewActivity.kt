@@ -156,7 +156,7 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
     }
 
     private fun transition(view: View, apPhoto: ApPhoto) {
-        val intent = ApTransitionPreviewActivity.getInstance(this, apPhoto.uriPath.toString())
+        val intent = ApTransitionPreviewActivity.getInstance(this, apPhoto)
         val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
             this,
             view,
