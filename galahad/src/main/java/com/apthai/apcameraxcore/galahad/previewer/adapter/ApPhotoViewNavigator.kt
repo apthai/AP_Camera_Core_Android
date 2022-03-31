@@ -1,6 +1,6 @@
 package com.apthai.apcameraxcore.galahad.previewer.adapter
 
-import com.apthai.apcameraxcore.galahad.model.ApPhoto
+import com.apthai.apcameraxcore.common.model.ApPhoto
 
 interface ApPhotoViewNavigator {
 

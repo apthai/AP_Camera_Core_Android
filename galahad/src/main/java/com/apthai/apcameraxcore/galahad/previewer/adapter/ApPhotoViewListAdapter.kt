@@ -6,8 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.R
-import com.apthai.apcameraxcore.galahad.model.ApPhoto
 
 class ApPhotoViewListAdapter(private val context : Context) : RecyclerView.Adapter<ApPhotoViewHolder>(){
 

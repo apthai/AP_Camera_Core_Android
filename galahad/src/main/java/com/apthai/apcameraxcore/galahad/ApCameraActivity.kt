@@ -3,6 +3,7 @@ package com.apthai.apcameraxcore.galahad
 import android.Manifest
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
@@ -20,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
+import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.collections.ArrayList
 
 
 class ApCameraActivity :
@@ -77,6 +80,8 @@ class ApCameraActivity :
 
     private val previewActivityContract =
         registerForActivityResult(ApPreviewResultContract()) {}
+
+    private var currentPhotoList : MutableList<ApPhoto> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,6 +131,69 @@ class ApCameraActivity :
         binding?.apCameraViewGalleryButton?.setOnClickListener(this)
 
         cameraExecutor = Executors.newSingleThreadExecutor()
+
+        apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
+            if (apPhotos.isEmpty()){
+                return@observe
+            }
+            val firstPhoto : ApPhoto = apPhotos[0]
+            binding?.apCameraViewGalleryButton?.let { imageView->
+                Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
+            }
+        }
+
+        val mediaCursor = contentResolver.query(
+            fetchMediaCollection,
+            fetchMediaProjection,
+            fetchMediaSelection,
+            fetchMediaSelectionArgs,
+            fetchMediaSortOrder
+        )
+
+        mediaCursor?.use { cursor ->
+            val fetchIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val fetchFileNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val fetchFileSizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val fetchDateAddedColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val fetchDateModifiedColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
+            val fetchBucketIdColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val fetchBucketNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            val fetchMimeTypeColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val fileId = cursor.getLong(fetchIdColumn)
+                val fileName = cursor.getString(fetchFileNameColumn)
+                val fileSize = cursor.getInt(fetchFileSizeColumn)
+                val fileDateAdded = cursor.getLong(fetchDateAddedColumn)
+                val fileDateModified = cursor.getLong(fetchDateModifiedColumn)
+                val fileBucketId = cursor.getLong(fetchBucketIdColumn)
+                val fileBucketName = cursor.getString(fetchBucketNameColumn)
+                val fileMimeType = cursor.getString(fetchMimeTypeColumn)
+
+                val contentUri: Uri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileId)
+
+                currentPhotoList += ApPhoto(
+                    id = fileId,
+                    uriPath = contentUri,
+                    fileName = fileName,
+                    fileSize = fileSize,
+                    createdAt = fileDateAdded,
+                    modifiedAt = fileDateModified,
+                    folderId = fileBucketId,
+                    folderName = fileBucketName,
+                    mimeType = fileMimeType
+                )
+            }
+        }
+
+        apCameraViewModel?.setSharedCurrentPhotos(currentPhotoList)
     }
 
     override fun isCameraPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all { permission ->
@@ -507,9 +575,4 @@ class ApCameraActivity :
     override fun launchPreviewPhotoActivity() {
         previewActivityContract.launch(tag())
     }
-
-    private val apCameraToolMainActResultContract =
-        registerForActivityResult(ApCameraToolMainActivityResultContract()) {
-
-        }
 }
