@@ -5,14 +5,16 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPreviewTransitionBinding
+import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
 import com.bumptech.glide.Glide
 
-class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewViewModel>(), ApTransitionPreviewNavigator {
+class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewViewModel>(), ApTransitionPreviewNavigator, View.OnClickListener {
 
     override fun tag(): String =ApTransitionPreviewActivity::class.java.simpleName
 
@@ -27,6 +29,10 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
     private val binding get() = activityGalahadPreviewTransitionBinding
 
     private var viewModel : ApTransitionPreviewViewModel?=null
+
+    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri->
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,7 +60,9 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
         }
     }
 
-    override fun initial() {}
+    override fun initial() {
+        binding?.apTransitionPreviewEditView?.setOnClickListener(this)
+    }
 
     override fun getSelectedApPhotoPayload(): ApPhoto? = intent?.getParcelableExtra<ApPhoto>(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
 
@@ -63,5 +71,11 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onClick(view: View?) {
+        getSelectedApPhotoPayload()?.let { selectedApPhoto->
+            apEditorActivityContract.launch(selectedApPhoto.uriPath.toString())
+        }
     }
 }
