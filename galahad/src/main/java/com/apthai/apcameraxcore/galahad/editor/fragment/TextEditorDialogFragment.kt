@@ -11,15 +11,15 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.LinearLayoutManager
-import kotlin.jvm.JvmOverloads
-import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.ColorInt
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
+import kotlin.jvm.JvmOverloads
 
 /**
  * Created by Burhanuddin Rashid on 1/16/2018.
@@ -38,7 +38,7 @@ class TextEditorDialogFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val dialog = dialog
-        //Make dialog full screen with transparent background
+        // Make dialog full screen with transparent background
         if (dialog != null) {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
             val height = ViewGroup.LayoutParams.MATCH_PARENT
@@ -62,7 +62,7 @@ class TextEditorDialogFragment : DialogFragment() {
             requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         mAddTextDoneTextView = view.findViewById(R.id.add_text_done_tv)
 
-        //Setup the color picker for text color
+        // Setup the color picker for text color
         val addTextColorPickerRecyclerView: RecyclerView =
             view.findViewById(R.id.add_text_color_picker_recycler_view)
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
@@ -70,21 +70,21 @@ class TextEditorDialogFragment : DialogFragment() {
         addTextColorPickerRecyclerView.setHasFixedSize(true)
         val colorPickerAdapter = ColorPickerAdapter(requireActivity())
 
-        //This listener will change the text color when clicked on any color from picker
+        // This listener will change the text color when clicked on any color from picker
         colorPickerAdapter.setOnColorPickerClickListener(object :
-            ColorPickerAdapter.OnColorPickerClickListener {
-            override fun onColorPickerClickListener(colorCode: Int) {
-                mColorCode = colorCode
-                mAddTextEditText!!.setTextColor(colorCode)
-            }
-        })
+                ColorPickerAdapter.OnColorPickerClickListener {
+                override fun onColorPickerClickListener(colorCode: Int) {
+                    mColorCode = colorCode
+                    mAddTextEditText!!.setTextColor(colorCode)
+                }
+            })
         addTextColorPickerRecyclerView.adapter = colorPickerAdapter
         mAddTextEditText!!.setText(requireArguments().getString(EXTRA_INPUT_TEXT))
         mColorCode = requireArguments().getInt(EXTRA_COLOR_CODE)
         mAddTextEditText!!.setTextColor(mColorCode)
         mInputMethodManager!!.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 
-        //Make a callback on activity when user is done with text editing
+        // Make a callback on activity when user is done with text editing
         mAddTextDoneTextView!!.setOnClickListener { onClickListenerView ->
             mInputMethodManager!!.hideSoftInputFromWindow(onClickListenerView.windowToken, 0)
             dismiss()
@@ -95,7 +95,7 @@ class TextEditorDialogFragment : DialogFragment() {
         }
     }
 
-    //Callback to listener if user is done with text editing
+    // Callback to listener if user is done with text editing
     fun setOnTextEditorListener(textEditorListener: TextEditorListener) {
         mTextEditorListener = textEditorListener
     }
@@ -105,8 +105,8 @@ class TextEditorDialogFragment : DialogFragment() {
         const val EXTRA_INPUT_TEXT = "extra_input_text"
         const val EXTRA_COLOR_CODE = "extra_color_code"
 
-        //Show dialog with provide text and text color
-        //Show dialog with default text input as empty and text color white
+        // Show dialog with provide text and text color
+        // Show dialog with default text input as empty and text color white
         @JvmOverloads
         fun show(
             appCompatActivity: AppCompatActivity,

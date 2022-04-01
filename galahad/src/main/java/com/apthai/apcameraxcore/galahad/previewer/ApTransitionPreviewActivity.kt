@@ -2,7 +2,6 @@ package com.apthai.apcameraxcore.galahad.previewer
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -16,22 +15,21 @@ import com.bumptech.glide.Glide
 
 class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewViewModel>(), ApTransitionPreviewNavigator, View.OnClickListener {
 
-    override fun tag(): String =ApTransitionPreviewActivity::class.java.simpleName
+    override fun tag(): String = ApTransitionPreviewActivity::class.java.simpleName
 
-    companion object{
+    companion object {
 
-        fun getInstance(context : Context, selectedApPhoto : ApPhoto) : Intent = Intent(context, ApTransitionPreviewActivity::class.java).apply {
+        fun getInstance(context: Context, selectedApPhoto: ApPhoto): Intent = Intent(context, ApTransitionPreviewActivity::class.java).apply {
             putExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD, selectedApPhoto)
         }
     }
 
-    private var activityGalahadPreviewTransitionBinding : ActivityGalahadPreviewTransitionBinding?=null
+    private var activityGalahadPreviewTransitionBinding: ActivityGalahadPreviewTransitionBinding? = null
     private val binding get() = activityGalahadPreviewTransitionBinding
 
-    private var viewModel : ApTransitionPreviewViewModel?=null
+    private var viewModel: ApTransitionPreviewViewModel? = null
 
-    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri->
-
+    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +40,7 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
         viewModel = ViewModelProvider.NewInstanceFactory().create(ApTransitionPreviewViewModel::class.java)
         viewModel?.setNavigator(this)
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             setUpView()
             initial()
         }
@@ -52,9 +50,9 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
         setSupportActionBar(binding?.apTransitionPreviewToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        getSelectedApPhotoPayload()?.let { selectedApPhoto->
+        getSelectedApPhotoPayload()?.let { selectedApPhoto ->
             supportActionBar?.title = selectedApPhoto.fileName
-            binding?.apPreviewTransitionView?.let { photoPreview->
+            binding?.apPreviewTransitionView?.let { photoPreview ->
                 Glide.with(this).load(selectedApPhoto.uriPath).into(photoPreview)
             }
         }
@@ -67,14 +65,14 @@ class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewView
     override fun getSelectedApPhotoPayload(): ApPhoto? = intent?.getParcelableExtra<ApPhoto>(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             android.R.id.home -> finish()
         }
         return super.onOptionsItemSelected(item)
     }
 
     override fun onClick(view: View?) {
-        getSelectedApPhotoPayload()?.let { selectedApPhoto->
+        getSelectedApPhotoPayload()?.let { selectedApPhoto ->
             apEditorActivityContract.launch(selectedApPhoto.uriPath.toString())
         }
     }

@@ -25,15 +25,13 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
-import com.apthai.apcameraxcore.galahad.tools.ApCameraToolMainActivityResultContract
+import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
-
 
 class ApCameraActivity :
     ApCameraBaseActivity<ApCameraViewModel>(),
@@ -44,7 +42,6 @@ class ApCameraActivity :
     companion object {
 
         private const val REQUEST_CODE_PERMISSIONS = 112
-        private const val FILENAME_FORMAT = "yyyy-MM-dd-HH-mm-ss-SSS"
         private val REQUIRED_PERMISSIONS = mutableListOf(
             Manifest.permission.CAMERA
         ).apply {
@@ -52,7 +49,6 @@ class ApCameraActivity :
                 add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             }
         }.toTypedArray()
-        private const val MIME_IMAGE_TYPE = "image/jpeg"
     }
 
     override fun tag(): String = ApCameraActivity::class.java.simpleName
@@ -81,7 +77,7 @@ class ApCameraActivity :
     private val previewActivityContract =
         registerForActivityResult(ApPreviewResultContract()) {}
 
-    private var currentPhotoList : MutableList<ApPhoto> = ArrayList()
+    private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -133,11 +129,11 @@ class ApCameraActivity :
         cameraExecutor = Executors.newSingleThreadExecutor()
 
         apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
-            if (apPhotos.isEmpty()){
+            if (apPhotos.isEmpty()) {
                 return@observe
             }
-            val firstPhoto : ApPhoto = apPhotos[0]
-            binding?.apCameraViewGalleryButton?.let { imageView->
+            val firstPhoto: ApPhoto = apPhotos[0]
+            binding?.apCameraViewGalleryButton?.let { imageView ->
                 Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
             }
         }
@@ -238,7 +234,7 @@ class ApCameraActivity :
 
     override fun takePhoto() {
         val imageCapture = currentCameraImageCapture ?: return
-        val fileName = getFileName()
+        val fileName = ApCameraUtil.getFileName()
         val contentValues = getContentValue(fileName)
         val outputOptions = getOutputFileOption(contentValues)
         playShutterSound()
@@ -248,7 +244,8 @@ class ApCameraActivity :
     override fun takePhotoWithOutSave() {
         val imageCapture = currentCameraImageCapture ?: return
 
-        imageCapture.takePicture(ContextCompat.getMainExecutor(this),
+        imageCapture.takePicture(
+            ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
 
                 @SuppressLint("UnsafeOptInUsageError")
@@ -269,14 +266,13 @@ class ApCameraActivity :
                                 itemBitmap
                             )
                         }
-
                     }
                 }
-            })
+            }
+        )
     }
 
     override fun saveImageToLocalSuccess(currentPathFile: String) {
-
     }
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
@@ -342,9 +338,6 @@ class ApCameraActivity :
             it.flashMode = cameraFlashMode
         }
     }
-
-    private fun getFileName(): String =
-        SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     override fun onClick(view: View?) {
         when (view?.id) {
@@ -415,9 +408,9 @@ class ApCameraActivity :
 
     override fun getContentValue(outputFileName: String): ContentValues = ContentValues().apply {
         put(MediaStore.MediaColumns.DISPLAY_NAME, outputFileName)
-        put(MediaStore.MediaColumns.MIME_TYPE, MIME_IMAGE_TYPE)
+        put(MediaStore.MediaColumns.MIME_TYPE, ApCameraUtil.AP_CAMERA_DEFAULT_MIME_TYPE)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/ApCamera-Image")
+            put(MediaStore.Images.Media.RELATIVE_PATH, ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER)
         }
     }
 
@@ -498,14 +491,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    if (measuredWidth > 0 && measuredHeight > 0) {
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        block()
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        if (measuredWidth > 0 && measuredHeight > 0) {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            block()
+                        }
                     }
-                }
-            })
+                })
         }
     }
 
@@ -547,7 +540,6 @@ class ApCameraActivity :
     }
 
     override fun loadDing(isLoading: Boolean) {
-
     }
 
     private val orientationEventListener by lazy {

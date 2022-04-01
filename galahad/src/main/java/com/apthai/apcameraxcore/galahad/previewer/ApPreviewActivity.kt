@@ -6,12 +6,10 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,11 +18,10 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPreviewBinding
 import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPhotoViewListAdapter
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
-import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
-import com.apthai.apcameraxcore.galahad.tools.ApCameraToolMainActivityResultContract
 
-
-class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewNavigator,
+class ApPreviewActivity :
+    ApCameraBaseActivity<ApPreviewViewModel>(),
+    ApPreviewNavigator,
     ApPhotoViewListAdapter.OnPhotoViewItemEventListener {
 
     override fun tag(): String = ApPreviewActivity::class.java.simpleName
@@ -41,7 +38,7 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
 
     private var apPhotoViewListAdapter: ApPhotoViewListAdapter? = null
 
-    private var currentPhotoList : MutableList<ApPhoto> = ArrayList()
+    private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,7 +69,7 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
     override fun initial() {
         apPhotoViewListAdapter?.setOnPhotoViewItemEventListener(this)
 
-        viewModel?.shareCurrentPhotos?.observe(this) { apPhotos->
+        viewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
             apPhotoViewListAdapter?.updateData(apPhotos)
         }
 
@@ -138,12 +135,15 @@ class ApPreviewActivity : ApCameraBaseActivity<ApPreviewViewModel>(), ApPreviewN
             android.R.id.home -> {
                 val photoUri = getPhotoUriPayload()
                 photoUri?.let { uriStr ->
-                    setResult(Activity.RESULT_OK, Intent().apply {
-                        putExtra(
-                            ApPreviewResultContract.AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST,
-                            uriStr
-                        )
-                    })
+                    setResult(
+                        Activity.RESULT_OK,
+                        Intent().apply {
+                            putExtra(
+                                ApPreviewResultContract.AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST,
+                                uriStr
+                            )
+                        }
+                    )
                 }
                 finish()
             }

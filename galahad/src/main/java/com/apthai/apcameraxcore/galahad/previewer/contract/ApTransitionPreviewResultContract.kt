@@ -9,14 +9,14 @@ import com.apthai.apcameraxcore.galahad.previewer.ApTransitionPreviewActivity
 
 class ApTransitionPreviewResultContract : ActivityResultContract<ApPhoto, String?>() {
 
-    companion object{
+    companion object {
         const val AP_TRANSITION_PREVIEW_PAYLOAD = "ap_transition_preview_payload"
     }
 
     override fun createIntent(context: Context, input: ApPhoto): Intent = ApTransitionPreviewActivity.getInstance(context, input)
 
     override fun parseResult(resultCode: Int, intent: Intent?): String? {
-        if (resultCode != Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return null
         }
         return intent?.getStringExtra(AP_TRANSITION_PREVIEW_PAYLOAD)

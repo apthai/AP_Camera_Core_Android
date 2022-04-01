@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class PropertiesBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeListener {
     private var mProperties: Properties? = null
@@ -40,14 +40,14 @@ class PropertiesBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChang
         rvColor.setHasFixedSize(true)
         val colorPickerAdapter = activity?.let { ColorPickerAdapter(it) }
         colorPickerAdapter?.setOnColorPickerClickListener(object :
-            ColorPickerAdapter.OnColorPickerClickListener {
-            override fun onColorPickerClickListener(colorCode: Int) {
-                if (mProperties != null) {
-                    dismiss()
-                    mProperties?.onColorChanged(colorCode)
+                ColorPickerAdapter.OnColorPickerClickListener {
+                override fun onColorPickerClickListener(colorCode: Int) {
+                    if (mProperties != null) {
+                        dismiss()
+                        mProperties?.onColorChanged(colorCode)
+                    }
                 }
-            }
-        })
+            })
         rvColor.adapter = colorPickerAdapter
     }
 

@@ -6,7 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlin.coroutines.CoroutineContext
 
-class MainEditPictureToolsViewModel: ApCameraBaseViewModel<MainEditPictureToolsNavigator>() {
+class MainEditPictureToolsViewModel : ApCameraBaseViewModel<MainEditPictureToolsNavigator>() {
     private val job: Job by lazy { SupervisorJob() }
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.IO

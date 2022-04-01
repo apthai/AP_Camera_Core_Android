@@ -8,18 +8,17 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.annotation.ChecksSdkIntAtLeast
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.MutableLiveData
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.OnLifecycleEvent
-import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import kotlin.Throws
+import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import java.io.IOException
 import java.lang.Exception
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import kotlin.Throws
 
 /**
  * General contract of this class is to
@@ -73,7 +72,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                 val imageCollection = buildUriCollection(newImageDetails)
                 val editedImageUri =
                     getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
-                editedImageUri?.let { editedUri->
+                editedImageUri?.let { editedUri ->
                     cursor = mContentResolver.query(
                         editedUri,
                         arrayOf(MediaStore.Images.Media.DATA),
@@ -83,14 +82,14 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                     )
                     val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     cursor?.moveToFirst()
-                    columnIndex?.let { cIndex->
+                    columnIndex?.let { cIndex ->
                         val filePath = cursor?.getString(cIndex)
                         // Post the file created result with the resolved image file path
                         updateResult(true, filePath, null, editedImageUri, newImageDetails)
                     } ?: kotlin.run {
                         updateResult(false, null, "File path from cursor is null", null, null)
                     }
-                }?: kotlin.run {
+                } ?: kotlin.run {
                     updateResult(false, null, "Edited image uri is null", null, null)
                 }
             } catch (ex: Exception) {
@@ -109,9 +108,12 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         imageCollection: Uri
     ): Uri? {
         newImageDetails.put(MediaStore.Images.Media.DISPLAY_NAME, fileNameToSave)
-        newImageDetails.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+        newImageDetails.put(MediaStore.Images.Media.MIME_TYPE, ApCameraUtil.AP_CAMERA_DEFAULT_MIME_TYPE)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+            newImageDetails.put(MediaStore.Images.Media.RELATIVE_PATH, ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER)
+        }
         val editedImageUri = mContentResolver.insert(imageCollection, newImageDetails)
-        editedImageUri?.let { imageUri->
+        editedImageUri?.let { imageUri ->
             val outputStream = mContentResolver.openOutputStream(imageUri)
             outputStream?.close()
             return editedImageUri
@@ -138,7 +140,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         if (isSdkHigherThan28()) {
             executor?.submit {
                 val value = fileCreatedResult.value
-                value?.let {  vl ->
+                value?.let { vl ->
                     vl.imageDetails?.clear()
                     vl.imageDetails?.put(MediaStore.Images.Media.IS_PENDING, 0)
                     val vlUri = vl.uri
@@ -151,8 +153,10 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     }
 
     private class FileMeta(
-        var isCreated: Boolean, var filePath: String?,
-        var uri: Uri?, var error: String?,
+        var isCreated: Boolean,
+        var filePath: String?,
+        var uri: Uri?,
+        var error: String?,
         var imageDetails: ContentValues?
     )
 
@@ -182,5 +186,4 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         }
     }
-
 }

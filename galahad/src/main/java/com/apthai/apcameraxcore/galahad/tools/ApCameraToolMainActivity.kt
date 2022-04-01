@@ -4,15 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityApCameraToolMainBinding
 import com.apthai.apcameraxcore.galahad.tools.fragment.MainEditPictureToolsFragment
 
-class ApCameraToolMainActivity : ApCameraBaseActivity<ApCameraToolMainViewModel>(),
+class ApCameraToolMainActivity :
+    ApCameraBaseActivity<ApCameraToolMainViewModel>(),
     ApCameraToolMainNavigator {
-
 
     companion object {
         const val KEY_ITEM_IMAGE_FILE_PATH: String = "image_file_path"
@@ -36,7 +35,6 @@ class ApCameraToolMainActivity : ApCameraBaseActivity<ApCameraToolMainViewModel>
         activityApCameraBinding = ActivityApCameraToolMainBinding.inflate(layoutInflater)
         setContentView(activityApCameraBinding.root)
         this.setUpView()
-
     }
 
     override fun tag(): String = ApCameraToolMainActivity::class.java.simpleName
@@ -53,7 +51,6 @@ class ApCameraToolMainActivity : ApCameraBaseActivity<ApCameraToolMainViewModel>
 
         sharedViewModel.customImageBitmap.observe(this) {
             it?.let {
-
             }
         }
     }

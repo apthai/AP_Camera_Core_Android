@@ -27,9 +27,9 @@ object ImageUtil {
 //                matrix.postRotate(this.getRotation(rotationDegree))
 //                if (flipNeeded) matrix.preScale(1.0f, -1.0f)
 //            }
-        //หมุนรูป
+        // หมุนรูป
         // matrix.postRotate(this.getRotation(rotationDegree))
-        //กลับรูป
+        // กลับรูป
         if (flipNeeded) matrix.preScale(1.0f, -1.0f) else matrix.preScale(-1.0f, 1.0f)
         val width = image.width.coerceAtMost(bitmap.width)
         val height = image.height.coerceAtMost(bitmap.height)
@@ -73,5 +73,4 @@ object ImageUtil {
         val state = Environment.getExternalStorageState()
         return Environment.MEDIA_MOUNTED == state
     }
-
 }

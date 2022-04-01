@@ -3,13 +3,12 @@ package com.apthai.apcameraxcore.galahad.previewer.contract
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.result.contract.ActivityResultContract
 import com.apthai.apcameraxcore.galahad.previewer.ApPreviewActivity
 
 class ApPreviewResultContract : ActivityResultContract<String, String?>() {
 
-    companion object{
+    companion object {
 
         const val AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST = "ap_preview_contract_uri_payload_cls"
     }
@@ -19,7 +18,7 @@ class ApPreviewResultContract : ActivityResultContract<String, String?>() {
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): String? {
-        if (resultCode != Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return null
         }
         return intent?.getStringExtra(AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST)

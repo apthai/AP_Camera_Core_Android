@@ -30,8 +30,13 @@ import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
-import com.apthai.apcameraxcore.galahad.editor.fragment.*
+import com.apthai.apcameraxcore.galahad.editor.fragment.EmojiBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.PropertiesBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ShapeBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.TextEditorDialogFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
+import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
 import com.burhanrashid52.photoediting.tools.EditingToolsAdapter
 import com.burhanrashid52.photoediting.tools.ToolType
@@ -40,11 +45,16 @@ import ja.burhanrashid52.photoeditor.*
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
 import ja.burhanrashid52.photoeditor.shape.ShapeType
 
-class ApEditorActivity : ApCameraBaseActivity<ApEditorViewModel>(), ApEditorNavigator,
+class ApEditorActivity :
+    ApCameraBaseActivity<ApEditorViewModel>(),
+    ApEditorNavigator,
     View.OnClickListener,
-    PropertiesBSFragment.Properties, ShapeBSFragment.Properties, EmojiBSFragment.EmojiListener,
+    PropertiesBSFragment.Properties,
+    ShapeBSFragment.Properties,
+    EmojiBSFragment.EmojiListener,
     StickerBSFragment.StickerListener,
-    EditingToolsAdapter.OnItemSelected, FilterListener,
+    EditingToolsAdapter.OnItemSelected,
+    FilterListener,
     OnPhotoEditorListener {
 
     override fun tag(): String = ApEditorActivity::class.java.simpleName
@@ -210,14 +220,14 @@ class ApEditorActivity : ApCameraBaseActivity<ApEditorViewModel>(), ApEditorNavi
             ToolType.TEXT -> {
                 val textEditorDialogFragment = TextEditorDialogFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
-                    TextEditorDialogFragment.TextEditorListener {
-                    override fun onDone(inputText: String?, colorCode: Int) {
-                        val styleBuilder = TextStyleBuilder()
-                        styleBuilder.withTextColor(colorCode)
-                        photoEditor?.addText(inputText, styleBuilder)
-                        binding?.txtCurrentTool?.setText(R.string.label_text)
-                    }
-                })
+                        TextEditorDialogFragment.TextEditorListener {
+                        override fun onDone(inputText: String?, colorCode: Int) {
+                            val styleBuilder = TextStyleBuilder()
+                            styleBuilder.withTextColor(colorCode)
+                            photoEditor?.addText(inputText, styleBuilder)
+                            binding?.txtCurrentTool?.setText(R.string.label_text)
+                        }
+                    })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
@@ -302,70 +312,74 @@ class ApEditorActivity : ApCameraBaseActivity<ApEditorViewModel>(), ApEditorNavi
 
     @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
     private fun saveImage() {
-        val fileName = System.currentTimeMillis().toString()
+        val fileName = ApCameraUtil.getFileName()
         val hasStoragePermission = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
         if (hasStoragePermission || FileSaveHelper.isSdkHigherThan28()) {
-            //ShowLoading HERE
-            saveFileHelper?.createFile(fileName, object : FileSaveHelper.OnFileCreateResult {
+            // ShowLoading HERE
+            saveFileHelper?.createFile(
+                fileName,
+                object : FileSaveHelper.OnFileCreateResult {
 
-                @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
-                override fun onFileCreateResult(
-                    created: Boolean,
-                    filePath: String?,
-                    error: String?,
-                    uri: Uri?
-                ) {
-                    if (created && filePath != null) {
-                        val saveSettings = SaveSettings.Builder()
-                            .setClearViewsEnabled(true)
-                            .setTransparencyEnabled(true)
-                            .build()
+                    @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
+                    override fun onFileCreateResult(
+                        created: Boolean,
+                        filePath: String?,
+                        error: String?,
+                        uri: Uri?
+                    ) {
+                        if (created && filePath != null) {
+                            val saveSettings = SaveSettings.Builder()
+                                .setClearViewsEnabled(true)
+                                .setTransparencyEnabled(true)
+                                .build()
 
-                        photoEditor?.saveAsFile(
-                            filePath,
-                            saveSettings,
-                            object : PhotoEditor.OnSaveListener {
-                                override fun onSuccess(imagePath: String) {
-                                    saveFileHelper?.notifyThatFileIsNowPubliclyAvailable(
-                                        contentResolver
-                                    )
-                                    //Hide loading HERE
-                                    Toast.makeText(
-                                        this@ApEditorActivity,
-                                        "Image Saved Successfully",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    saveImageUri = uri
-                                    binding?.photoEditorView?.let { photoEditorView ->
-                                        Glide.with(this@ApEditorActivity).load(saveImageUri)
-                                            .into(photoEditorView.source)
+                            photoEditor?.saveAsFile(
+                                filePath,
+                                saveSettings,
+                                object : PhotoEditor.OnSaveListener {
+                                    override fun onSuccess(imagePath: String) {
+                                        saveFileHelper?.notifyThatFileIsNowPubliclyAvailable(
+                                            contentResolver
+                                        )
+                                        // Hide loading HERE
+                                        Toast.makeText(
+                                            this@ApEditorActivity,
+                                            "Image Saved Successfully",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        saveImageUri = uri
+                                        binding?.photoEditorView?.let { photoEditorView ->
+                                            Glide.with(this@ApEditorActivity).load(saveImageUri)
+                                                .into(photoEditorView.source)
+                                        }
+                                    }
+
+                                    override fun onFailure(exception: Exception) {
+                                        // Hide loading HERE
+                                        Toast.makeText(
+                                            this@ApEditorActivity,
+                                            "Failed to save Image",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
                                 }
-
-                                override fun onFailure(exception: Exception) {
-                                    //Hide loading HERE
-                                    Toast.makeText(
-                                        this@ApEditorActivity,
-                                        "Failed to save Image",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            })
-                    } else {
-                        //Hide loading HERE
-                        error?.let {
-                            Toast.makeText(
-                                this@ApEditorActivity,
-                                "$error",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            )
+                        } else {
+                            // Hide loading HERE
+                            error?.let {
+                                Toast.makeText(
+                                    this@ApEditorActivity,
+                                    "$error",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         }
                     }
                 }
-            })
+            )
         } else {
             requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
@@ -385,7 +399,7 @@ class ApEditorActivity : ApCameraBaseActivity<ApEditorViewModel>(), ApEditorNavi
 
     override fun onEditTextChangeListener(rootView: View?, text: String?, colorCode: Int) {
         val textEditorDialogFragment = TextEditorDialogFragment.show(this, text.toString(), colorCode)
-        textEditorDialogFragment.setOnTextEditorListener (object : TextEditorDialogFragment.TextEditorListener {
+        textEditorDialogFragment.setOnTextEditorListener(object : TextEditorDialogFragment.TextEditorListener {
             override fun onDone(inputText: String?, colorCode: Int) {
                 val styleBuilder = TextStyleBuilder()
                 styleBuilder.withTextColor(colorCode)

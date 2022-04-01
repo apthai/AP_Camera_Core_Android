@@ -3,23 +3,21 @@ package com.apthai.apcameraxcore.galahad.editor.fragment
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.drawable.Drawable
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
 class StickerBSFragment : BottomSheetDialogFragment() {
     private var mStickerListener: StickerListener? = null
@@ -70,9 +68,9 @@ class StickerBSFragment : BottomSheetDialogFragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             // Load sticker image from remote url
             Glide.with(requireContext())
-                    .asBitmap()
-                    .load(stickerPathList[position])
-                    .into(holder.imgSticker)
+                .asBitmap()
+                .load(stickerPathList[position])
+                .into(holder.imgSticker)
         }
 
         override fun getItemCount(): Int {
@@ -86,15 +84,15 @@ class StickerBSFragment : BottomSheetDialogFragment() {
                 itemView.setOnClickListener {
                     if (mStickerListener != null) {
                         Glide.with(requireContext())
-                                .asBitmap()
-                                .load(stickerPathList[layoutPosition])
-                                .into(object : CustomTarget<Bitmap?>(256, 256) {
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
-                                        mStickerListener!!.onStickerClick(resource)
-                                    }
+                            .asBitmap()
+                            .load(stickerPathList[layoutPosition])
+                            .into(object : CustomTarget<Bitmap?>(256, 256) {
+                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                                    mStickerListener!!.onStickerClick(resource)
+                                }
 
-                                    override fun onLoadCleared(placeholder: Drawable?) {}
-                                })
+                                override fun onLoadCleared(placeholder: Drawable?) {}
+                            })
                     }
                     dismiss()
                 }
@@ -105,15 +103,15 @@ class StickerBSFragment : BottomSheetDialogFragment() {
     companion object {
         // Image Urls from flaticon(https://www.flaticon.com/stickers-pack/food-289)
         private val stickerPathList = arrayOf(
-                "https://cdn-icons-png.flaticon.com/256/4392/4392452.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392455.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392459.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392462.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392465.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392467.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392469.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392471.png",
-                "https://cdn-icons-png.flaticon.com/256/4392/4392522.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392452.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392455.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392459.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392462.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392465.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392467.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392469.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392471.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392522.png",
         )
     }
 }

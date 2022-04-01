@@ -11,8 +11,10 @@ import com.apthai.apcameraxcore.galahad.databinding.FragmentMainEditPictureTools
 import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.bumptech.glide.Glide
 
-class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsViewModel>(),
-    MainEditPictureToolsNavigator, View.OnClickListener {
+class MainEditPictureToolsFragment :
+    ApCameraBaseFragment<MainEditPictureToolsViewModel>(),
+    MainEditPictureToolsNavigator,
+    View.OnClickListener {
 
     companion object {
         const val TAG_FRAGMENT_NAME = "MainEditPictureToolsFragment"
@@ -29,10 +31,8 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
     private lateinit var viewBinding: FragmentMainEditPictureToolsBinding
     private lateinit var viewModel: MainEditPictureToolsViewModel
 
-    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri->
-
+    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
     }
-
 
     override fun tag(): String = MainEditPictureToolsFragment::class.java.simpleName
 
@@ -66,19 +66,18 @@ class MainEditPictureToolsFragment : ApCameraBaseFragment<MainEditPictureToolsVi
     }
 
     override fun onClick(view: View?) {
-        when(view?.id){
-            R.id.frm_main_edit_picture_tools_ic_back ->{
+        when (view?.id) {
+            R.id.frm_main_edit_picture_tools_ic_back -> {
                 activity?.finish()
             }
-            R.id.frm_main_edit_picture_tools_ic_edit_mode ->{
+            R.id.frm_main_edit_picture_tools_ic_edit_mode -> {
                 val photoPathUriStr = getPathFileFromArg()
-                if (photoPathUriStr.isEmpty()){
+                if (photoPathUriStr.isEmpty()) {
                     return
                 }
                 apEditorActivityContract.launch(photoPathUriStr)
             }
-            else ->{
-
+            else -> {
             }
         }
     }

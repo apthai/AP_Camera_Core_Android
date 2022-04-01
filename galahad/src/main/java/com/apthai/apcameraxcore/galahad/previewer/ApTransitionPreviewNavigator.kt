@@ -4,5 +4,5 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 
 interface ApTransitionPreviewNavigator {
 
-    fun getSelectedApPhotoPayload() : ApPhoto?
+    fun getSelectedApPhotoPayload(): ApPhoto?
 }

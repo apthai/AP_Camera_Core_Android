@@ -1,11 +1,9 @@
 package com.apthai.apcameraxcore.common
 
-import android.content.ContentUris
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
-import com.apthai.apcameraxcore.common.model.ApPhoto
 
 abstract class ApCameraBaseActivity<V : ApCameraBaseViewModel<*>> : AppCompatActivity() {
 

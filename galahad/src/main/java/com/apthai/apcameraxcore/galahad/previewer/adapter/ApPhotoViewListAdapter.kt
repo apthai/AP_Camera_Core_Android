@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.R
 
-class ApPhotoViewListAdapter(private val context : Context) : RecyclerView.Adapter<ApPhotoViewHolder>(){
+class ApPhotoViewListAdapter(private val context: Context) : RecyclerView.Adapter<ApPhotoViewHolder>() {
 
-    private var apPhotoList : MutableList<ApPhoto> = ArrayList()
+    private var apPhotoList: MutableList<ApPhoto> = ArrayList()
     private val inflater = LayoutInflater.from(context)
-    private var listener : OnPhotoViewItemEventListener?=null
+    private var listener: OnPhotoViewItemEventListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApPhotoViewHolder {
         val view = inflater.inflate(R.layout.item_galahad_photo_view, parent, false)
@@ -40,17 +40,17 @@ class ApPhotoViewListAdapter(private val context : Context) : RecyclerView.Adapt
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(apPhotos : MutableList<ApPhoto>){
+    fun updateData(apPhotos: MutableList<ApPhoto>) {
         this.apPhotoList = apPhotos
         notifyDataSetChanged()
     }
 
-    fun setOnPhotoViewItemEventListener(listener: OnPhotoViewItemEventListener){
+    fun setOnPhotoViewItemEventListener(listener: OnPhotoViewItemEventListener) {
         this.listener = listener
     }
 
-    interface OnPhotoViewItemEventListener{
+    interface OnPhotoViewItemEventListener {
 
-        fun onPhotoClick(view : View, apPhoto : ApPhoto, position: Int)
+        fun onPhotoClick(view: View, apPhoto: ApPhoto, position: Int)
     }
 }

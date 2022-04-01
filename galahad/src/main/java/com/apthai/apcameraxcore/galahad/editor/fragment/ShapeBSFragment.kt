@@ -6,12 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import ja.burhanrashid52.photoeditor.shape.ShapeType
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import ja.burhanrashid52.photoeditor.shape.ShapeType
 
 class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeListener {
     private var mProperties: Properties? = null
@@ -40,7 +40,7 @@ class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeList
 
         // shape picker
         shapeGroup.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
-            when(checkedId) {
+            when (checkedId) {
                 R.id.lineRadioButton -> {
                     mProperties!!.onShapePicked(ShapeType.LINE)
                 }
@@ -64,14 +64,14 @@ class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeList
         rvColor.setHasFixedSize(true)
         val colorPickerAdapter = ColorPickerAdapter(requireActivity())
         colorPickerAdapter.setOnColorPickerClickListener(object :
-            ColorPickerAdapter.OnColorPickerClickListener {
-            override fun onColorPickerClickListener(colorCode: Int) {
-                if (mProperties != null) {
-                    dismiss()
-                    mProperties!!.onColorChanged(colorCode)
+                ColorPickerAdapter.OnColorPickerClickListener {
+                override fun onColorPickerClickListener(colorCode: Int) {
+                    if (mProperties != null) {
+                        dismiss()
+                        mProperties!!.onColorChanged(colorCode)
+                    }
                 }
-            }
-        })
+            })
         rvColor.adapter = colorPickerAdapter
     }
 

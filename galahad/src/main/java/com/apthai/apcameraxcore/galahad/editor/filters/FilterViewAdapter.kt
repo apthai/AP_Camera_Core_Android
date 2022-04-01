@@ -45,7 +45,7 @@ class FilterViewAdapter(private val mFilterListener: FilterListener) :
         val mTxtFilterName: TextView = itemView.findViewById(R.id.txtFilterName)
 
         init {
-            itemView.setOnClickListener{
+            itemView.setOnClickListener {
                 mFilterListener.onFilterSelected(
                     mPairList[layoutPosition].second
                 )
