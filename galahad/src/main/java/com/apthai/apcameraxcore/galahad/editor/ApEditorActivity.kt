@@ -302,7 +302,7 @@ class ApEditorActivity : ApCameraBaseActivity<ApEditorViewModel>(), ApEditorNavi
 
     @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
     private fun saveImage() {
-        val fileName = System.currentTimeMillis().toString() + ".png"
+        val fileName = System.currentTimeMillis().toString()
         val hasStoragePermission = ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE

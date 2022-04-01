@@ -7,6 +7,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
 import androidx.appcompat.app.AppCompatActivity
@@ -37,14 +38,12 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     private val fileCreatedResult: MutableLiveData<FileMeta> = MutableLiveData()
     private var resultListener: OnFileCreateResult? = null
     private val observer = Observer { fileMeta: FileMeta ->
-        if (resultListener != null) {
-            resultListener!!.onFileCreateResult(
-                fileMeta.isCreated,
-                fileMeta.filePath,
-                fileMeta.error,
-                fileMeta.uri
-            )
-        }
+        resultListener?.onFileCreateResult(
+            fileMeta.isCreated,
+            fileMeta.filePath,
+            fileMeta.error,
+            fileMeta.uri
+        )
     }
 
     constructor(activity: AppCompatActivity) : this(activity.contentResolver) {
@@ -54,11 +53,6 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     private fun addObserver(lifecycleOwner: LifecycleOwner) {
         fileCreatedResult.observe(lifecycleOwner, observer)
         lifecycleOwner.lifecycle.addObserver(this)
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    fun release() {
-        executor?.shutdownNow()
     }
 
     /**
@@ -71,30 +65,34 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
      */
     fun createFile(fileNameToSave: String, listener: OnFileCreateResult?) {
         resultListener = listener
-        executor!!.submit {
+        executor?.submit {
             var cursor: Cursor? = null
             try {
-
                 // Build the edited image URI for the MediaStore
                 val newImageDetails = ContentValues()
                 val imageCollection = buildUriCollection(newImageDetails)
                 val editedImageUri =
                     getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
-
-                // Query the MediaStore for the image file path from the image Uri
-                cursor = mContentResolver.query(
-                    editedImageUri,
-                    arrayOf(MediaStore.Images.Media.DATA),
-                    null,
-                    null,
-                    null
-                )
-                val columnIndex = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                cursor.moveToFirst()
-                val filePath = cursor.getString(columnIndex)
-
-                // Post the file created result with the resolved image file path
-                updateResult(true, filePath, null, editedImageUri, newImageDetails)
+                editedImageUri?.let { editedUri->
+                    cursor = mContentResolver.query(
+                        editedUri,
+                        arrayOf(MediaStore.Images.Media.DATA),
+                        null,
+                        null,
+                        null
+                    )
+                    val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    cursor?.moveToFirst()
+                    columnIndex?.let { cIndex->
+                        val filePath = cursor?.getString(cIndex)
+                        // Post the file created result with the resolved image file path
+                        updateResult(true, filePath, null, editedImageUri, newImageDetails)
+                    } ?: kotlin.run {
+                        updateResult(false, null, "File path from cursor is null", null, null)
+                    }
+                }?: kotlin.run {
+                    updateResult(false, null, "Edited image uri is null", null, null)
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 updateResult(false, null, ex.message, null, null)
@@ -109,12 +107,16 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         fileNameToSave: String,
         newImageDetails: ContentValues,
         imageCollection: Uri
-    ): Uri {
+    ): Uri? {
         newImageDetails.put(MediaStore.Images.Media.DISPLAY_NAME, fileNameToSave)
+        newImageDetails.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
         val editedImageUri = mContentResolver.insert(imageCollection, newImageDetails)
-        val outputStream = mContentResolver.openOutputStream(editedImageUri!!)
-        outputStream!!.close()
-        return editedImageUri
+        editedImageUri?.let { imageUri->
+            val outputStream = mContentResolver.openOutputStream(imageUri)
+            outputStream?.close()
+            return editedImageUri
+        }
+        return null
     }
 
     @SuppressLint("InlinedApi")
@@ -134,12 +136,15 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     @SuppressLint("InlinedApi")
     fun notifyThatFileIsNowPubliclyAvailable(contentResolver: ContentResolver) {
         if (isSdkHigherThan28()) {
-            executor!!.submit {
+            executor?.submit {
                 val value = fileCreatedResult.value
-                if (value != null) {
-                    value.imageDetails!!.clear()
-                    value.imageDetails!!.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    contentResolver.update(value.uri!!, value.imageDetails, null, null)
+                value?.let {  vl ->
+                    vl.imageDetails?.clear()
+                    vl.imageDetails?.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    val vlUri = vl.uri
+                    vlUri?.let {
+                        contentResolver.update(it, value.imageDetails, null, null)
+                    }
                 }
             }
         }
@@ -172,6 +177,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
     }
 
     companion object {
+        @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
         fun isSdkHigherThan28(): Boolean {
             return Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         }
