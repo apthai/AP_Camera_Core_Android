@@ -2,6 +2,7 @@ package com.apthai.apcameraxcore.galahad.editor.tools
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
+import android.content.ContentUris
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
@@ -70,17 +71,34 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                 // Build the edited image URI for the MediaStore
                 val newImageDetails = ContentValues()
                 val imageCollection = buildUriCollection(newImageDetails)
+                val imageProjections: Array<String> = arrayOf(
+                    MediaStore.Images.Media._ID,
+                    MediaStore.Images.Media.DATA
+                )
                 val editedImageUri =
                     getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
                 editedImageUri?.let { editedUri ->
                     cursor = mContentResolver.query(
                         editedUri,
-                        arrayOf(MediaStore.Images.Media.DATA),
+                        imageProjections,
                         null,
                         null,
                         null
                     )
-                    val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    val idColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                    val indexColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    cursor?.moveToFirst()
+                    idColumn?.let { idc->
+                        val id = cursor?.getLong(idc)
+                        val uri = ContentUris.withAppendedId(editedUri, id!!)
+                        // Post the file created result with the resolved image file path
+                        //updateResult(true, x.toString(), null, editedImageUri, newImageDetails)
+                    }
+                    indexColumn?.let { cIndex->
+                        val filePath = cursor?.getString(cIndex)
+                        updateResult(true, filePath, null, editedImageUri, newImageDetails)
+                    }
+                    /*val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     cursor?.moveToFirst()
                     columnIndex?.let { cIndex ->
                         val filePath = cursor?.getString(cIndex)
@@ -88,7 +106,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                         updateResult(true, filePath, null, editedImageUri, newImageDetails)
                     } ?: kotlin.run {
                         updateResult(false, null, "File path from cursor is null", null, null)
-                    }
+                    }*/
                 } ?: kotlin.run {
                     updateResult(false, null, "Edited image uri is null", null, null)
                 }

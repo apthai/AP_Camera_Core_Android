@@ -243,6 +243,7 @@ class ApEditorActivity :
             ToolType.STICKER -> {
                 showBottomSheetDialogFragment(stickerBSFragment)
             }
+            else -> {}
         }
     }
 
