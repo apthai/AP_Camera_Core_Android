@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleObserver
@@ -73,7 +74,9 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                 val imageCollection = buildUriCollection(newImageDetails)
                 val imageProjections: Array<String> = arrayOf(
                     MediaStore.Images.Media._ID,
-                    MediaStore.Images.Media.DATA
+                        MediaStore.Images.Media.RELATIVE_PATH,
+                    MediaStore.Images.Media.DATA,
+                    MediaStore.Images.Media.DISPLAY_NAME
                 )
                 val editedImageUri =
                     getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
@@ -87,6 +90,8 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                     )
                     val idColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                     val indexColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                    val relativePathColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
+                    val nameColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                     cursor?.moveToFirst()
                     idColumn?.let { idc->
                         val id = cursor?.getLong(idc)
@@ -96,8 +101,17 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                     }
                     indexColumn?.let { cIndex->
                         val filePath = cursor?.getString(cIndex)
-                        updateResult(true, filePath, null, editedImageUri, newImageDetails)
+                        //updateResult(true, filePath, null, editedImageUri, newImageDetails)
+                        nameColumn?.let { nameCol->
+                            val name = cursor?.getString(nameCol)
+                            Log.d("onFile name","fileName $name")
+                        }
+                        relativePathColumn?.let { relativeCur->
+                            val fileRelativePath = cursor?.getString(relativeCur)
+                            updateResult(true, fileRelativePath, null, editedImageUri, newImageDetails)
+                        }
                     }
+
                     /*val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     cursor?.moveToFirst()
                     columnIndex?.let { cIndex ->
