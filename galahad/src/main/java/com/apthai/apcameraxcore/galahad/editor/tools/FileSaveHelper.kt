@@ -73,10 +73,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                 val newImageDetails = ContentValues()
                 val imageCollection = buildUriCollection(newImageDetails)
                 val imageProjections: Array<String> = arrayOf(
-                    MediaStore.Images.Media._ID,
-                        MediaStore.Images.Media.RELATIVE_PATH,
-                    MediaStore.Images.Media.DATA,
-                    MediaStore.Images.Media.DISPLAY_NAME
+                    MediaStore.Images.Media.DATA
                 )
                 val editedImageUri =
                     getEditedImageUri(fileNameToSave, newImageDetails, imageCollection)
@@ -88,39 +85,14 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                         null,
                         null
                     )
-                    val idColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
                     val indexColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                    val relativePathColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.RELATIVE_PATH)
-                    val nameColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
                     cursor?.moveToFirst()
-                    idColumn?.let { idc->
-                        val id = cursor?.getLong(idc)
-                        val uri = ContentUris.withAppendedId(editedUri, id!!)
-                        // Post the file created result with the resolved image file path
-                        //updateResult(true, x.toString(), null, editedImageUri, newImageDetails)
-                    }
                     indexColumn?.let { cIndex->
                         val filePath = cursor?.getString(cIndex)
-                        //updateResult(true, filePath, null, editedImageUri, newImageDetails)
-                        nameColumn?.let { nameCol->
-                            val name = cursor?.getString(nameCol)
-                            Log.d("onFile name","fileName $name")
-                        }
-                        relativePathColumn?.let { relativeCur->
-                            val fileRelativePath = cursor?.getString(relativeCur)
-                            updateResult(true, fileRelativePath, null, editedImageUri, newImageDetails)
-                        }
-                    }
-
-                    /*val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-                    cursor?.moveToFirst()
-                    columnIndex?.let { cIndex ->
-                        val filePath = cursor?.getString(cIndex)
-                        // Post the file created result with the resolved image file path
                         updateResult(true, filePath, null, editedImageUri, newImageDetails)
                     } ?: kotlin.run {
                         updateResult(false, null, "File path from cursor is null", null, null)
-                    }*/
+                    }
                 } ?: kotlin.run {
                     updateResult(false, null, "Edited image uri is null", null, null)
                 }

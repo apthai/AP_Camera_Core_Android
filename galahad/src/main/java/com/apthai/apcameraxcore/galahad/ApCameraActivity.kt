@@ -43,12 +43,10 @@ class ApCameraActivity :
 
         private const val REQUEST_CODE_PERMISSIONS = 112
         private val REQUIRED_PERMISSIONS = mutableListOf(
-            Manifest.permission.CAMERA
-        ).apply {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-        }.toTypedArray()
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ).toTypedArray()
     }
 
     override fun tag(): String = ApCameraActivity::class.java.simpleName
