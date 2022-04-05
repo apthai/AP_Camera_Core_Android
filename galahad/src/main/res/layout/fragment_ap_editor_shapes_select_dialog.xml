@@ -7,44 +7,51 @@
     android:layout_height="wrap_content">
 
     <RadioGroup
-        android:id="@+id/shapeRadioGroup"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_type_radio_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shapeType">
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_type_title_text_label">
 
         <RadioButton
-            android:id="@+id/brushRadioButton"
+            android:id="@+id/ap_editor_select_shape_dialog_shape_brush_type_radio_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:checked="true"
-            android:text="@string/label_brush" />
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
+            android:text="@string/ap_editor_select_shape_menu_brush_text_label" />
 
         <RadioButton
-            android:id="@+id/lineRadioButton"
+            android:id="@+id/ap_editor_select_shape_dialog_shape_line_type_radio_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:text="@string/label_line" />
 
         <RadioButton
-            android:id="@+id/ovalRadioButton"
+            android:id="@+id/ap_editor_select_shape_dialog_shape_oval_type_radio_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_oval" />
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
+            android:text="@string/ap_editor_select_shape_menu_oval_text_label" />
 
         <RadioButton
-            android:id="@+id/rectRadioButton"
+            android:id="@+id/ap_editor_select_shape_dialog_shape_rectangle_type_radio_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/label_rectangle" />
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
+            android:text="@string/ap_editor_select_shape_menu_rectangle_text_label" />
 
     </RadioGroup>
 
     <SeekBar
-        android:id="@+id/shapeSize"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_size_seek_bar_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -53,10 +60,10 @@
         android:progress="25"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtShapeSize" />
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_size_title_text_label" />
 
     <SeekBar
-        android:id="@+id/shapeOpacity"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_opacity_seek_bar_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -66,65 +73,62 @@
         android:progress="255"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtOpacity" />
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_opacity_title_text_label" />
 
     <TextView
-        android:id="@+id/txtShapeSize"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_size_title_text_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Brush"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="@string/ap_editor_select_brush_size_dialog_text_title_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shapeRadioGroup" />
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_type_radio_group" />
 
     <TextView
-        android:id="@+id/txtOpacity"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_opacity_title_text_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:text="Opacity"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="@string/ap_editor_select_opacity_dialog_text_title_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/txtShapeSize" />
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_size_title_text_label" />
 
     <TextView
-        android:id="@+id/shapeType"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_type_title_text_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="Shape"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:text="@string/ap_editor_select_shape_dialog_text_title_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/shapeColors"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_color_recycler_view"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_double"
+        android:layout_marginBottom="@dimen/ap_camera_view_item_padding"
         android:orientation="horizontal"
+        android:background="#80FFFFFF"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/shapeOpacity"
-        tools:background="@android:color/black"
-        tools:listitem="@layout/color_picker_item_list" />
+        app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_opacity_seek_bar_view"
+        tools:listitem="@layout/item_ap_editor_color_picker_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

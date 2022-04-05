@@ -29,6 +29,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgToolIcon"
-        tools:text="@string/label_brush" />
+        tools:text="@string/ap_editor_select_shape_menu_brush_text_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

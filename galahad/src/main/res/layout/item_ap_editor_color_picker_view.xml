@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ap_editor_color_picker_item_image_view"
+    android:layout_width="50dp"
+    android:layout_height="50dp"
+    android:adjustViewBounds="true"
+    android:background="@drawable/background_ap_circle_view_transparent_with_black_border"
+    android:contentDescription="@string/ap_editor_color_picker_image_view_content_description"
+    android:layout_marginEnd="@dimen/ap_camera_view_item_padding_small"/>

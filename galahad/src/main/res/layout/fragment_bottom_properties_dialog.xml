@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/sbOpacity"
         tools:background="@android:color/black"
-        tools:listitem="@layout/color_picker_item_list"
+        tools:listitem="@layout/item_ap_editor_color_picker_view"
         android:layout_alignParentRight="true" />
 
     <SeekBar
@@ -35,10 +35,10 @@
         android:progress="100"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtOpacity" />
+        app:layout_constraintTop_toBottomOf="@+id/ap_editor_select_shape_dialog_shape_opacity_title_text_label" />
 
     <TextView
-        android:id="@+id/txtOpacity"
+        android:id="@+id/ap_editor_select_shape_dialog_shape_opacity_title_text_label"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"

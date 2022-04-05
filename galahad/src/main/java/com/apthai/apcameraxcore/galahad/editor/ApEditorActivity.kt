@@ -181,17 +181,17 @@ class ApEditorActivity :
 
     override fun onColorChanged(colorCode: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeColor(colorCode))
-        binding?.txtCurrentTool?.setText(R.string.label_brush)
+        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onOpacityChanged(opacity: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeOpacity(opacity))
-        binding?.txtCurrentTool?.setText(R.string.label_brush)
+        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapeSizeChanged(shapeSize: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeSize(shapeSize.toFloat()))
-        binding?.txtCurrentTool?.setText(R.string.label_brush)
+        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapePicked(shapeType: ShapeType?) {
@@ -214,7 +214,7 @@ class ApEditorActivity :
                 photoEditor?.setBrushDrawingMode(true)
                 shapeBuilder = ShapeBuilder()
                 photoEditor?.setShape(shapeBuilder)
-                binding?.txtCurrentTool?.setText(R.string.label_shape)
+                binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_shape_text_label)
                 showBottomSheetDialogFragment(shapeBSFragment)
             }
             ToolType.TEXT -> {

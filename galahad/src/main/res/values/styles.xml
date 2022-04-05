@@ -15,4 +15,88 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
+
+    <!--Text on Bold size and title color-->
+    <style name="ApCameraAppBaseTextAppearanceBoldTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldLarge" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <!--Text on Medium or normal size and title color-->
+    <style name="ApCameraAppBaseTextAppearanceTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceLarge" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_title_color</item>
+    </style>
+
+    <!--Text on Bold size and white color-->
+    <style name="ApCameraAppBaseTextAppearanceBoldWhiteTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldWhiteLarge" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldWhiteMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceBoldWhiteSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/ap_galahad_camera_bold</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <!--Text on Medium or normal and white color-->
+    <style name="ApCameraAppBaseTextAppearanceWhiteTitle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceWhiteLarge" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceWhiteMedium" parent="TextAppearance.AppCompat.Medium">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
+
+    <style name="ApCameraAppBaseTextAppearanceWhiteSmall" parent="TextAppearance.AppCompat.Small">
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
+        <item name="android:textColor">@color/ap_camera_text_white_color</item>
+    </style>
 </resources>

@@ -9,6 +9,7 @@ import android.widget.SeekBar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
+import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorShapesSelectDialogBinding
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.shape.ShapeType
@@ -23,56 +24,55 @@ class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeList
         fun onShapePicked(shapeType: ShapeType?)
     }
 
+    private var fragmentApEditorShapesSelectDialogBinding : FragmentApEditorShapesSelectDialogBinding?=null
+    private val binding get() = fragmentApEditorShapesSelectDialogBinding
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_bottom_shapes_dialog, container, false)
+        val view = inflater.inflate(R.layout.fragment_ap_editor_shapes_select_dialog, container, false)
+        fragmentApEditorShapesSelectDialogBinding = FragmentApEditorShapesSelectDialogBinding.bind(view)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val rvColor: RecyclerView = view.findViewById(R.id.shapeColors)
-        val sbOpacity = view.findViewById<SeekBar>(R.id.shapeOpacity)
-        val sbBrushSize = view.findViewById<SeekBar>(R.id.shapeSize)
-        val shapeGroup = view.findViewById<RadioGroup>(R.id.shapeRadioGroup)
 
         // shape picker
-        shapeGroup.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
+        binding?.apEditorSelectShapeDialogShapeTypeRadioGroup?.setOnCheckedChangeListener { _: RadioGroup?, checkedId: Int ->
             when (checkedId) {
-                R.id.lineRadioButton -> {
-                    mProperties!!.onShapePicked(ShapeType.LINE)
+                R.id.ap_editor_select_shape_dialog_shape_line_type_radio_text -> {
+                    mProperties?.onShapePicked(ShapeType.LINE)
                 }
-                R.id.ovalRadioButton -> {
-                    mProperties!!.onShapePicked(ShapeType.OVAL)
+                R.id.ap_editor_select_shape_dialog_shape_oval_type_radio_text -> {
+                    mProperties?.onShapePicked(ShapeType.OVAL)
                 }
-                R.id.rectRadioButton -> {
-                    mProperties!!.onShapePicked(ShapeType.RECTANGLE)
+                R.id.ap_editor_select_shape_dialog_shape_rectangle_type_radio_text -> {
+                    mProperties?.onShapePicked(ShapeType.RECTANGLE)
                 }
                 else -> {
-                    mProperties!!.onShapePicked(ShapeType.BRUSH)
+                    mProperties?.onShapePicked(ShapeType.BRUSH)
                 }
             }
         }
-        sbOpacity.setOnSeekBarChangeListener(this)
-        sbBrushSize.setOnSeekBarChangeListener(this)
+        binding?.apEditorSelectShapeDialogShapeOpacitySeekBarView?.setOnSeekBarChangeListener(this)
+        binding?.apEditorSelectShapeDialogShapeSizeSeekBarView?.setOnSeekBarChangeListener(this)
 
         // TODO(lucianocheng): Move layoutManager to a xml file.
         val layoutManager = LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false)
-        rvColor.layoutManager = layoutManager
-        rvColor.setHasFixedSize(true)
+        binding?.apEditorSelectShapeDialogShapeColorRecyclerView?.layoutManager = layoutManager
+        binding?.apEditorSelectShapeDialogShapeColorRecyclerView?.setHasFixedSize(true)
         val colorPickerAdapter = ColorPickerAdapter(requireActivity())
         colorPickerAdapter.setOnColorPickerClickListener(object :
                 ColorPickerAdapter.OnColorPickerClickListener {
                 override fun onColorPickerClickListener(colorCode: Int) {
-                    if (mProperties != null) {
-                        dismiss()
-                        mProperties!!.onColorChanged(colorCode)
-                    }
+                    dismiss()
+                    mProperties?.onColorChanged(colorCode)
                 }
             })
-        rvColor.adapter = colorPickerAdapter
+        binding?.apEditorSelectShapeDialogShapeColorRecyclerView?.adapter = colorPickerAdapter
     }
 
     fun setPropertiesChangeListener(properties: Properties?) {
@@ -81,12 +81,8 @@ class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeList
 
     override fun onProgressChanged(seekBar: SeekBar, i: Int, b: Boolean) {
         when (seekBar.id) {
-            R.id.shapeOpacity -> if (mProperties != null) {
-                mProperties!!.onOpacityChanged(i)
-            }
-            R.id.shapeSize -> if (mProperties != null) {
-                mProperties!!.onShapeSizeChanged(i)
-            }
+            R.id.ap_editor_select_shape_dialog_shape_opacity_seek_bar_view -> mProperties?.onOpacityChanged(i)
+            R.id.ap_editor_select_shape_dialog_shape_size_seek_bar_view -> mProperties?.onShapeSizeChanged(i)
         }
     }
 

@@ -1,12 +1,15 @@
 package com.apthai.apcameraxcore.galahad.editor
 
 import android.content.Context
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
+import com.bumptech.glide.Glide
 import java.util.ArrayList
 
 /**
@@ -26,12 +29,12 @@ class ColorPickerAdapter internal constructor(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = inflater.inflate(R.layout.color_picker_item_list, parent, false)
+        val view = inflater.inflate(R.layout.item_ap_editor_color_picker_view, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.colorPickerView.setBackgroundColor(colorPickerColors[position])
+        Glide.with(context).load(ColorDrawable(colorPickerColors[position])).circleCrop().into(holder.colorPickerView)
     }
 
     override fun getItemCount(): Int {
@@ -43,7 +46,7 @@ class ColorPickerAdapter internal constructor(
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var colorPickerView: View = itemView.findViewById(R.id.color_picker_view)
+        var colorPickerView: ImageView = itemView.findViewById(R.id.ap_editor_color_picker_item_image_view)
 
         init {
             itemView.setOnClickListener {

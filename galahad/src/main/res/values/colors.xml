@@ -26,4 +26,9 @@
     <color name="yellow_green_color_picker">#C5E17A</color>
     <color name="tool_bg">#151414</color>
     <color name="semi_black_transparent">#99000000</color>
+
+    <color name="ap_camera_text_title_color">#000000</color>
+    <color name="ap_camera_text_title_hint_color">#77869E</color>
+    <color name="ap_camera_text_red_color">#C92028</color>
+    <color name="ap_camera_text_white_color">#FFFFFF</color>
 </resources>
