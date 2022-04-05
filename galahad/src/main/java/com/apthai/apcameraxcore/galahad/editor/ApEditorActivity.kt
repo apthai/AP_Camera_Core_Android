@@ -32,7 +32,7 @@ import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
 import com.apthai.apcameraxcore.galahad.editor.fragment.EmojiBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.PropertiesBSFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.ShapeBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.TextEditorDialogFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
@@ -50,7 +50,7 @@ class ApEditorActivity :
     ApEditorNavigator,
     View.OnClickListener,
     PropertiesBSFragment.Properties,
-    ShapeBSFragment.Properties,
+    ApEditorShapeSelectorFragment.Properties,
     EmojiBSFragment.EmojiListener,
     StickerBSFragment.StickerListener,
     EditingToolsAdapter.OnItemSelected,
@@ -85,7 +85,7 @@ class ApEditorActivity :
     private fun isPermissionGranted(isGranted: Boolean, permission: String?) {}
 
     private var propertiesBSFragment: PropertiesBSFragment? = null
-    private var shapeBSFragment: ShapeBSFragment? = null
+    private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
     private var emojiBSFragment: EmojiBSFragment? = null
     private var stickerBSFragment: StickerBSFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
@@ -122,8 +122,8 @@ class ApEditorActivity :
 
         propertiesBSFragment = PropertiesBSFragment()
         propertiesBSFragment?.setPropertiesChangeListener(this)
-        shapeBSFragment = ShapeBSFragment()
-        shapeBSFragment?.setPropertiesChangeListener(this)
+        apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
+        apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
         emojiBSFragment = EmojiBSFragment()
         emojiBSFragment?.setEmojiListener(this)
         stickerBSFragment = StickerBSFragment()
@@ -215,7 +215,7 @@ class ApEditorActivity :
                 shapeBuilder = ShapeBuilder()
                 photoEditor?.setShape(shapeBuilder)
                 binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_shape_text_label)
-                showBottomSheetDialogFragment(shapeBSFragment)
+                showBottomSheetDialogFragment(apEditorShapeSelectorFragment)
             }
             ToolType.TEXT -> {
                 val textEditorDialogFragment = TextEditorDialogFragment.show(this)

@@ -14,7 +14,7 @@ import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.shape.ShapeType
 
-class ShapeBSFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeListener {
+class ApEditorShapeSelectorFragment : BottomSheetDialogFragment(), SeekBar.OnSeekBarChangeListener {
     private var mProperties: Properties? = null
 
     interface Properties {
