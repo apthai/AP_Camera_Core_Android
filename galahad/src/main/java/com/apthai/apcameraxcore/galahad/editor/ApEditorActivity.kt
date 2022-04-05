@@ -21,6 +21,7 @@ import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.ChangeBounds
@@ -34,7 +35,7 @@ import com.apthai.apcameraxcore.galahad.editor.fragment.EmojiBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.PropertiesBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.TextEditorDialogFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
@@ -218,12 +219,16 @@ class ApEditorActivity :
                 showBottomSheetDialogFragment(apEditorShapeSelectorFragment)
             }
             ToolType.TEXT -> {
-                val textEditorDialogFragment = TextEditorDialogFragment.show(this)
+                val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
-                        TextEditorDialogFragment.TextEditorListener {
+                        ApEditorAddTextEditorFragment.TextEditorListener {
                         override fun onDone(inputText: String?, colorCode: Int) {
                             val styleBuilder = TextStyleBuilder()
                             styleBuilder.withTextColor(colorCode)
+                            val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                            apFont?.let {
+                                styleBuilder.withTextFont(it)
+                            }
                             photoEditor?.addText(inputText, styleBuilder)
                             binding?.txtCurrentTool?.setText(R.string.label_text)
                         }
@@ -399,11 +404,15 @@ class ApEditorActivity :
     override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}
 
     override fun onEditTextChangeListener(rootView: View?, text: String?, colorCode: Int) {
-        val textEditorDialogFragment = TextEditorDialogFragment.show(this, text.toString(), colorCode)
-        textEditorDialogFragment.setOnTextEditorListener(object : TextEditorDialogFragment.TextEditorListener {
+        val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this, text.toString(), colorCode)
+        textEditorDialogFragment.setOnTextEditorListener(object : ApEditorAddTextEditorFragment.TextEditorListener {
             override fun onDone(inputText: String?, colorCode: Int) {
                 val styleBuilder = TextStyleBuilder()
                 styleBuilder.withTextColor(colorCode)
+                val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                apFont?.let {
+                    styleBuilder.withTextFont(it)
+                }
                 if (rootView != null) {
                     photoEditor?.editText(rootView, inputText, styleBuilder)
                 }

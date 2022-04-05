@@ -8,23 +8,21 @@
     android:background="#B3000000">
 
     <TextView
-        android:id="@+id/add_text_done_tv"
+        android:id="@+id/ap_editor_add_text_dialog_done_text_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:background="@drawable/rounded_border_text_view"
-        android:padding="10dp"
-        android:text="Done"
+        android:padding="@dimen/ap_camera_view_item_padding_double"
+        android:text="@string/ap_editor_add_text_dialog_done_button_text_label"
         android:textAllCaps="false"
-        android:textColor="@color/white"
-        android:textSize="15sp"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/add_text_edit_text"
+        android:id="@+id/ap_editor_add_text_dialog_text_field"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@null"
@@ -33,16 +31,17 @@
         android:gravity="center"
         android:inputType="textMultiLine"
         android:singleLine="true"
-        android:textColorPrimary="#FFFFFF"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toTopOf="@+id/add_text_color_picker_recycler_view"
+        android:hint="@string/ap_editor_add_text_dialog_text_field_text_hint"
+        android:textColorHint="@android:color/darker_gray"
+        style="@style/ApCameraAppBaseTextAppearanceLarge"
+        app:layout_constraintBottom_toTopOf="@+id/ap_editor_add_text_dialog_color_picker_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_text_done_tv"
+        app:layout_constraintTop_toBottomOf="@+id/ap_editor_add_text_dialog_done_text_label"
         tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/add_text_color_picker_recycler_view"
+        android:id="@+id/ap_editor_add_text_dialog_color_picker_recycler_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
