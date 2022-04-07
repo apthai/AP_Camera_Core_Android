@@ -30,6 +30,16 @@
     <string name="ap_editor_emoji_sticker_dialog_done_button_text_label">Done</string>
     <string name="ap_editor_emoji_sticker_dialog_close_button_text_label">Close</string>
     <string name="ap_editor_sticker_item_image_view_description">Just sticker pls</string>
+    <string name="ap_editor_tools_undo_image_view_description">Just Undo</string>
+    <string name="ap_editor_tools_redo_image_view_description">Just Redo</string>
+    <string name="ap_editor_tools_close_image_view_description">Just Close</string>
+    <string name="ap_editor_tools_save_image_view_description">Just Save</string>
+    
+    <string name="ap_editor_main_tools_shape_text_label">Shape</string>
+    <string name="ap_editor_main_tools_add_text_label">Text</string>
+    <string name="ap_editor_main_tools_eraser_text_label">Eraser</string>
+    <string name="ap_editor_main_tools_emoji_text_label">Emoji</string>
+    <string name="ap_editor_main_tools_sticker_text_label">Sticker</string>
 
     <string-array name="photo_editor_emoji">
 

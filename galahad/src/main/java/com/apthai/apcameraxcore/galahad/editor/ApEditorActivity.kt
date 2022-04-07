@@ -35,11 +35,11 @@ import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFra
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
+import com.apthai.apcameraxcore.galahad.editor.tools.EditingToolsAdapter
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
+import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
-import com.burhanrashid52.photoediting.tools.EditingToolsAdapter
-import com.burhanrashid52.photoediting.tools.ToolType
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.*
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
@@ -88,10 +88,7 @@ class ApEditorActivity :
     private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
     private var wonderFont: Typeface? = null
-    private val editingToolsAdapter = EditingToolsAdapter(this)
-    private val filterViewAdapter = FilterViewAdapter(this)
-    private val constraintSet = ConstraintSet()
-    private var isFilterVisible = false
+    private var editingToolsAdapter : EditingToolsAdapter ?= null
 
     var saveImageUri: Uri? = null
     private var saveFileHelper: FileSaveHelper? = null
@@ -125,21 +122,20 @@ class ApEditorActivity :
         apEditorStickerSelectorFragment = ApEditorStickerSelectorFragment()
         apEditorStickerSelectorFragment?.setOnStickerSelectedListener(this)
 
+        editingToolsAdapter = EditingToolsAdapter(this, this)
+
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding?.rvConstraintTools?.layoutManager = llmTools
-        binding?.rvConstraintTools?.adapter = editingToolsAdapter
-        val llmFilters = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        binding?.rvFilterView?.layoutManager = llmFilters
-        binding?.rvFilterView?.adapter = filterViewAdapter
+        binding?.apEditorConstraintToolsView?.layoutManager = llmTools
+        binding?.apEditorConstraintToolsView?.adapter = editingToolsAdapter
     }
 
     override fun initial() {
-        binding?.imgUndo?.setOnClickListener(this)
-        binding?.imgRedo?.setOnClickListener(this)
-        binding?.imgSave?.setOnClickListener(this)
-        binding?.imgClose?.setOnClickListener(this)
+        binding?.apEditorToolUndoImageButtonView?.setOnClickListener(this)
+        binding?.apEditorToolRedoImageButtonView?.setOnClickListener(this)
+        binding?.apEditorSaveImageButtonView?.setOnClickListener(this)
+        binding?.apEditorCloseImageButtonView?.setOnClickListener(this)
 
-        photoEditor = binding?.photoEditorView?.run {
+        photoEditor = binding?.apEditorPhotoEditorView?.run {
             PhotoEditor.Builder(this@ApEditorActivity, this)
                 .setPinchTextScalable(true)
                 .build()
@@ -148,7 +144,7 @@ class ApEditorActivity :
 
         getPhotoUriPayload()?.let { photoUriStr ->
             val photoUri = Uri.parse(photoUriStr)
-            binding?.photoEditorView?.let {
+            binding?.apEditorPhotoEditorView?.let {
                 Glide.with(this).load(photoUri).into(it.source)
             }
         }
@@ -160,16 +156,16 @@ class ApEditorActivity :
     @SuppressLint("NonConstantResourceId", "MissingPermission")
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.imgUndo -> {
+            R.id.ap_editor_tool_undo_image_button_view -> {
                 photoEditor?.undo()
             }
-            R.id.imgRedo -> {
+            R.id.ap_editor_tool_redo_image_button_view -> {
                 photoEditor?.redo()
             }
-            R.id.imgSave -> {
+            R.id.ap_editor_save_image_button_view -> {
                 saveImage()
             }
-            R.id.imgClose -> {
+            R.id.ap_editor_close_image_button_view -> {
                 onBackPressed()
             }
         }
@@ -177,17 +173,17 @@ class ApEditorActivity :
 
     override fun onColorChanged(colorCode: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeColor(colorCode))
-        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onOpacityChanged(opacity: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeOpacity(opacity))
-        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapeSizeChanged(shapeSize: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeSize(shapeSize.toFloat()))
-        binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapePicked(shapeType: ShapeType?) {
@@ -195,12 +191,12 @@ class ApEditorActivity :
     }
     override fun onEmojiSelected(emojiStr: String?) {
         photoEditor?.addEmoji(emojiStr)
-        binding?.txtCurrentTool?.setText(R.string.label_emoji)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_emoji)
     }
 
     override fun onStickerSelected(bitmap: Bitmap) {
         photoEditor?.addImage(bitmap)
-        binding?.txtCurrentTool?.setText(R.string.label_sticker)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_sticker)
     }
 
     override fun onToolSelected(toolType: ToolType?) {
@@ -209,7 +205,7 @@ class ApEditorActivity :
                 photoEditor?.setBrushDrawingMode(true)
                 shapeBuilder = ShapeBuilder()
                 photoEditor?.setShape(shapeBuilder)
-                binding?.txtCurrentTool?.setText(R.string.ap_editor_select_shape_menu_shape_text_label)
+                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_shape_text_label)
                 showBottomSheetDialogFragment(apEditorShapeSelectorFragment)
             }
             ToolType.TEXT -> {
@@ -224,17 +220,13 @@ class ApEditorActivity :
                                 styleBuilder.withTextFont(it)
                             }
                             photoEditor?.addText(inputText, styleBuilder)
-                            binding?.txtCurrentTool?.setText(R.string.label_text)
+                            binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_text)
                         }
                     })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
-                binding?.txtCurrentTool?.setText(R.string.label_eraser_mode)
-            }
-            ToolType.FILTER -> {
-                binding?.txtCurrentTool?.setText(R.string.label_filter)
-                showFilter(true)
+                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_eraser_mode)
             }
             ToolType.EMOJI -> {
                 showBottomSheetDialogFragment(apEditorEmojiSelectorFragment)
@@ -253,35 +245,6 @@ class ApEditorActivity :
         fragment.show(supportFragmentManager, fragment.tag)
     }
 
-    private fun showFilter(isVisible: Boolean) {
-        isFilterVisible = isVisible
-        constraintSet.clone(binding?.rootView)
-        val rvFilterId: Int =
-            binding?.rvFilterView?.id ?: throw IllegalArgumentException("RV Filter ID Expected")
-        if (isVisible) {
-            constraintSet.clear(rvFilterId, ConstraintSet.START)
-            constraintSet.connect(
-                rvFilterId, ConstraintSet.START,
-                ConstraintSet.PARENT_ID, ConstraintSet.START
-            )
-            constraintSet.connect(
-                rvFilterId, ConstraintSet.END,
-                ConstraintSet.PARENT_ID, ConstraintSet.END
-            )
-        } else {
-            constraintSet.connect(
-                rvFilterId, ConstraintSet.START,
-                ConstraintSet.PARENT_ID, ConstraintSet.END
-            )
-            constraintSet.clear(rvFilterId, ConstraintSet.END)
-        }
-        val changeBounds = ChangeBounds()
-        changeBounds.duration = 350
-        changeBounds.interpolator = AnticipateOvershootInterpolator(1.0f)
-        binding?.rootView?.let { TransitionManager.beginDelayedTransition(it, changeBounds) }
-        constraintSet.applyTo(binding?.rootView)
-    }
-
     override fun onFilterSelected(photoFilter: PhotoFilter?) {
         photoEditor?.setFilterEffect(photoFilter)
     }
@@ -290,10 +253,7 @@ class ApEditorActivity :
         val isCacheEmpty =
             photoEditor?.isCacheEmpty ?: throw IllegalArgumentException("isCacheEmpty Expected")
 
-        if (isFilterVisible) {
-            showFilter(false)
-            binding?.txtCurrentTool?.setText("Photo Editor")
-        } else if (!isCacheEmpty) {
+        if (!isCacheEmpty) {
             showSaveDialog()
         } else {
             super.onBackPressed()
@@ -351,7 +311,7 @@ class ApEditorActivity :
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         saveImageUri = uri
-                                        binding?.photoEditorView?.let { photoEditorView ->
+                                        binding?.apEditorPhotoEditorView?.let { photoEditorView ->
                                             Glide.with(this@ApEditorActivity).load(saveImageUri)
                                                 .into(photoEditorView.source)
                                         }
@@ -410,7 +370,7 @@ class ApEditorActivity :
                 if (rootView != null) {
                     photoEditor?.editText(rootView, inputText, styleBuilder)
                 }
-                binding?.txtCurrentTool?.setText(R.string.label_text)
+                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_text)
             }
         })
     }

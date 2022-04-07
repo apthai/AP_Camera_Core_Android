@@ -1,4 +1,4 @@
-package com.burhanrashid52.photoediting.tools
+package com.apthai.apcameraxcore.galahad.editor.tools
 
 /**
  * @author [Burhanuddin Rashid](https://github.com/burhanrashid52)
