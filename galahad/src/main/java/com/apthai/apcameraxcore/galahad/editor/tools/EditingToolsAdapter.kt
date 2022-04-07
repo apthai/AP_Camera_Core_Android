@@ -31,7 +31,7 @@ class EditingToolsAdapter(private val context : Context, private val mOnItemSele
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.row_editing_tools, parent, false)
+            .inflate(R.layout.item_ap_editor_tools_view, parent, false)
         return ViewHolder(view)
     }
 
@@ -46,8 +46,8 @@ class EditingToolsAdapter(private val context : Context, private val mOnItemSele
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imgToolIcon: ImageView = itemView.findViewById(R.id.imgToolIcon)
-        val txtTool: TextView = itemView.findViewById(R.id.txtTool)
+        val imgToolIcon: ImageView = itemView.findViewById(R.id.ap_editor_item_main_tool_image_view)
+        val txtTool: TextView = itemView.findViewById(R.id.ap_editor_item_main_tool_text_label)
 
         init {
             itemView.setOnClickListener { _: View? ->
@@ -59,10 +59,10 @@ class EditingToolsAdapter(private val context : Context, private val mOnItemSele
     }
 
     init {
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_shape_text_label), R.drawable.ic_oval, ToolType.SHAPE))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_add_text_label), R.drawable.ic_text, ToolType.TEXT))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_eraser_text_label), R.drawable.ic_eraser, ToolType.ERASER))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_emoji_text_label), R.drawable.ic_insert_emoticon, ToolType.EMOJI))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_sticker_text_label), R.drawable.ic_sticker, ToolType.STICKER))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_shape_text_label), R.drawable.ic_ap_editor_tool_shape_oval, ToolType.SHAPE))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_add_text_label), R.drawable.ic_ap_editor_tool_add_text, ToolType.TEXT))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_eraser_text_label), R.drawable.ic_ap_editor_tool_eraser, ToolType.ERASER))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_emoji_text_label), R.drawable.ic_ap_editor_tool_emoji, ToolType.EMOJI))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_sticker_text_label), R.drawable.ic_ap_editor_tool_sticker, ToolType.STICKER))
     }
 }

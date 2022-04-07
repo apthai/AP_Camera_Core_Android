@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:background="@color/semi_black_transparent"
         android:padding="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_undo"
+        android:src="@drawable/ic_ap_editor_tool_undo"
         android:contentDescription="@string/ap_editor_tools_undo_image_view_description"
         app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
         app:layout_constraintEnd_toStartOf="@+id/ap_editor_tool_redo_image_button_view" />
@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:background="@color/semi_black_transparent"
         android:padding="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_redo"
+        android:src="@drawable/ic_ap_editor_tool_redo"
         android:contentDescription="@string/ap_editor_tools_redo_image_view_description"
         app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_margin="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_close"
+        android:src="@drawable/ic_ap_editor_close"
         android:contentDescription="@string/ap_editor_tools_close_image_view_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +72,7 @@
         app:layout_constraintBottom_toTopOf="@+id/ap_editor_guide_line_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/row_editing_tools" />
+        tools:listitem="@layout/item_ap_editor_tools_view" />
 
     <TextView
         android:id="@+id/ap_editor_current_selected_tool_text_label"
@@ -93,7 +93,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_save"
+        android:src="@drawable/ic_ap_editor_tool_save"
         android:contentDescription="@string/ap_editor_tools_save_image_view_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

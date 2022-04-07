@@ -9,18 +9,15 @@
     <string name="ap_editor_select_shape_menu_shape_text_label">Shape</string>
     <string name="ap_editor_select_shape_menu_oval_text_label">Oval</string>
     <string name="ap_editor_select_shape_menu_rectangle_text_label">Rectangle</string>
-    <string name="label_line">Line</string>
-    <string name="label_emoji">Emoji</string>
-    <string name="label_sticker">Sticker</string>
-    <string name="label_eraser">Eraser</string>
-    <string name="label_eraser_mode">Eraser Mode</string>
-    <string name="label_text">Text</string>
-    <string name="label_filter">Filter</string>
-    <string name="label_adjust">Adjust</string>
-    <string name="msg_save_image">Are you want to exit without saving image ?</string>
-    <string name="app_intent_name">PhotoEditor</string>
-    <string name="msg_save_image_to_share">Please save image to share</string>
-    <string name="msg_share_image">Share Image</string>
+    <string name="ap_editor_tool_label_line">Line</string>
+    <string name="ap_editor_tool_label_emoji">Emoji</string>
+    <string name="ap_editor_tool_label_sticker">Sticker</string>
+    <string name="ap_editor_tool_label_eraser">Eraser</string>
+    <string name="ap_editor_tool_label_eraser_mode">Eraser Mode</string>
+    <string name="ap_editor_tool_label_text">Text</string>
+    <string name="ap_editor_tool_label_filter">Filter</string>
+    <string name="ap_editor_tool_label_adjust">Adjust</string>
+    <string name="ap_editor_tool_save_image_label">Are you want to exit without saving image ?</string>
     <string name="ap_editor_color_picker_image_view_content_description">Just pick the color</string>
     <string name="ap_editor_select_shape_dialog_text_title_label">Shape</string>
     <string name="ap_editor_select_opacity_dialog_text_title_label">Opacity</string>
@@ -34,7 +31,8 @@
     <string name="ap_editor_tools_redo_image_view_description">Just Redo</string>
     <string name="ap_editor_tools_close_image_view_description">Just Close</string>
     <string name="ap_editor_tools_save_image_view_description">Just Save</string>
-    
+
+    <string name="ap_editor_main_tools_description">Just tools</string>
     <string name="ap_editor_main_tools_shape_text_label">Shape</string>
     <string name="ap_editor_main_tools_add_text_label">Text</string>
     <string name="ap_editor_main_tools_eraser_text_label">Eraser</string>

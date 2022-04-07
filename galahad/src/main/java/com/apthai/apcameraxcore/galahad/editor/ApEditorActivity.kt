@@ -14,23 +14,17 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
-import android.view.animation.AnticipateOvershootInterpolator
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.transition.ChangeBounds
-import androidx.transition.TransitionManager
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
-import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
-import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
@@ -53,7 +47,6 @@ class ApEditorActivity :
     ApEditorEmojiSelectorFragment.OnEmojiSelectedListener,
     ApEditorStickerSelectorFragment.OnStickerSelectedListener,
     EditingToolsAdapter.OnItemSelected,
-    FilterListener,
     OnPhotoEditorListener {
 
     override fun tag(): String = ApEditorActivity::class.java.simpleName
@@ -191,12 +184,12 @@ class ApEditorActivity :
     }
     override fun onEmojiSelected(emojiStr: String?) {
         photoEditor?.addEmoji(emojiStr)
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_emoji)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_emoji)
     }
 
     override fun onStickerSelected(bitmap: Bitmap) {
         photoEditor?.addImage(bitmap)
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_sticker)
+        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_sticker)
     }
 
     override fun onToolSelected(toolType: ToolType?) {
@@ -220,13 +213,13 @@ class ApEditorActivity :
                                 styleBuilder.withTextFont(it)
                             }
                             photoEditor?.addText(inputText, styleBuilder)
-                            binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_text)
+                            binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_text)
                         }
                     })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
-                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_eraser_mode)
+                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_eraser_mode)
             }
             ToolType.EMOJI -> {
                 showBottomSheetDialogFragment(apEditorEmojiSelectorFragment)
@@ -245,10 +238,6 @@ class ApEditorActivity :
         fragment.show(supportFragmentManager, fragment.tag)
     }
 
-    override fun onFilterSelected(photoFilter: PhotoFilter?) {
-        photoEditor?.setFilterEffect(photoFilter)
-    }
-
     override fun onBackPressed() {
         val isCacheEmpty =
             photoEditor?.isCacheEmpty ?: throw IllegalArgumentException("isCacheEmpty Expected")
@@ -263,7 +252,7 @@ class ApEditorActivity :
     @SuppressLint("MissingPermission")
     private fun showSaveDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setMessage(getString(R.string.msg_save_image))
+        builder.setMessage(getString(R.string.ap_editor_tool_save_image_label))
         builder.setPositiveButton("Save") { _: DialogInterface?, _: Int -> saveImage() }
         builder.setNegativeButton("Cancel") { dialog: DialogInterface, _: Int -> dialog.dismiss() }
         builder.setNeutralButton("Discard") { _: DialogInterface?, _: Int -> finish() }
@@ -370,7 +359,7 @@ class ApEditorActivity :
                 if (rootView != null) {
                     photoEditor?.editText(rootView, inputText, styleBuilder)
                 }
-                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.label_text)
+                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_text)
             }
         })
     }

@@ -31,7 +31,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             style="@style/ApCameraAppBaseTextAppearanceSmall"
-            android:text="@string/label_line" />
+            android:text="@string/ap_editor_tool_label_line" />
 
         <RadioButton
             android:id="@+id/ap_editor_select_shape_dialog_shape_oval_type_radio_text"

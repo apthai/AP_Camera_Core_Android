@@ -4,31 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    android:padding="4dp"
+    android:layout_margin="@dimen/ap_camera_view_item_padding"
+    android:padding="@dimen/ap_camera_view_item_padding_half"
     tools:background="@android:color/black">
 
 
     <ImageView
-        android:id="@+id/imgToolIcon"
+        android:id="@+id/ap_editor_item_main_tool_image_view"
         android:layout_width="@dimen/editor_size"
         android:layout_height="@dimen/editor_size"
-        android:layout_margin="4dp"
-        android:layout_marginBottom="8dp"
+        android:layout_margin="@dimen/ap_camera_view_item_padding_half"
+        android:layout_marginBottom="@dimen/ap_camera_view_item_padding"
+        android:contentDescription="@string/ap_editor_main_tools_description"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:src="@drawable/ic_brush" />
+        tools:src="@drawable/ic_ap_editor_tool_brush" />
 
     <TextView
-        android:id="@+id/txtTool"
+        android:id="@+id/ap_editor_item_main_tool_text_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="@dimen/ap_camera_view_item_padding_half"
         android:textColor="@android:color/white"
+        android:textSize="12sp"
+        style="@style/ApCameraAppBaseTextAppearanceSmall"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imgToolIcon"
+        app:layout_constraintTop_toBottomOf="@+id/ap_editor_item_main_tool_image_view"
         tools:text="@string/ap_editor_select_shape_menu_brush_text_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
