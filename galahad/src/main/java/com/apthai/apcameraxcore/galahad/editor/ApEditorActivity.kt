@@ -31,9 +31,9 @@ import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerEmojiSelectorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
@@ -50,8 +50,8 @@ class ApEditorActivity :
     ApEditorNavigator,
     View.OnClickListener,
     ApEditorShapeSelectorFragment.Properties,
-    ApEditorStickerEmojiSelectorFragment.OnEmojiSelectedListener,
-    StickerBSFragment.StickerListener,
+    ApEditorEmojiSelectorFragment.OnEmojiSelectedListener,
+    ApEditorStickerSelectorFragment.OnStickerSelectedListener,
     EditingToolsAdapter.OnItemSelected,
     FilterListener,
     OnPhotoEditorListener {
@@ -84,8 +84,8 @@ class ApEditorActivity :
     private fun isPermissionGranted(isGranted: Boolean, permission: String?) {}
 
     private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
-    private var apEditorStickerEmojiSelectorFragment: ApEditorStickerEmojiSelectorFragment? = null
-    private var stickerBSFragment: StickerBSFragment? = null
+    private var apEditorEmojiSelectorFragment: ApEditorEmojiSelectorFragment? = null
+    private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
     private var wonderFont: Typeface? = null
     private val editingToolsAdapter = EditingToolsAdapter(this)
@@ -120,10 +120,10 @@ class ApEditorActivity :
 
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
-        apEditorStickerEmojiSelectorFragment = ApEditorStickerEmojiSelectorFragment()
-        apEditorStickerEmojiSelectorFragment?.setOnEmojiSelectedListener(this)
-        stickerBSFragment = StickerBSFragment()
-        stickerBSFragment?.setStickerListener(this)
+        apEditorEmojiSelectorFragment = ApEditorEmojiSelectorFragment()
+        apEditorEmojiSelectorFragment?.setOnEmojiSelectedListener(this)
+        apEditorStickerSelectorFragment = ApEditorStickerSelectorFragment()
+        apEditorStickerSelectorFragment?.setOnStickerSelectedListener(this)
 
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.rvConstraintTools?.layoutManager = llmTools
@@ -198,7 +198,7 @@ class ApEditorActivity :
         binding?.txtCurrentTool?.setText(R.string.label_emoji)
     }
 
-    override fun onStickerClick(bitmap: Bitmap?) {
+    override fun onStickerSelected(bitmap: Bitmap) {
         photoEditor?.addImage(bitmap)
         binding?.txtCurrentTool?.setText(R.string.label_sticker)
     }
@@ -237,10 +237,10 @@ class ApEditorActivity :
                 showFilter(true)
             }
             ToolType.EMOJI -> {
-                showBottomSheetDialogFragment(apEditorStickerEmojiSelectorFragment)
+                showBottomSheetDialogFragment(apEditorEmojiSelectorFragment)
             }
             ToolType.STICKER -> {
-                showBottomSheetDialogFragment(stickerBSFragment)
+                showBottomSheetDialogFragment(apEditorStickerSelectorFragment)
             }
             else -> {}
         }

@@ -4,15 +4,12 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorStickerEmojiDialogBinding
+import com.apthai.apcameraxcore.galahad.editor.fragment.adapter.StickerListAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -20,15 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class StickerBSFragment : BottomSheetDialogFragment() {
-    private var mStickerListener: StickerListener? = null
-    fun setStickerListener(stickerListener: StickerListener?) {
-        mStickerListener = stickerListener
-    }
-
-    interface StickerListener {
-        fun onStickerClick(bitmap: Bitmap?)
-    }
+class ApEditorStickerSelectorFragment : BottomSheetDialogFragment(),
+    StickerListAdapter.OnStickerItemEventListener {
 
     private val mBottomSheetBehaviorCallback: BottomSheetCallback = object : BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -43,6 +33,8 @@ class StickerBSFragment : BottomSheetDialogFragment() {
     private var fragmentApEditorStickerEmojiDialogBinding: FragmentApEditorStickerEmojiDialogBinding? =
         null
     private val binding get() = fragmentApEditorStickerEmojiDialogBinding
+    private var stickerListAdapter: StickerListAdapter? = null
+    private var listener: OnStickerSelectedListener? = null
 
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
@@ -61,61 +53,43 @@ class StickerBSFragment : BottomSheetDialogFragment() {
             (ctView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
             val gridLayoutManager = GridLayoutManager(activity, 3)
             binding?.apEditorEmojiStickerRecyclerView?.layoutManager = gridLayoutManager
-            val stickerAdapter = StickerAdapter()
-            binding?.apEditorEmojiStickerRecyclerView?.adapter = stickerAdapter
+            stickerListAdapter = StickerListAdapter(requireActivity(), stickerPathList)
+            binding?.apEditorEmojiStickerRecyclerView?.adapter = stickerListAdapter
             binding?.apEditorEmojiStickerRecyclerView?.setHasFixedSize(true)
             binding?.apEditorEmojiStickerRecyclerView?.setItemViewCacheSize(stickerPathList.size)
+            stickerListAdapter?.setOnStickerItemEventListener(this)
         }
     }
 
-    inner class StickerAdapter : RecyclerView.Adapter<StickerAdapter.ViewHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.item_ap_editor_sticker_view, parent, false)
-            return ViewHolder(view)
-        }
-
-        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            // Load sticker image from remote url
-            Glide.with(requireContext())
-                .asBitmap()
-                .load(stickerPathList[position])
-                .into(holder.imgSticker)
-        }
-
-        override fun getItemCount(): Int {
-            return stickerPathList.size
-        }
-
-        inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val imgSticker: ImageView = itemView.findViewById(R.id.ap_editor_item_sticker_image_view)
-
-            init {
-                itemView.setOnClickListener {
-                    if (mStickerListener != null) {
-                        Glide.with(requireContext())
-                            .asBitmap()
-                            .load(stickerPathList[layoutPosition])
-                            .into(object : CustomTarget<Bitmap?>(256, 256) {
-                                override fun onResourceReady(
-                                    resource: Bitmap,
-                                    transition: Transition<in Bitmap?>?
-                                ) {
-                                    mStickerListener!!.onStickerClick(resource)
-                                }
-
-                                override fun onLoadCleared(placeholder: Drawable?) {}
-                            })
-                    }
-                    dismiss()
+    override fun onStickerClick(stickerUrl: String) {
+        Glide.with(requireContext())
+            .asBitmap()
+            .load(stickerUrl)
+            .into(object : CustomTarget<Bitmap?>(256, 256) {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    transition: Transition<in Bitmap?>?
+                ) {
+                    listener?.onStickerSelected(resource)
                 }
-            }
-        }
+
+                override fun onLoadCleared(placeholder: Drawable?) {}
+            })
+        dismiss()
+    }
+
+    fun setOnStickerSelectedListener(listener: OnStickerSelectedListener) {
+        this.listener = listener
+    }
+
+    interface OnStickerSelectedListener {
+
+        fun onStickerSelected(bitmap: Bitmap)
     }
 
     companion object {
         // Image Urls from flaticon(https://www.flaticon.com/stickers-pack/food-289)
-        private val stickerPathList = arrayOf(
+        private val stickerPathList = arrayListOf<String>(
             "https://cdn-icons-png.flaticon.com/256/4392/4392452.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392455.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392459.png",
