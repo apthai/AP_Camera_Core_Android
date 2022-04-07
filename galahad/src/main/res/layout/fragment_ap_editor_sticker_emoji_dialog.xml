@@ -3,59 +3,57 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp">
+        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+        android:layout_marginStart="@dimen/ap_camera_view_item_padding_double">
 
         <TextView
-            android:id="@+id/txtClose"
+            android:id="@+id/ap_editor_emoji_sticker_close_button"
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/ap_camera_view_item_padding"
             android:gravity="center"
-            android:text="Close"
+            android:text="@string/ap_editor_emoji_sticker_dialog_close_button_text_label"
             android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginLeft="8dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/lineView"
+            android:id="@+id/ap_editor_emoji_sticker_line_view"
             android:layout_width="match_parent"
-            android:layout_height="2px"
+            android:layout_height="@dimen/ap_camera_view_item_padding_small"
             android:background="@android:color/white"
             android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@+id/txtClose" />
+            app:layout_constraintTop_toBottomOf="@+id/ap_editor_emoji_sticker_close_button" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEmoji"
+            android:id="@+id/ap_editor_emoji_sticker_recycler_view"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_margin="8dp"
+            android:layout_margin="@dimen/ap_camera_view_item_padding"
             app:layout_behavior="@string/bottom_sheet_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lineView" />
+            app:layout_constraintTop_toBottomOf="@+id/ap_editor_emoji_sticker_line_view" />
 
         <TextView
-            android:id="@+id/txtDone"
+            android:id="@+id/ap_editor_emoji_sticker_done_button"
             android:layout_width="wrap_content"
             android:layout_height="?attr/actionBarSize"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
             android:gravity="center"
-            android:text="Done"
+            android:text="@string/ap_editor_emoji_sticker_dialog_done_button_text_label"
             android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginRight="8dp" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

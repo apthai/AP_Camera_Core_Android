@@ -31,7 +31,7 @@ import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
-import com.apthai.apcameraxcore.galahad.editor.fragment.EmojiBSFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerEmojiSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.PropertiesBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
@@ -52,7 +52,7 @@ class ApEditorActivity :
     View.OnClickListener,
     PropertiesBSFragment.Properties,
     ApEditorShapeSelectorFragment.Properties,
-    EmojiBSFragment.EmojiListener,
+    ApEditorStickerEmojiSelectorFragment.EmojiListener,
     StickerBSFragment.StickerListener,
     EditingToolsAdapter.OnItemSelected,
     FilterListener,
@@ -87,7 +87,7 @@ class ApEditorActivity :
 
     private var propertiesBSFragment: PropertiesBSFragment? = null
     private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
-    private var emojiBSFragment: EmojiBSFragment? = null
+    private var apEditorStickerEmojiSelectorFragment: ApEditorStickerEmojiSelectorFragment? = null
     private var stickerBSFragment: StickerBSFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
     private var wonderFont: Typeface? = null
@@ -125,8 +125,8 @@ class ApEditorActivity :
         propertiesBSFragment?.setPropertiesChangeListener(this)
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
-        emojiBSFragment = EmojiBSFragment()
-        emojiBSFragment?.setEmojiListener(this)
+        apEditorStickerEmojiSelectorFragment = ApEditorStickerEmojiSelectorFragment()
+        apEditorStickerEmojiSelectorFragment?.setEmojiListener(this)
         stickerBSFragment = StickerBSFragment()
         stickerBSFragment?.setStickerListener(this)
 
@@ -243,7 +243,7 @@ class ApEditorActivity :
                 showFilter(true)
             }
             ToolType.EMOJI -> {
-                showBottomSheetDialogFragment(emojiBSFragment)
+                showBottomSheetDialogFragment(apEditorStickerEmojiSelectorFragment)
             }
             ToolType.STICKER -> {
                 showBottomSheetDialogFragment(stickerBSFragment)

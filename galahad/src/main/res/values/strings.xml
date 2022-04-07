@@ -27,6 +27,8 @@
     <string name="ap_editor_select_brush_size_dialog_text_title_label">Brush size</string>
     <string name="ap_editor_add_text_dialog_done_button_text_label">Done</string>
     <string name="ap_editor_add_text_dialog_text_field_text_hint">Press to enter text</string>
+    <string name="ap_editor_emoji_sticker_dialog_done_button_text_label">Done</string>
+    <string name="ap_editor_emoji_sticker_dialog_close_button_text_label">Close</string>
 
     <string-array name="photo_editor_emoji">
 

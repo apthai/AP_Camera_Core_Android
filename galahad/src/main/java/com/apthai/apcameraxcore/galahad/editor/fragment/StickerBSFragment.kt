@@ -42,7 +42,7 @@ class StickerBSFragment : BottomSheetDialogFragment() {
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-        val contentView = View.inflate(context, R.layout.fragment_bottom_sticker_emoji_dialog, null)
+        val contentView = View.inflate(context, R.layout.fragment_ap_editor_sticker_emoji_dialog, null)
         dialog.setContentView(contentView)
         val params = (contentView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
         val behavior = params.behavior
@@ -50,7 +50,7 @@ class StickerBSFragment : BottomSheetDialogFragment() {
             behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
         }
         (contentView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
-        val rvEmoji: RecyclerView = contentView.findViewById(R.id.rvEmoji)
+        val rvEmoji: RecyclerView = contentView.findViewById(R.id.ap_editor_emoji_sticker_recycler_view)
         val gridLayoutManager = GridLayoutManager(activity, 3)
         rvEmoji.layoutManager = gridLayoutManager
         val stickerAdapter = StickerAdapter()
