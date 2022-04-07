@@ -32,7 +32,6 @@ import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterListener
 import com.apthai.apcameraxcore.galahad.editor.filters.FilterViewAdapter
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerEmojiSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.PropertiesBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.StickerBSFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
@@ -50,7 +49,6 @@ class ApEditorActivity :
     ApCameraBaseActivity<ApEditorViewModel>(),
     ApEditorNavigator,
     View.OnClickListener,
-    PropertiesBSFragment.Properties,
     ApEditorShapeSelectorFragment.Properties,
     ApEditorStickerEmojiSelectorFragment.EmojiListener,
     StickerBSFragment.StickerListener,
@@ -85,7 +83,6 @@ class ApEditorActivity :
 
     private fun isPermissionGranted(isGranted: Boolean, permission: String?) {}
 
-    private var propertiesBSFragment: PropertiesBSFragment? = null
     private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
     private var apEditorStickerEmojiSelectorFragment: ApEditorStickerEmojiSelectorFragment? = null
     private var stickerBSFragment: StickerBSFragment? = null
@@ -121,8 +118,6 @@ class ApEditorActivity :
 
     override fun setUpView() {
 
-        propertiesBSFragment = PropertiesBSFragment()
-        propertiesBSFragment?.setPropertiesChangeListener(this)
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
         apEditorStickerEmojiSelectorFragment = ApEditorStickerEmojiSelectorFragment()
