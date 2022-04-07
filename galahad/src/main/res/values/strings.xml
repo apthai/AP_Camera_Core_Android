@@ -39,6 +39,8 @@
     <string name="ap_editor_main_tools_emoji_text_label">Emoji</string>
     <string name="ap_editor_main_tools_sticker_text_label">Sticker</string>
 
+    <string name="ap_editor_main_current_default_title_text_label">Photo Editor</string>
+
     <string-array name="photo_editor_emoji">
 
         <!-- Smiles -->

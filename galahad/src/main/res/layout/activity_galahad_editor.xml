@@ -35,7 +35,7 @@
         android:src="@drawable/ic_ap_editor_tool_undo"
         android:contentDescription="@string/ap_editor_tools_undo_image_view_description"
         app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
-        app:layout_constraintEnd_toStartOf="@+id/ap_editor_tool_redo_image_button_view" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/ap_editor_tool_redo_image_button_view"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:singleLine="true"
-        android:text="@string/app_name"
+        android:text="@string/ap_editor_main_current_default_title_text_label"
         style="@style/ApCameraAppBaseTextAppearanceMedium"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"

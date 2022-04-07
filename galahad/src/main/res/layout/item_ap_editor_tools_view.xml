@@ -2,9 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="70dp"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/ap_camera_view_item_padding"
+    android:layout_margin="@dimen/ap_camera_view_item_padding_half"
     android:padding="@dimen/ap_camera_view_item_padding_half"
     tools:background="@android:color/black">
 
