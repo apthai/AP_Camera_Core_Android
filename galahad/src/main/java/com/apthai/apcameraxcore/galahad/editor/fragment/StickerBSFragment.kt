@@ -12,6 +12,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
+import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorStickerEmojiDialogBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -39,29 +40,38 @@ class StickerBSFragment : BottomSheetDialogFragment() {
         override fun onSlide(bottomSheet: View, slideOffset: Float) {}
     }
 
+    private var fragmentApEditorStickerEmojiDialogBinding: FragmentApEditorStickerEmojiDialogBinding? =
+        null
+    private val binding get() = fragmentApEditorStickerEmojiDialogBinding
+
     @SuppressLint("RestrictedApi")
     override fun setupDialog(dialog: Dialog, style: Int) {
         super.setupDialog(dialog, style)
-        val contentView = View.inflate(context, R.layout.fragment_ap_editor_sticker_emoji_dialog, null)
-        dialog.setContentView(contentView)
-        val params = (contentView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
-        val behavior = params.behavior
-        if (behavior != null && behavior is BottomSheetBehavior<*>) {
-            behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
+        val contentView =
+            View.inflate(context, R.layout.fragment_ap_editor_sticker_emoji_dialog, null)
+        fragmentApEditorStickerEmojiDialogBinding =
+            FragmentApEditorStickerEmojiDialogBinding.bind(contentView)
+        binding?.root?.let { ctView ->
+            dialog.setContentView(ctView)
+            val params = (ctView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
+            val behavior = params.behavior
+            if (behavior != null && behavior is BottomSheetBehavior<*>) {
+                behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
+            }
+            (ctView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
+            val gridLayoutManager = GridLayoutManager(activity, 3)
+            binding?.apEditorEmojiStickerRecyclerView?.layoutManager = gridLayoutManager
+            val stickerAdapter = StickerAdapter()
+            binding?.apEditorEmojiStickerRecyclerView?.adapter = stickerAdapter
+            binding?.apEditorEmojiStickerRecyclerView?.setHasFixedSize(true)
+            binding?.apEditorEmojiStickerRecyclerView?.setItemViewCacheSize(stickerPathList.size)
         }
-        (contentView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
-        val rvEmoji: RecyclerView = contentView.findViewById(R.id.ap_editor_emoji_sticker_recycler_view)
-        val gridLayoutManager = GridLayoutManager(activity, 3)
-        rvEmoji.layoutManager = gridLayoutManager
-        val stickerAdapter = StickerAdapter()
-        rvEmoji.adapter = stickerAdapter
-        rvEmoji.setHasFixedSize(true)
-        rvEmoji.setItemViewCacheSize(stickerPathList.size)
     }
 
     inner class StickerAdapter : RecyclerView.Adapter<StickerAdapter.ViewHolder>() {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.row_sticker, parent, false)
+            val view =
+                LayoutInflater.from(parent.context).inflate(R.layout.item_ap_editor_sticker_view, parent, false)
             return ViewHolder(view)
         }
 
@@ -78,7 +88,7 @@ class StickerBSFragment : BottomSheetDialogFragment() {
         }
 
         inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val imgSticker: ImageView = itemView.findViewById(R.id.imgSticker)
+            val imgSticker: ImageView = itemView.findViewById(R.id.ap_editor_item_sticker_image_view)
 
             init {
                 itemView.setOnClickListener {
@@ -87,7 +97,10 @@ class StickerBSFragment : BottomSheetDialogFragment() {
                             .asBitmap()
                             .load(stickerPathList[layoutPosition])
                             .into(object : CustomTarget<Bitmap?>(256, 256) {
-                                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
+                                override fun onResourceReady(
+                                    resource: Bitmap,
+                                    transition: Transition<in Bitmap?>?
+                                ) {
                                     mStickerListener!!.onStickerClick(resource)
                                 }
 

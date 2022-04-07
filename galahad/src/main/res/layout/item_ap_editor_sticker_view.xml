@@ -7,11 +7,12 @@
     android:layout_margin="4dp">
 
     <ImageView
-        android:id="@+id/imgSticker"
+        android:id="@+id/ap_editor_item_sticker_image_view"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:scaleType="fitCenter"
         tools:src="@tools:sample/avatars"
+        android:contentDescription="@string/ap_editor_sticker_item_image_view_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"

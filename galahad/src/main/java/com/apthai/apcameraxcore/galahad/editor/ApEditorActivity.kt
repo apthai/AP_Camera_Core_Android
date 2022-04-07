@@ -50,7 +50,7 @@ class ApEditorActivity :
     ApEditorNavigator,
     View.OnClickListener,
     ApEditorShapeSelectorFragment.Properties,
-    ApEditorStickerEmojiSelectorFragment.EmojiListener,
+    ApEditorStickerEmojiSelectorFragment.OnEmojiSelectedListener,
     StickerBSFragment.StickerListener,
     EditingToolsAdapter.OnItemSelected,
     FilterListener,
@@ -121,7 +121,7 @@ class ApEditorActivity :
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
         apEditorStickerEmojiSelectorFragment = ApEditorStickerEmojiSelectorFragment()
-        apEditorStickerEmojiSelectorFragment?.setEmojiListener(this)
+        apEditorStickerEmojiSelectorFragment?.setOnEmojiSelectedListener(this)
         stickerBSFragment = StickerBSFragment()
         stickerBSFragment?.setStickerListener(this)
 
@@ -193,9 +193,8 @@ class ApEditorActivity :
     override fun onShapePicked(shapeType: ShapeType?) {
         photoEditor?.setShape(shapeBuilder?.withShapeType(shapeType))
     }
-
-    override fun onEmojiClick(emojiUnicode: String?) {
-        photoEditor?.addEmoji(emojiUnicode)
+    override fun onEmojiSelected(emojiStr: String?) {
+        photoEditor?.addEmoji(emojiStr)
         binding?.txtCurrentTool?.setText(R.string.label_emoji)
     }
 
