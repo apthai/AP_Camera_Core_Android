@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ja.burhanrashid52.photoeditor.PhotoEditorView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ap_editor_photo_editor_view"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
+    app:layout_constraintLeft_toLeftOf="parent"
+    app:layout_constraintRight_toRightOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:photo_src="@drawable/background_ap_rectangle_view_white" />

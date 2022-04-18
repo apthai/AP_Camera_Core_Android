@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPagerEditorBinding
+import com.apthai.apcameraxcore.galahad.editor.adapter.PagerEditorAdapter
 
 class ApPagerEditorActivity : ApCameraBaseActivity<ApPagerEditorViewModel>(), ApPagerEditorNavigator {
 
@@ -12,6 +13,8 @@ class ApPagerEditorActivity : ApCameraBaseActivity<ApPagerEditorViewModel>(), Ap
     private var activityGalahadPagerEditorBinding : ActivityGalahadPagerEditorBinding?=null
     private val binding get() = activityGalahadPagerEditorBinding
     private var apPagerEditorViewModel : ApPagerEditorViewModel?=null
+
+    private var editorFragmentPager : PagerEditorAdapter?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
