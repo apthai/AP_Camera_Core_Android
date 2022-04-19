@@ -2,14 +2,15 @@ package com.apthai.apcameraxcore.galahad.editor
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ContentUris
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -22,22 +23,25 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
+import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
+import com.apthai.apcameraxcore.galahad.editor.adapter.PhotoEditorAdapter
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.EditingToolsAdapter
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
-import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ja.burhanrashid52.photoeditor.*
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
 import ja.burhanrashid52.photoeditor.shape.ShapeType
+
 
 class ApEditorActivity :
     ApCameraBaseActivity<ApEditorViewModel>(),
@@ -54,9 +58,9 @@ class ApEditorActivity :
     companion object {
 
         const val AP_EDITOR_PHOTO_PAYLOAD = "ap_editor_photo_payload"
-        fun getInstance(context: Context, photoUriStr: String): Intent =
+        fun getInstance(context: Context, fromScreenTag : String): Intent =
             Intent(context, ApEditorActivity::class.java).apply {
-                putExtra(AP_EDITOR_PHOTO_PAYLOAD, photoUriStr)
+                putExtra(ApCameraUtil.GENERIC.AP_CAMERA_GENERIC_SCREEN_TAG, fromScreenTag)
             }
     }
 
@@ -80,8 +84,10 @@ class ApEditorActivity :
     private var apEditorEmojiSelectorFragment: ApEditorEmojiSelectorFragment? = null
     private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
-    private var wonderFont: Typeface? = null
     private var editingToolsAdapter : EditingToolsAdapter ?= null
+
+    private var photoEditorAdapter : PhotoEditorAdapter?=null
+    private var currentApPhotoList : MutableList<ApPhoto> = ArrayList()
 
     var saveImageUri: Uri? = null
     private var saveFileHelper: FileSaveHelper? = null
@@ -116,6 +122,11 @@ class ApEditorActivity :
         apEditorStickerSelectorFragment?.setOnStickerSelectedListener(this)
 
         editingToolsAdapter = EditingToolsAdapter(this, this)
+        photoEditorAdapter = PhotoEditorAdapter(this)
+
+        binding?.apEditorPhotoEditorViewpager?.apply {
+            adapter = photoEditorAdapter
+        }
 
         val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding?.apEditorConstraintToolsView?.layoutManager = llmTools
@@ -128,7 +139,37 @@ class ApEditorActivity :
         binding?.apEditorSaveImageButtonView?.setOnClickListener(this)
         binding?.apEditorCloseImageButtonView?.setOnClickListener(this)
 
-        photoEditor = binding?.apEditorPhotoEditorView?.run {
+        binding?.apEditorPhotoEditorViewpager?.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                Toast.makeText(this@ApEditorActivity, "Current Selected Position : $position", Toast.LENGTH_SHORT).show()
+                val currentSelectedView = binding?.apEditorPhotoEditorViewpager?.findViewById<PhotoEditorView>(photoEditorAdapter?.getItemId(position)?.toInt()?:0)
+                currentSelectedView?.let { currentPhotoView->
+                    photoEditor = currentPhotoView.run {
+                        PhotoEditor.Builder(this@ApEditorActivity, this)
+                            .setPinchTextScalable(true)
+                            .build()
+                    }
+                    photoEditor?.setOnPhotoEditorListener(this@ApEditorActivity)
+                }
+
+                /*currentSelectedView?.let { currentView->
+                    val itemViewBinding = ItemApEditorPhotoViewBinding.bind(currentView)
+                }*/
+
+                //val itemViewBinding = ItemApEditorPhotoViewBinding.bind(currentSelectedView!!)
+                /*val currentSelectedPhotoEditorView = currentSelectedView as PhotoEditorView
+                photoEditor = currentSelectedPhotoEditorView.run {
+                    PhotoEditor.Builder(this@ApEditorActivity, this)
+                        .setPinchTextScalable(true)
+                        .build()
+                }
+                photoEditor?.setOnPhotoEditorListener(this@ApEditorActivity)*/
+            }
+        })
+
+        /*photoEditor = binding?.apEditorPhotoEditorView?.run {
             PhotoEditor.Builder(this@ApEditorActivity, this)
                 .setPinchTextScalable(true)
                 .build()
@@ -140,11 +181,11 @@ class ApEditorActivity :
             binding?.apEditorPhotoEditorView?.let {
                 Glide.with(this).load(photoUri).into(it.source)
             }
-        }
+        }*/
         saveFileHelper = FileSaveHelper(this)
-    }
 
-    override fun getPhotoUriPayload(): String? = intent?.getStringExtra(AP_EDITOR_PHOTO_PAYLOAD)
+        fetchCurrentPhotoList()
+    }
 
     @SuppressLint("NonConstantResourceId", "MissingPermission")
     override fun onClick(view: View?) {
@@ -300,10 +341,10 @@ class ApEditorActivity :
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         saveImageUri = uri
-                                        binding?.apEditorPhotoEditorView?.let { photoEditorView ->
+                                        /*binding?.apEditorPhotoEditorView?.let { photoEditorView ->
                                             Glide.with(this@ApEditorActivity).load(saveImageUri)
                                                 .into(photoEditorView.source)
-                                        }
+                                        }*/
                                     }
 
                                     override fun onFailure(exception: Exception) {
@@ -371,4 +412,58 @@ class ApEditorActivity :
     override fun onStopViewChangeListener(viewType: ViewType?) {}
 
     override fun onTouchSourceImage(event: MotionEvent?) {}
+
+    override fun fetchCurrentPhotoList() {
+        val mediaCursor = contentResolver.query(
+            fetchMediaCollection,
+            fetchMediaProjection,
+            fetchMediaSelection,
+            fetchMediaSelectionArgs,
+            fetchMediaSortOrder
+        )
+
+        mediaCursor?.use { cursor ->
+            val fetchIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+            val fetchFileNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+            val fetchFileSizeColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+            val fetchDateAddedColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_ADDED)
+            val fetchDateModifiedColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
+            val fetchBucketIdColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val fetchBucketNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
+            val fetchMimeTypeColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+            while (cursor.moveToNext()) {
+                val fileId = cursor.getLong(fetchIdColumn)
+                val fileName = cursor.getString(fetchFileNameColumn)
+                val fileSize = cursor.getInt(fetchFileSizeColumn)
+                val fileDateAdded = cursor.getLong(fetchDateAddedColumn)
+                val fileDateModified = cursor.getLong(fetchDateModifiedColumn)
+                val fileBucketId = cursor.getLong(fetchBucketIdColumn)
+                val fileBucketName = cursor.getString(fetchBucketNameColumn)
+                val fileMimeType = cursor.getString(fetchMimeTypeColumn)
+
+                val contentUri: Uri =
+                    ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, fileId)
+
+                currentApPhotoList += ApPhoto(
+                    id = fileId,
+                    uriPath = contentUri,
+                    fileName = fileName,
+                    fileSize = fileSize,
+                    createdAt = fileDateAdded,
+                    modifiedAt = fileDateModified,
+                    folderId = fileBucketId,
+                    folderName = fileBucketName,
+                    mimeType = fileMimeType
+                )
+            }
+        }
+        photoEditorAdapter?.updateData(currentApPhotoList)
+    }
 }

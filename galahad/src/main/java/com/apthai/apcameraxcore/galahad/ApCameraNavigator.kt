@@ -34,4 +34,8 @@ interface ApCameraNavigator {
     fun launchPreviewPhotoActivity()
     fun loadDing(isLoading: Boolean)
     fun saveImageToLocalSuccess(currentPathFile: String)
+
+    fun launchPagerPhotoEditorActivity()
+
+    fun launchEditorPhotoActivity()
 }

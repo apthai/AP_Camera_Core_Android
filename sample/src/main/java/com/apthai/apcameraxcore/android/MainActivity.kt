@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.android.databinding.ActivityMainBinding
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.ApCameraActivity
+import com.apthai.apcameraxcore.galahad.editor.ApEditorActivity
 
 class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.OnClickListener {
 
@@ -52,5 +53,10 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     override fun launchCameraScreen() {
         val cameraIntent = Intent(this, ApCameraActivity::class.java)
         startActivity(cameraIntent)
+    }
+
+    override fun launchEditorScreen() {
+        val editorIntent = ApEditorActivity.getInstance(this, tag())
+        startActivity(editorIntent)
     }
 }

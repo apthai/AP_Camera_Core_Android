@@ -24,6 +24,8 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
+import com.apthai.apcameraxcore.galahad.editor.contract.ApPagerEditorContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
@@ -58,7 +60,7 @@ class ApCameraActivity :
     private var cameraProcessFuture: ListenableFuture<ProcessCameraProvider>? = null
     private var currentCameraImageCapture: ImageCapture? = null
     private var currentCameraImageAnalysis: ImageAnalysis? = null
-    private lateinit var cameraExecutor: ExecutorService
+    private var cameraExecutor: ExecutorService?=null
     private var cameraFacing: CameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
     private var cameraLensFacing: Int = CameraSelector.LENS_FACING_BACK
     private var cameraFlashMode: Int = ImageCapture.FLASH_MODE_OFF
@@ -74,6 +76,12 @@ class ApCameraActivity :
 
     private val previewActivityContract =
         registerForActivityResult(ApPreviewResultContract()) {}
+
+    private val photoViewEditorActivityContact =
+        registerForActivityResult(ApPagerEditorContract()) {}
+
+    private val editorActivityContact =
+        registerForActivityResult(ApEditorResultContract()) {}
 
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
@@ -352,14 +360,16 @@ class ApCameraActivity :
                 toggleAspectRatio()
             }
             R.id.ap_camera_view_gallery_button -> {
-                launchPreviewPhotoActivity()
+                //launchPreviewPhotoActivity()
+                //launchPagerPhotoEditorActivity()
+                launchEditorPhotoActivity()
             }
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        cameraExecutor.shutdown()
+        cameraExecutor?.shutdown()
     }
 
     override fun onRequestPermissionsResult(
@@ -564,5 +574,13 @@ class ApCameraActivity :
 
     override fun launchPreviewPhotoActivity() {
         previewActivityContract.launch(tag())
+    }
+
+    override fun launchPagerPhotoEditorActivity() {
+        photoViewEditorActivityContact.launch(tag())
+    }
+
+    override fun launchEditorPhotoActivity() {
+        editorActivityContact.launch(tag())
     }
 }

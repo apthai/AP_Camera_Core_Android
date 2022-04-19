@@ -4,5 +4,5 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 
 interface ApPagerEditorNavigator {
 
-    fun getApPhotoListPayload() : MutableList<ApPhoto>
+    fun fetchCurrentPhotoList()
 }

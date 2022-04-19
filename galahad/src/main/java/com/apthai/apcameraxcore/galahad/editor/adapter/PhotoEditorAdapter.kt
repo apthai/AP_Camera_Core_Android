@@ -1,0 +1,60 @@
+package com.apthai.apcameraxcore.galahad.editor.adapter
+
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.apthai.apcameraxcore.common.model.ApPhoto
+import com.apthai.apcameraxcore.galahad.R
+
+class PhotoEditorAdapter(private val context : Context) : RecyclerView.Adapter<PhotoEditorViewHolder>() {
+
+    private val inflater : LayoutInflater = LayoutInflater.from(context)
+    private var apPhotoList : MutableList<ApPhoto> = ArrayList()
+    private var listener : OnPhotoViewEditorEventListener?=null
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoEditorViewHolder {
+        val view = inflater.inflate(R.layout.item_ap_editor_photo_view, parent, false)
+        return PhotoEditorViewHolder(context, view).listen { position, _ ->
+            val currentPhoto = apPhotoList[position]
+            //TODO with itemClick
+        }
+    }
+
+    override fun onBindViewHolder(holder: PhotoEditorViewHolder, position: Int) {
+        val apPhoto = apPhotoList[position]
+        holder.initView(apPhoto)
+    }
+
+    private fun <T : RecyclerView.ViewHolder> T.listen(
+        event: (position: Int, type: Int) -> Unit
+    ): T {
+        itemView.setOnClickListener {
+            event.invoke(adapterPosition, itemViewType)
+        }
+        return this
+    }
+
+    override fun getItemCount(): Int = apPhotoList.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(apPhotoList : MutableList<ApPhoto>){
+        this.apPhotoList = apPhotoList
+        try {
+            notifyDataSetChanged()
+        }catch (exception : Exception){
+            exception.printStackTrace()
+        }
+    }
+
+    fun setOnPhotoViewEditorEventListener(listener : OnPhotoViewEditorEventListener){
+        this.listener = listener
+    }
+
+    interface OnPhotoViewEditorEventListener {
+
+        fun onPhotoViewEditorItemClick(apPhoto : ApPhoto, view : View)
+    }
+}

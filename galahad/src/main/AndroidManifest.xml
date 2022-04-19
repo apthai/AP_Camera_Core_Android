@@ -8,12 +8,6 @@
         android:supportsRtl="true"
         tools:targetApi="n">
         <activity
-            android:name=".tools.ApCameraToolMainActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            tools:ignore="LockedOrientationActivity" />
-        <activity
             android:name=".ApCameraActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -33,6 +27,11 @@
             tools:ignore="LockedOrientationActivity"/>
 
         <activity android:name=".previewer.ApTransitionPreviewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            tools:ignore="LockedOrientationActivity"/>
+        <activity android:name=".editor.ApPagerEditorActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
