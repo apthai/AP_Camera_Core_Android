@@ -1,6 +1,8 @@
 package com.apthai.apcameraxcore.galahad.previewer
 
 import android.content.ContentUris
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,11 +15,19 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPagerPreviewBinding
 import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPhotoViewListAdapter
+import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 
 class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
     ApPagerPreviewNavigator, ApPhotoViewListAdapter.OnPhotoViewItemEventListener {
 
     override fun tag(): String = ApPagerPreviewActivity::class.java.simpleName
+
+    companion object{
+
+        fun getInstance(context : Context, fromScreenTag : String) : Intent = Intent(context, ApPagerPreviewActivity::class.java).apply {
+            putExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG, fromScreenTag)
+        }
+    }
 
     private var activityGalahadPagerPreviewBinding: ActivityGalahadPagerPreviewBinding? = null
     private val binding get() = activityGalahadPagerPreviewBinding

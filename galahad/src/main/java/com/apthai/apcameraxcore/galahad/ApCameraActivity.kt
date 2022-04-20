@@ -20,10 +20,13 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.list.listItems
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
@@ -74,6 +77,9 @@ class ApCameraActivity :
 
     private val previewActivityContract =
         registerForActivityResult(ApPreviewResultContract()) {}
+
+    private val pagerPreviewActivityContract =
+        registerForActivityResult(ApPagerPreviewResultContract()) {}
 
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
@@ -337,6 +343,7 @@ class ApCameraActivity :
         }
     }
 
+    @SuppressLint("CheckResult")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.ap_camera_view_capture_button -> {
@@ -352,7 +359,16 @@ class ApCameraActivity :
                 toggleAspectRatio()
             }
             R.id.ap_camera_view_gallery_button -> {
-                launchPreviewPhotoActivity()
+                MaterialDialog(this).show {
+                    listItems(items = listOf("Grid view", "Pager view")){ dialog, index, _ ->
+                        dialog.dismiss()
+                        when (index){
+                            0-> launchPreviewPhotoActivity()
+                            1-> launchPagerPreviewPhotoActivity()
+                            else ->{}
+                        }
+                    }
+                }
             }
         }
     }
@@ -564,5 +580,9 @@ class ApCameraActivity :
 
     override fun launchPreviewPhotoActivity() {
         previewActivityContract.launch(tag())
+    }
+
+    override fun launchPagerPreviewPhotoActivity() {
+        pagerPreviewActivityContract.launch(tag())
     }
 }
