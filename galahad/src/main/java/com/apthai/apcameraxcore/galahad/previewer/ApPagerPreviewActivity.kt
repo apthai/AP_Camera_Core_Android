@@ -1,10 +1,6 @@
 package com.apthai.apcameraxcore.galahad.previewer
 
-import android.R
-import android.app.Activity
 import android.content.ContentUris
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -12,41 +8,54 @@ import android.view.MenuItem
 import android.view.View
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
-import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPreviewBinding
+import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPagerPreviewBinding
 import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPhotoViewListAdapter
-import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 
-class ApPreviewActivity :
-    ApCameraBaseActivity<ApPreviewViewModel>(),
-    ApPreviewNavigator,
-    ApPhotoViewListAdapter.OnPhotoViewItemEventListener {
+class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
+    ApPagerPreviewNavigator, ApPhotoViewListAdapter.OnPhotoViewItemEventListener {
 
-    override fun tag(): String = ApPreviewActivity::class.java.simpleName
+    override fun tag(): String = ApPagerPreviewActivity::class.java.simpleName
 
-    companion object {
+    private var activityGalahadPagerPreviewBinding: ActivityGalahadPagerPreviewBinding? = null
+    private val binding get() = activityGalahadPagerPreviewBinding
 
-        fun getInstance(context: Context): Intent = Intent(context, ApPreviewActivity::class.java)
-    }
-
-    private var activityGalahadPreviewBinding: ActivityGalahadPreviewBinding? = null
-    private val binding get() = activityGalahadPreviewBinding
-
-    private var viewModel: ApPreviewViewModel? = null
+    private var apPagerPreviewViewModel: ApPagerPreviewViewModel? = null
 
     private var apPhotoViewListAdapter: ApPhotoViewListAdapter? = null
-
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
+
+    private val viewPagerListener: ViewPager2.OnPageChangeCallback =
+        object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+            }
+
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+            }
+
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activityGalahadPreviewBinding = ActivityGalahadPreviewBinding.inflate(layoutInflater)
+        activityGalahadPagerPreviewBinding =
+            ActivityGalahadPagerPreviewBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
-        viewModel = ViewModelProvider.NewInstanceFactory().create(ApPreviewViewModel::class.java)
-        viewModel?.setNavigator(this)
+        apPagerPreviewViewModel =
+            ViewModelProvider.NewInstanceFactory().create(ApPagerPreviewViewModel::class.java)
+        apPagerPreviewViewModel?.setNavigator(this)
 
         if (savedInstanceState == null) {
             setUpView()
@@ -55,64 +64,18 @@ class ApPreviewActivity :
     }
 
     override fun setUpView() {
-
-        setSupportActionBar(binding?.apPreviewToolbar)
+        setSupportActionBar(binding?.apPagerPreviewToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         apPhotoViewListAdapter = ApPhotoViewListAdapter(this)
-        binding?.apPreviewRecyclerView?.apply {
-            layoutManager = GridLayoutManager(this@ApPreviewActivity, 2)
+        binding?.apPagerPreviewViewpager?.apply {
             adapter = apPhotoViewListAdapter
+            registerOnPageChangeCallback(viewPagerListener)
         }
-    }
-
-    override fun initial() {
         apPhotoViewListAdapter?.setOnPhotoViewItemEventListener(this)
-
-        viewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
-            apPhotoViewListAdapter?.updateData(apPhotos)
-        }
-
-        fetchCurrentPhotos()
     }
 
-    override fun getPhotoUriPayload(): String? =
-        intent.getStringExtra(ApPreviewResultContract.AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST)
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            android.R.id.home -> {
-                val photoUri = getPhotoUriPayload()
-                photoUri?.let { uriStr ->
-                    setResult(
-                        Activity.RESULT_OK,
-                        Intent().apply {
-                            putExtra(
-                                ApPreviewResultContract.AP_PREVIEW_CONTRACT_URI_PAYLOAD_CONST,
-                                uriStr
-                            )
-                        }
-                    )
-                }
-                finish()
-            }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onPhotoClick(view: View, apPhoto: ApPhoto, position: Int) {
-        transition(view, apPhoto)
-    }
-
-    private fun transition(view: View, apPhoto: ApPhoto) {
-        val intent = ApTransitionPreviewActivity.getInstance(this, apPhoto)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            this,
-            view,
-            "Transition Test"
-        )
-        startActivity(intent, options.toBundle())
-    }
+    override fun initial() {}
 
     override fun fetchCurrentPhotos() {
         val mediaCursor = contentResolver.query(
@@ -122,8 +85,6 @@ class ApPreviewActivity :
             fetchMediaSelectionArgs,
             fetchMediaSortOrder
         )
-
-        currentPhotoList = ArrayList()
 
         mediaCursor?.use { cursor ->
             val fetchIdColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
@@ -166,8 +127,32 @@ class ApPreviewActivity :
                     mimeType = fileMimeType
                 )
             }
+
+            apPhotoViewListAdapter?.updateData(currentPhotoList)
         }
 
-        viewModel?.setSharedCurrentPhotos(currentPhotoList)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun transition(view: View, apPhoto: ApPhoto) {
+        val intent = ApTransitionPreviewActivity.getInstance(this, apPhoto)
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+            this,
+            view,
+            "Transition Test"
+        )
+        startActivity(intent, options.toBundle())
+    }
+
+    override fun onPhotoClick(view: View, apPhoto: ApPhoto, position: Int) {
+        transition(view, apPhoto)
     }
 }
