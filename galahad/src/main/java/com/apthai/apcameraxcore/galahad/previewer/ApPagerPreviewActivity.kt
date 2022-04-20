@@ -62,6 +62,7 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
                 super.onPageSelected(position)
                 val currentSelectedApPhoto = currentPhotoList[position]
                 currentSelectedPhotoUri = currentSelectedApPhoto.uriPath
+                supportActionBar?.title = currentSelectedApPhoto.fileName
             }
         }
 
