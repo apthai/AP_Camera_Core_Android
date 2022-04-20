@@ -21,4 +21,29 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/ap_pager_preview_edit_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="75dp"
+        android:padding="@dimen/ap_camera_view_item_padding"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size_container"
+            android:background="@drawable/background_ap_circle_view_transparent">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ap_pager_preview_edit_image_view"
+                android:layout_width="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_height="@dimen/frm_main_edit_picture_tools_ic_base_size"
+                android:layout_centerInParent="true"
+                android:padding="2dp"
+                app:srcCompat="@drawable/ic_ap_editor_edit_mode" />
+
+        </RelativeLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

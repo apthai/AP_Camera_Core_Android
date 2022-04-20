@@ -8,34 +8,41 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.view.View
-import androidx.core.app.ActivityOptionsCompat
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
+import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadPagerPreviewBinding
-import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPhotoViewListAdapter
+import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
+import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPagerPhotoViewAdapter
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 
 class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
-    ApPagerPreviewNavigator, ApPhotoViewListAdapter.OnPhotoViewItemEventListener {
+    ApPagerPreviewNavigator, View.OnClickListener {
 
     override fun tag(): String = ApPagerPreviewActivity::class.java.simpleName
 
-    companion object{
+    companion object {
 
-        fun getInstance(context : Context, fromScreenTag : String) : Intent = Intent(context, ApPagerPreviewActivity::class.java).apply {
-            putExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG, fromScreenTag)
-        }
+        fun getInstance(context: Context, fromScreenTag: String): Intent =
+            Intent(context, ApPagerPreviewActivity::class.java).apply {
+                putExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG, fromScreenTag)
+            }
     }
 
     private var activityGalahadPagerPreviewBinding: ActivityGalahadPagerPreviewBinding? = null
     private val binding get() = activityGalahadPagerPreviewBinding
 
     private var apPagerPreviewViewModel: ApPagerPreviewViewModel? = null
-
-    private var apPhotoViewListAdapter: ApPhotoViewListAdapter? = null
+    private var apPagerPhotoViewAdapter: ApPagerPhotoViewAdapter? = null
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
+
+    private var currentSelectedPhotoUri : Uri?=null
+
+    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+    }
 
     private val viewPagerListener: ViewPager2.OnPageChangeCallback =
         object : ViewPager2.OnPageChangeCallback() {
@@ -53,7 +60,8 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
+                val currentSelectedApPhoto = currentPhotoList[position]
+                currentSelectedPhotoUri = currentSelectedApPhoto.uriPath
             }
         }
 
@@ -77,15 +85,20 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
         setSupportActionBar(binding?.apPagerPreviewToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        apPhotoViewListAdapter = ApPhotoViewListAdapter(this)
+        apPagerPhotoViewAdapter = ApPagerPhotoViewAdapter(this)
         binding?.apPagerPreviewViewpager?.apply {
-            adapter = apPhotoViewListAdapter
+            adapter = apPagerPhotoViewAdapter
             registerOnPageChangeCallback(viewPagerListener)
         }
-        apPhotoViewListAdapter?.setOnPhotoViewItemEventListener(this)
+
+        fetchCurrentPhotos()
+
     }
 
-    override fun initial() {}
+    override fun initial() {
+
+        binding?.apPagerPreviewEditView?.setOnClickListener(this)
+    }
 
     override fun fetchCurrentPhotos() {
         val mediaCursor = contentResolver.query(
@@ -111,6 +124,8 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
                 cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
             val fetchMimeTypeColumn =
                 cursor.getColumnIndexOrThrow(MediaStore.Images.Media.MIME_TYPE)
+
+            currentPhotoList = ArrayList()
 
             while (cursor.moveToNext()) {
                 val fileId = cursor.getLong(fetchIdColumn)
@@ -138,7 +153,7 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
                 )
             }
 
-            apPhotoViewListAdapter?.updateData(currentPhotoList)
+            apPagerPhotoViewAdapter?.updateData(apPhotoList = currentPhotoList)
         }
 
     }
@@ -152,17 +167,16 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
         return super.onOptionsItemSelected(item)
     }
 
-    private fun transition(view: View, apPhoto: ApPhoto) {
-        val intent = ApTransitionPreviewActivity.getInstance(this, apPhoto)
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-            this,
-            view,
-            "Transition Test"
-        )
-        startActivity(intent, options.toBundle())
-    }
-
-    override fun onPhotoClick(view: View, apPhoto: ApPhoto, position: Int) {
-        transition(view, apPhoto)
+    override fun onClick(view: View?) {
+        when(view?.id){
+            R.id.ap_pager_preview_edit_view ->{
+                currentSelectedPhotoUri?.let { photoUri->
+                    val photoUriRaw = photoUri.toString()
+                    apEditorActivityContract.launch(photoUriRaw)
+                } ?: kotlin.run {
+                    Toast.makeText(this, "Current selected Photo unavailable", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
     }
 }
