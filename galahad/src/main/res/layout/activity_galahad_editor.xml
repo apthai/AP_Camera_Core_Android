@@ -1,102 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ap_editor_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    android:background="@android:color/black">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/ap_editor_guide_line_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="?attr/actionBarSize" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/ap_editor_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <ja.burhanrashid52.photoeditor.PhotoEditorView
-        android:id="@+id/ap_editor_photo_editor_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:photo_src="@drawable/background_ap_rectangle_view_white" />
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <ImageView
-        android:id="@+id/ap_editor_tool_undo_image_button_view"
-        android:layout_width="@dimen/top_tool_icon_width"
-        android:layout_height="wrap_content"
-        android:background="@color/semi_black_transparent"
-        android:padding="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_ap_editor_tool_undo"
-        android:contentDescription="@string/ap_editor_tools_undo_image_view_description"
-        app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ja.burhanrashid52.photoeditor.PhotoEditorView
+            android:id="@+id/ap_editor_photo_editor_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:photo_src="@drawable/background_ap_rectangle_view_white" />
 
-    <ImageView
-        android:id="@+id/ap_editor_tool_redo_image_button_view"
-        android:layout_width="@dimen/top_tool_icon_width"
-        android:layout_height="wrap_content"
-        android:background="@color/semi_black_transparent"
-        android:padding="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_ap_editor_tool_redo"
-        android:contentDescription="@string/ap_editor_tools_redo_image_view_description"
-        app:layout_constraintBottom_toTopOf="@+id/ap_editor_constraint_tools_view"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ap_editor_constraint_tools_view"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/ap_camera_view_item_padding_double"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_ap_editor_tools_view" />
 
-    <ImageView
-        android:id="@+id/ap_editor_close_image_button_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_margin="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_ap_editor_close"
-        android:contentDescription="@string/ap_editor_tools_close_image_view_description"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ap_editor_guide_line_view" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/ap_editor_constraint_tools_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@color/tool_bg"
-        android:orientation="horizontal"
-        android:paddingTop="@dimen/ap_camera_view_item_padding_half"
-        android:paddingBottom="@dimen/ap_camera_view_item_padding_half"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@+id/ap_editor_guide_line_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/item_ap_editor_tools_view" />
+            android:layout_marginBottom="@dimen/ap_camera_view_item_padding_double"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/ap_editor_current_selected_tool_text_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:singleLine="true"
-        android:text="@string/ap_editor_main_current_default_title_text_label"
-        style="@style/ApCameraAppBaseTextAppearanceMedium"
-        android:textColor="@android:color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ap_editor_guide_line_view" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/ap_camera_view_item_padding_double"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-    <ImageView
-        android:id="@+id/ap_editor_save_image_button_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/ap_camera_view_item_padding"
-        android:src="@drawable/ic_ap_editor_tool_save"
-        android:contentDescription="@string/ap_editor_tools_save_image_view_description"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ap_editor_guide_line_view" />
+                <ImageView
+                    android:id="@+id/ap_editor_tool_undo_image_button_view"
+                    android:layout_width="@dimen/top_tool_icon_width"
+                    android:layout_height="@dimen/top_tool_icon_width"
+                    android:contentDescription="@string/ap_editor_tools_undo_image_view_description"
+                    android:padding="@dimen/ap_camera_view_item_padding"
+                    android:src="@drawable/ic_ap_editor_tool_undo" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:layout_width="100dp"
+                    android:layout_height="0dp" />
+
+                <ImageView
+                    android:id="@+id/ap_editor_tool_redo_image_button_view"
+                    android:layout_width="@dimen/top_tool_icon_width"
+                    android:layout_height="@dimen/top_tool_icon_width"
+                    android:contentDescription="@string/ap_editor_tools_redo_image_view_description"
+                    android:padding="@dimen/ap_camera_view_item_padding"
+                    android:src="@drawable/ic_ap_editor_tool_redo" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/ap_editor_constraint_save_button"
+                style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/ap_camera_view_item_padding_double"
+                android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+                android:background="@android:color/holo_red_light"
+                android:fontFamily="@font/ap_galahad_camera_bold"
+                android:padding="@dimen/ap_camera_view_item_padding"
+                android:text="save"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

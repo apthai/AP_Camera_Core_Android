@@ -1,4 +1,4 @@
-package com.apthai.apcameraxcore.galahad.editor.tools
+package com.apthai.apcameraxcore.galahad.editor.fragment.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
+import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import java.util.ArrayList
 
 /**
@@ -59,10 +60,20 @@ class EditingToolsAdapter(private val context : Context, private val mOnItemSele
     }
 
     init {
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_shape_text_label), R.drawable.ic_ap_editor_tool_shape_oval, ToolType.SHAPE))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_add_text_label), R.drawable.ic_ap_editor_tool_add_text, ToolType.TEXT))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_eraser_text_label), R.drawable.ic_ap_editor_tool_eraser, ToolType.ERASER))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_emoji_text_label), R.drawable.ic_ap_editor_tool_emoji, ToolType.EMOJI))
-        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_sticker_text_label), R.drawable.ic_ap_editor_tool_sticker, ToolType.STICKER))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_shape_text_label), R.drawable.ic_ap_editor_tool_shape_oval,
+            ToolType.SHAPE
+        ))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_add_text_label), R.drawable.ic_ap_editor_tool_add_text,
+            ToolType.TEXT
+        ))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_eraser_text_label), R.drawable.ic_ap_editor_tool_eraser,
+            ToolType.ERASER
+        ))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_emoji_text_label), R.drawable.ic_ap_editor_tool_emoji,
+            ToolType.EMOJI
+        ))
+        mToolList.add(ToolModel(context.resources.getString(R.string.ap_editor_main_tools_sticker_text_label), R.drawable.ic_ap_editor_tool_sticker,
+            ToolType.STICKER
+        ))
     }
 }

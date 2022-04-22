@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ap_editor_constraint_tools_view"
+    android:layout_width="80dp"
+    android:layout_height="match_parent"
+    android:layout_gravity="end"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/ap_camera_view_item_padding_double"
+    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+    tools:listitem="@layout/item_ap_editor_tools_view"/>

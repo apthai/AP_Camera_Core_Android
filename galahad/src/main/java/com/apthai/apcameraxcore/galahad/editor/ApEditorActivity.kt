@@ -10,6 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.Window
@@ -29,7 +30,7 @@ import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFra
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
 import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
-import com.apthai.apcameraxcore.galahad.editor.tools.EditingToolsAdapter
+import com.apthai.apcameraxcore.galahad.editor.fragment.adapter.EditingToolsAdapter
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
@@ -80,19 +81,13 @@ class ApEditorActivity :
     private var apEditorEmojiSelectorFragment: ApEditorEmojiSelectorFragment? = null
     private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
-    private var wonderFont: Typeface? = null
-    private var editingToolsAdapter : EditingToolsAdapter ?= null
+    private var editingToolsAdapter : EditingToolsAdapter?= null
 
     var saveImageUri: Uri? = null
     private var saveFileHelper: FileSaveHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
         activityApEditorBinding = ActivityGalahadEditorBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
@@ -108,6 +103,10 @@ class ApEditorActivity :
 
     override fun setUpView() {
 
+        setSupportActionBar(binding?.apEditorToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = getString(R.string.ap_editor_main_current_default_title_text_label)
+
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
         apEditorEmojiSelectorFragment = ApEditorEmojiSelectorFragment()
@@ -117,7 +116,7 @@ class ApEditorActivity :
 
         editingToolsAdapter = EditingToolsAdapter(this, this)
 
-        val llmTools = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        val llmTools = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
         binding?.apEditorConstraintToolsView?.layoutManager = llmTools
         binding?.apEditorConstraintToolsView?.adapter = editingToolsAdapter
     }
@@ -125,8 +124,6 @@ class ApEditorActivity :
     override fun initial() {
         binding?.apEditorToolUndoImageButtonView?.setOnClickListener(this)
         binding?.apEditorToolRedoImageButtonView?.setOnClickListener(this)
-        binding?.apEditorSaveImageButtonView?.setOnClickListener(this)
-        binding?.apEditorCloseImageButtonView?.setOnClickListener(this)
 
         photoEditor = binding?.apEditorPhotoEditorView?.run {
             PhotoEditor.Builder(this@ApEditorActivity, this)
@@ -155,28 +152,28 @@ class ApEditorActivity :
             R.id.ap_editor_tool_redo_image_button_view -> {
                 photoEditor?.redo()
             }
-            R.id.ap_editor_save_image_button_view -> {
+            /*R.id.ap_editor_save_image_button_view -> {
                 saveImage()
             }
             R.id.ap_editor_close_image_button_view -> {
                 onBackPressed()
-            }
+            }*/
         }
     }
 
     override fun onColorChanged(colorCode: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeColor(colorCode))
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        supportActionBar?.title = getString(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onOpacityChanged(opacity: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeOpacity(opacity))
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        supportActionBar?.title = getString(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapeSizeChanged(shapeSize: Int) {
         photoEditor?.setShape(shapeBuilder?.withShapeSize(shapeSize.toFloat()))
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_brush_text_label)
+        supportActionBar?.title = getString(R.string.ap_editor_select_shape_menu_brush_text_label)
     }
 
     override fun onShapePicked(shapeType: ShapeType?) {
@@ -184,12 +181,12 @@ class ApEditorActivity :
     }
     override fun onEmojiSelected(emojiStr: String?) {
         photoEditor?.addEmoji(emojiStr)
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_emoji)
+        supportActionBar?.title = getString(R.string.ap_editor_tool_label_emoji)
     }
 
     override fun onStickerSelected(bitmap: Bitmap) {
         photoEditor?.addImage(bitmap)
-        binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_sticker)
+        supportActionBar?.title = getString(R.string.ap_editor_tool_label_sticker)
     }
 
     override fun onToolSelected(toolType: ToolType?) {
@@ -198,7 +195,7 @@ class ApEditorActivity :
                 photoEditor?.setBrushDrawingMode(true)
                 shapeBuilder = ShapeBuilder()
                 photoEditor?.setShape(shapeBuilder)
-                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_select_shape_menu_shape_text_label)
+                supportActionBar?.title = getString(R.string.ap_editor_select_shape_menu_shape_text_label)
                 showBottomSheetDialogFragment(apEditorShapeSelectorFragment)
             }
             ToolType.TEXT -> {
@@ -213,13 +210,13 @@ class ApEditorActivity :
                                 styleBuilder.withTextFont(it)
                             }
                             photoEditor?.addText(inputText, styleBuilder)
-                            binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_text)
+                            supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
                         }
                     })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
-                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_eraser_mode)
+                supportActionBar?.title = getString(R.string.ap_editor_tool_label_eraser_mode)
             }
             ToolType.EMOJI -> {
                 showBottomSheetDialogFragment(apEditorEmojiSelectorFragment)
@@ -359,7 +356,7 @@ class ApEditorActivity :
                 if (rootView != null) {
                     photoEditor?.editText(rootView, inputText, styleBuilder)
                 }
-                binding?.apEditorCurrentSelectedToolTextLabel?.setText(R.string.ap_editor_tool_label_text)
+                supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
             }
         })
     }
@@ -371,4 +368,11 @@ class ApEditorActivity :
     override fun onStopViewChangeListener(viewType: ViewType?) {}
 
     override fun onTouchSourceImage(event: MotionEvent?) {}
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            android.R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 }
