@@ -233,6 +233,7 @@ class ApEditorActivity :
             }
             else -> {}
         }
+        hideApEditorToolsFragment()
     }
 
     private fun showBottomSheetDialogFragment(fragment: BottomSheetDialogFragment?) {
@@ -393,21 +394,9 @@ class ApEditorActivity :
                 apEditorToolsFragment?.let { toolsFragment ->
                     val fragmentTransaction = supportFragmentManager.beginTransaction()
                     if (toolsFragment.isVisible) {
-                        fragmentTransaction.apply {
-                            setCustomAnimations(
-                                R.anim.ap_anim_transition_fade_in,
-                                R.anim.ap_anim_transition_fade_out
-                            )
-                            hide(toolsFragment)
-                        }.commitAllowingStateLoss()
+                        hideApEditorToolsFragment()
                     } else {
-                        fragmentTransaction.apply {
-                            setCustomAnimations(
-                                R.anim.ap_anim_transition_fade_in,
-                                R.anim.ap_anim_transition_fade_out
-                            )
-                            show(toolsFragment)
-                        }.commitAllowingStateLoss()
+                        showApEditorToolsFragment()
                     }
                 }
             }
@@ -421,5 +410,31 @@ class ApEditorActivity :
             R.anim.ap_anim_transition_fade_in,
             R.anim.ap_anim_transition_fade_out
         )
+    }
+
+    override fun showApEditorToolsFragment() {
+        apEditorToolsFragment?.let { toolsFragment ->
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.apply {
+                setCustomAnimations(
+                    R.anim.ap_anim_transition_fade_in,
+                    R.anim.ap_anim_transition_fade_out
+                )
+                show(toolsFragment)
+            }.commitAllowingStateLoss()
+        }
+    }
+
+    override fun hideApEditorToolsFragment() {
+        apEditorToolsFragment?.let { toolsFragment ->
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            fragmentTransaction.apply {
+                setCustomAnimations(
+                    R.anim.ap_anim_transition_fade_in,
+                    R.anim.ap_anim_transition_fade_out
+                )
+                hide(toolsFragment)
+            }.commitAllowingStateLoss()
+        }
     }
 }
