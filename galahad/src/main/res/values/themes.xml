@@ -17,6 +17,7 @@
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowEnterTransition">@android:transition/no_transition</item>
         <item name="android:windowExitTransition">@android:transition/no_transition</item>
+        <item name="android:fontFamily">@font/ap_galahad_camera_medium</item>
     </style>
 
     <style name="Theme.GalahadCameraCore.Fullscreen" parent="Theme.GalahadCameraCore">
