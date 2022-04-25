@@ -72,7 +72,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/ap_editor_constraint_save_button"
+                android:id="@+id/ap_editor_save_button"
                 style="@style/Widget.AppCompat.Button.Borderless.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

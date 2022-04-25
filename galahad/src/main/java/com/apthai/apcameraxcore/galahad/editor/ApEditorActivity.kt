@@ -41,7 +41,7 @@ class ApEditorActivity :
     ApEditorEmojiSelectorFragment.OnEmojiSelectedListener,
     ApEditorStickerSelectorFragment.OnStickerSelectedListener,
     ApEditorToolsFragment.OnApEditorToolsEventListener,
-    OnPhotoEditorListener {
+    OnPhotoEditorListener{
 
     override fun tag(): String = ApEditorActivity::class.java.simpleName
 
@@ -126,6 +126,7 @@ class ApEditorActivity :
     override fun initial() {
         binding?.apEditorToolUndoImageButtonView?.setOnClickListener(this)
         binding?.apEditorToolRedoImageButtonView?.setOnClickListener(this)
+        binding?.apEditorSaveButton?.setOnClickListener(this)
 
         photoEditor = binding?.apEditorPhotoEditorView?.run {
             PhotoEditor.Builder(this@ApEditorActivity, this)
@@ -154,12 +155,9 @@ class ApEditorActivity :
             R.id.ap_editor_tool_redo_image_button_view -> {
                 photoEditor?.redo()
             }
-            /*R.id.ap_editor_save_image_button_view -> {
+            R.id.ap_editor_save_button ->{
                 saveImage()
             }
-            R.id.ap_editor_close_image_button_view -> {
-                onBackPressed()
-            }*/
         }
     }
 
