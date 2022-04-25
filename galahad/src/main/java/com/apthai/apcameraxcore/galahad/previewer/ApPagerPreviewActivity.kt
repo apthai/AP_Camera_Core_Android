@@ -6,8 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
@@ -20,7 +20,7 @@ import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPagerPhotoViewAdapte
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 
 class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
-    ApPagerPreviewNavigator, View.OnClickListener {
+    ApPagerPreviewNavigator {
 
     override fun tag(): String = ApPagerPreviewActivity::class.java.simpleName
 
@@ -39,10 +39,11 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
     private var apPagerPhotoViewAdapter: ApPagerPhotoViewAdapter? = null
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
-    private var currentSelectedPhotoUri : Uri?=null
+    private var currentSelectedPhotoUri: Uri? = null
 
-    private val apEditorActivityContract = registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
-    }
+    private val apEditorActivityContract =
+        registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+        }
 
     private val viewPagerListener: ViewPager2.OnPageChangeCallback =
         object : ViewPager2.OnPageChangeCallback() {
@@ -96,10 +97,7 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
 
     }
 
-    override fun initial() {
-
-        binding?.apPagerPreviewEditView?.setOnClickListener(this)
-    }
+    override fun initial() {}
 
     override fun fetchCurrentPhotos() {
         val mediaCursor = contentResolver.query(
@@ -159,25 +157,26 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
 
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.ap_preview_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
             }
-        }
-        return super.onOptionsItemSelected(item)
-    }
-
-    override fun onClick(view: View?) {
-        when(view?.id){
-            R.id.ap_pager_preview_edit_view ->{
-                currentSelectedPhotoUri?.let { photoUri->
+            R.id.ap_preview_action_editor -> {
+                currentSelectedPhotoUri?.let { photoUri ->
                     val photoUriRaw = photoUri.toString()
                     apEditorActivityContract.launch(photoUriRaw)
                 } ?: kotlin.run {
-                    Toast.makeText(this, "Current selected Photo unavailable", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Current selected Photo unavailable", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
         }
+        return super.onOptionsItemSelected(item)
     }
 }

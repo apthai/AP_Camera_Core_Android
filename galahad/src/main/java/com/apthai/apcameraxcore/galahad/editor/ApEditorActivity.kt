@@ -10,11 +10,7 @@ import android.graphics.Bitmap
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.view.MenuItem
-import android.view.MotionEvent
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
@@ -26,10 +22,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
-import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.*
 import com.apthai.apcameraxcore.galahad.editor.fragment.adapter.EditingToolsAdapter
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
@@ -47,7 +40,7 @@ class ApEditorActivity :
     ApEditorShapeSelectorFragment.Properties,
     ApEditorEmojiSelectorFragment.OnEmojiSelectedListener,
     ApEditorStickerSelectorFragment.OnStickerSelectedListener,
-    EditingToolsAdapter.OnItemSelected,
+    ApEditorToolsFragment.OnApEditorToolsEventListener,
     OnPhotoEditorListener {
 
     override fun tag(): String = ApEditorActivity::class.java.simpleName
@@ -80,8 +73,8 @@ class ApEditorActivity :
     private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
     private var apEditorEmojiSelectorFragment: ApEditorEmojiSelectorFragment? = null
     private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
+    private var apEditorToolsFragment : ApEditorToolsFragment?=null
     private var shapeBuilder: ShapeBuilder? = null
-    private var editingToolsAdapter : EditingToolsAdapter?= null
 
     var saveImageUri: Uri? = null
     private var saveFileHelper: FileSaveHelper? = null
@@ -113,12 +106,12 @@ class ApEditorActivity :
         apEditorEmojiSelectorFragment?.setOnEmojiSelectedListener(this)
         apEditorStickerSelectorFragment = ApEditorStickerSelectorFragment()
         apEditorStickerSelectorFragment?.setOnStickerSelectedListener(this)
+        apEditorToolsFragment = ApEditorToolsFragment.getInstance(tag())
+        apEditorToolsFragment?.setOnApEditorToolsEventListener(this)
 
-        editingToolsAdapter = EditingToolsAdapter(this, this)
-
-        val llmTools = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
-        binding?.apEditorConstraintToolsView?.layoutManager = llmTools
-        binding?.apEditorConstraintToolsView?.adapter = editingToolsAdapter
+        apEditorToolsFragment?.let { toolsFragment ->
+            supportFragmentManager.beginTransaction().add(R.id.ap_editor_container_tools_view, toolsFragment, ApEditorToolsFragment::class.java.simpleName).addToBackStack(null).commitAllowingStateLoss()
+        }
     }
 
     override fun initial() {
@@ -189,7 +182,7 @@ class ApEditorActivity :
         supportActionBar?.title = getString(R.string.ap_editor_tool_label_sticker)
     }
 
-    override fun onToolSelected(toolType: ToolType?) {
+    override fun onSelectedToolType(toolType: ToolType?) {
         when (toolType) {
             ToolType.SHAPE -> {
                 photoEditor?.setBrushDrawingMode(true)
@@ -201,18 +194,18 @@ class ApEditorActivity :
             ToolType.TEXT -> {
                 val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
-                        ApEditorAddTextEditorFragment.TextEditorListener {
-                        override fun onDone(inputText: String?, colorCode: Int) {
-                            val styleBuilder = TextStyleBuilder()
-                            styleBuilder.withTextColor(colorCode)
-                            val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
-                            apFont?.let {
-                                styleBuilder.withTextFont(it)
-                            }
-                            photoEditor?.addText(inputText, styleBuilder)
-                            supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
+                    ApEditorAddTextEditorFragment.TextEditorListener {
+                    override fun onDone(inputText: String?, colorCode: Int) {
+                        val styleBuilder = TextStyleBuilder()
+                        styleBuilder.withTextColor(colorCode)
+                        val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                        apFont?.let {
+                            styleBuilder.withTextFont(it)
                         }
-                    })
+                        photoEditor?.addText(inputText, styleBuilder)
+                        supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
+                    }
+                })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
@@ -369,9 +362,23 @@ class ApEditorActivity :
 
     override fun onTouchSourceImage(event: MotionEvent?) {}
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.ap_preview_menu, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             android.R.id.home -> finish()
+            R.id.ap_preview_action_editor ->{
+                apEditorToolsFragment?.let { toolsFragment->
+                    if (toolsFragment.isVisible){
+                        supportFragmentManager.beginTransaction().hide(toolsFragment).commitAllowingStateLoss()
+                    }else{
+                        supportFragmentManager.beginTransaction().show(toolsFragment).commitAllowingStateLoss()
+                    }
+                }
+            }
         }
         return super.onOptionsItemSelected(item)
     }

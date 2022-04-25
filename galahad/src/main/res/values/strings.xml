@@ -40,6 +40,7 @@
     <string name="ap_editor_main_tools_sticker_text_label">Sticker</string>
 
     <string name="ap_editor_main_current_default_title_text_label">Photo Editor</string>
+    <string name="ap_editor_menu_item_text_title">Edit</string>
 
     <string-array name="photo_editor_emoji">
 

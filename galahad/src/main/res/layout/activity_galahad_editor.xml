@@ -28,15 +28,12 @@
             android:layout_height="match_parent"
             app:photo_src="@drawable/background_ap_rectangle_view_white" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/ap_editor_constraint_tools_view"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/ap_editor_container_tools_view"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/ap_camera_view_item_padding_double"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_ap_editor_tools_view" />
+            android:orientation="vertical" />
 
         <LinearLayout
             android:layout_width="match_parent"
