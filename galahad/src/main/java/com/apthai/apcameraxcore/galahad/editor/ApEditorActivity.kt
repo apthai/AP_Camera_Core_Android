@@ -7,10 +7,12 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresPermission
@@ -18,12 +20,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
 import com.apthai.apcameraxcore.galahad.editor.fragment.*
-import com.apthai.apcameraxcore.galahad.editor.fragment.adapter.EditingToolsAdapter
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
@@ -73,7 +73,7 @@ class ApEditorActivity :
     private var apEditorShapeSelectorFragment: ApEditorShapeSelectorFragment? = null
     private var apEditorEmojiSelectorFragment: ApEditorEmojiSelectorFragment? = null
     private var apEditorStickerSelectorFragment: ApEditorStickerSelectorFragment? = null
-    private var apEditorToolsFragment : ApEditorToolsFragment?=null
+    private var apEditorToolsFragment: ApEditorToolsFragment? = null
     private var shapeBuilder: ShapeBuilder? = null
 
     var saveImageUri: Uri? = null
@@ -81,6 +81,10 @@ class ApEditorActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        overridePendingTransition(
+            R.anim.ap_anim_transition_fade_in,
+            R.anim.ap_anim_transition_fade_out
+        )
         activityApEditorBinding = ActivityGalahadEditorBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
@@ -98,7 +102,8 @@ class ApEditorActivity :
 
         setSupportActionBar(binding?.apEditorToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = getString(R.string.ap_editor_main_current_default_title_text_label)
+        supportActionBar?.title =
+            getString(R.string.ap_editor_main_current_default_title_text_label)
 
         apEditorShapeSelectorFragment = ApEditorShapeSelectorFragment()
         apEditorShapeSelectorFragment?.setPropertiesChangeListener(this)
@@ -110,7 +115,11 @@ class ApEditorActivity :
         apEditorToolsFragment?.setOnApEditorToolsEventListener(this)
 
         apEditorToolsFragment?.let { toolsFragment ->
-            supportFragmentManager.beginTransaction().add(R.id.ap_editor_container_tools_view, toolsFragment, ApEditorToolsFragment::class.java.simpleName).addToBackStack(null).commitAllowingStateLoss()
+            supportFragmentManager.beginTransaction().add(
+                R.id.ap_editor_container_tools_view,
+                toolsFragment,
+                ApEditorToolsFragment::class.java.simpleName
+            ).commitAllowingStateLoss()
         }
     }
 
@@ -172,6 +181,7 @@ class ApEditorActivity :
     override fun onShapePicked(shapeType: ShapeType?) {
         photoEditor?.setShape(shapeBuilder?.withShapeType(shapeType))
     }
+
     override fun onEmojiSelected(emojiStr: String?) {
         photoEditor?.addEmoji(emojiStr)
         supportActionBar?.title = getString(R.string.ap_editor_tool_label_emoji)
@@ -188,7 +198,8 @@ class ApEditorActivity :
                 photoEditor?.setBrushDrawingMode(true)
                 shapeBuilder = ShapeBuilder()
                 photoEditor?.setShape(shapeBuilder)
-                supportActionBar?.title = getString(R.string.ap_editor_select_shape_menu_shape_text_label)
+                supportActionBar?.title =
+                    getString(R.string.ap_editor_select_shape_menu_shape_text_label)
                 showBottomSheetDialogFragment(apEditorShapeSelectorFragment)
             }
             ToolType.TEXT -> {
@@ -198,7 +209,10 @@ class ApEditorActivity :
                     override fun onDone(inputText: String?, colorCode: Int) {
                         val styleBuilder = TextStyleBuilder()
                         styleBuilder.withTextColor(colorCode)
-                        val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                        val apFont = ResourcesCompat.getFont(
+                            this@ApEditorActivity,
+                            R.font.ap_galahad_camera_bold
+                        )
                         apFont?.let {
                             styleBuilder.withTextFont(it)
                         }
@@ -337,12 +351,15 @@ class ApEditorActivity :
     override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}
 
     override fun onEditTextChangeListener(rootView: View?, text: String?, colorCode: Int) {
-        val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this, text.toString(), colorCode)
-        textEditorDialogFragment.setOnTextEditorListener(object : ApEditorAddTextEditorFragment.TextEditorListener {
+        val textEditorDialogFragment =
+            ApEditorAddTextEditorFragment.show(this, text.toString(), colorCode)
+        textEditorDialogFragment.setOnTextEditorListener(object :
+            ApEditorAddTextEditorFragment.TextEditorListener {
             override fun onDone(inputText: String?, colorCode: Int) {
                 val styleBuilder = TextStyleBuilder()
                 styleBuilder.withTextColor(colorCode)
-                val apFont = ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                val apFont =
+                    ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
                 apFont?.let {
                     styleBuilder.withTextFont(it)
                 }
@@ -368,18 +385,41 @@ class ApEditorActivity :
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            android.R.id.home -> finish()
-            R.id.ap_preview_action_editor ->{
-                apEditorToolsFragment?.let { toolsFragment->
-                    if (toolsFragment.isVisible){
-                        supportFragmentManager.beginTransaction().hide(toolsFragment).commitAllowingStateLoss()
-                    }else{
-                        supportFragmentManager.beginTransaction().show(toolsFragment).commitAllowingStateLoss()
+        when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+            }
+            R.id.ap_preview_action_editor -> {
+                apEditorToolsFragment?.let { toolsFragment ->
+                    val fragmentTransaction = supportFragmentManager.beginTransaction()
+                    if (toolsFragment.isVisible) {
+                        fragmentTransaction.apply {
+                            setCustomAnimations(
+                                R.anim.ap_anim_transition_fade_in,
+                                R.anim.ap_anim_transition_fade_out
+                            )
+                            hide(toolsFragment)
+                        }.commitAllowingStateLoss()
+                    } else {
+                        fragmentTransaction.apply {
+                            setCustomAnimations(
+                                R.anim.ap_anim_transition_fade_in,
+                                R.anim.ap_anim_transition_fade_out
+                            )
+                            show(toolsFragment)
+                        }.commitAllowingStateLoss()
                     }
                 }
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun finish() {
+        super.finish()
+        overridePendingTransition(
+            R.anim.ap_anim_transition_fade_in,
+            R.anim.ap_anim_transition_fade_out
+        )
     }
 }
