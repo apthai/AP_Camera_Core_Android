@@ -14,7 +14,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ApEditorEmojiSelectorFragment : BottomSheetDialogFragment(),
+class ApEditorEmojiSelectorFragment :
+    BottomSheetDialogFragment(),
     EmojiListAdapter.OnEmojiItemEventListener {
 
     private val mBottomSheetBehaviorCallback: BottomSheetCallback = object : BottomSheetCallback() {

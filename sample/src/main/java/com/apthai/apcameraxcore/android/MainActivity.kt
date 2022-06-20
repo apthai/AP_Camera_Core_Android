@@ -12,14 +12,13 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
     override fun tag(): String = MainActivity::class.java.simpleName
 
-    companion object{
-
+    companion object {
     }
 
-    private var activityMainBinding : ActivityMainBinding?=null
+    private var activityMainBinding: ActivityMainBinding? = null
     private val binding get() = activityMainBinding
 
-    private var mainViewModel : MainViewModel?=null
+    private var mainViewModel: MainViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +28,7 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
         mainViewModel = ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
         mainViewModel?.setNavigator(this)
 
-        if (savedInstanceState==null){
+        if (savedInstanceState == null) {
             setUpView()
             initial()
         }
@@ -42,7 +41,7 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     }
 
     override fun onClick(view: View?) {
-        when(view?.id){
+        when (view?.id) {
             R.id.main_launch_camera_button -> {
                 launchCameraScreen()
             }

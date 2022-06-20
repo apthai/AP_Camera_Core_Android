@@ -13,9 +13,27 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.*
+import android.view.MenuItem
+import android.view.MotionEvent
+import android.view.OrientationEventListener
+import android.view.ScaleGestureDetector
+import android.view.Surface
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.WindowManager
 import android.widget.Toast
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfoUnavailableException
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.FocusMeteringAction
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageCapture
+import androidx.camera.core.ImageCaptureException
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.MeteringPointFactory
+import androidx.camera.core.Preview
+import androidx.camera.core.SurfaceOrientedMeteringPointFactory
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -31,7 +49,6 @@ import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContra
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import kotlin.collections.ArrayList
@@ -310,12 +327,12 @@ class ApCameraActivity :
             }
             R.id.ap_camera_view_gallery_button -> {
                 MaterialDialog(this).show {
-                    listItems(items = listOf("Grid view", "Pager view")){ dialog, index, _ ->
+                    listItems(items = listOf("Grid view", "Pager view")) { dialog, index, _ ->
                         dialog.dismiss()
-                        when (index){
-                            0-> launchPreviewPhotoActivity()
-                            1-> launchPagerPreviewPhotoActivity()
-                            else ->{}
+                        when (index) {
+                            0 -> launchPreviewPhotoActivity()
+                            1 -> launchPagerPreviewPhotoActivity()
+                            else -> {}
                         }
                     }
                 }

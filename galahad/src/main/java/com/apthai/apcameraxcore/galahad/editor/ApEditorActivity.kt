@@ -23,13 +23,21 @@ import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadEditorBinding
-import com.apthai.apcameraxcore.galahad.editor.fragment.*
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorAddTextEditorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorEmojiSelectorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorShapeSelectorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorStickerSelectorFragment
+import com.apthai.apcameraxcore.galahad.editor.fragment.ApEditorToolsFragment
 import com.apthai.apcameraxcore.galahad.editor.tools.FileSaveHelper
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import ja.burhanrashid52.photoeditor.*
+import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
+import ja.burhanrashid52.photoeditor.PhotoEditor
+import ja.burhanrashid52.photoeditor.SaveSettings
+import ja.burhanrashid52.photoeditor.TextStyleBuilder
+import ja.burhanrashid52.photoeditor.ViewType
 import ja.burhanrashid52.photoeditor.shape.ShapeBuilder
 import ja.burhanrashid52.photoeditor.shape.ShapeType
 
@@ -41,7 +49,7 @@ class ApEditorActivity :
     ApEditorEmojiSelectorFragment.OnEmojiSelectedListener,
     ApEditorStickerSelectorFragment.OnStickerSelectedListener,
     ApEditorToolsFragment.OnApEditorToolsEventListener,
-    OnPhotoEditorListener{
+    OnPhotoEditorListener {
 
     override fun tag(): String = ApEditorActivity::class.java.simpleName
 
@@ -155,7 +163,7 @@ class ApEditorActivity :
             R.id.ap_editor_tool_redo_image_button_view -> {
                 photoEditor?.redo()
             }
-            R.id.ap_editor_save_button ->{
+            R.id.ap_editor_save_button -> {
                 saveImage()
             }
         }
@@ -203,21 +211,21 @@ class ApEditorActivity :
             ToolType.TEXT -> {
                 val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
-                    ApEditorAddTextEditorFragment.TextEditorListener {
-                    override fun onDone(inputText: String?, colorCode: Int) {
-                        val styleBuilder = TextStyleBuilder()
-                        styleBuilder.withTextColor(colorCode)
-                        val apFont = ResourcesCompat.getFont(
-                            this@ApEditorActivity,
-                            R.font.ap_galahad_camera_bold
-                        )
-                        apFont?.let {
-                            styleBuilder.withTextFont(it)
+                        ApEditorAddTextEditorFragment.TextEditorListener {
+                        override fun onDone(inputText: String?, colorCode: Int) {
+                            val styleBuilder = TextStyleBuilder()
+                            styleBuilder.withTextColor(colorCode)
+                            val apFont = ResourcesCompat.getFont(
+                                this@ApEditorActivity,
+                                R.font.ap_galahad_camera_bold
+                            )
+                            apFont?.let {
+                                styleBuilder.withTextFont(it)
+                            }
+                            photoEditor?.addText(inputText, styleBuilder)
+                            supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
                         }
-                        photoEditor?.addText(inputText, styleBuilder)
-                        supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
-                    }
-                })
+                    })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
@@ -353,21 +361,21 @@ class ApEditorActivity :
         val textEditorDialogFragment =
             ApEditorAddTextEditorFragment.show(this, text.toString(), colorCode)
         textEditorDialogFragment.setOnTextEditorListener(object :
-            ApEditorAddTextEditorFragment.TextEditorListener {
-            override fun onDone(inputText: String?, colorCode: Int) {
-                val styleBuilder = TextStyleBuilder()
-                styleBuilder.withTextColor(colorCode)
-                val apFont =
-                    ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
-                apFont?.let {
-                    styleBuilder.withTextFont(it)
+                ApEditorAddTextEditorFragment.TextEditorListener {
+                override fun onDone(inputText: String?, colorCode: Int) {
+                    val styleBuilder = TextStyleBuilder()
+                    styleBuilder.withTextColor(colorCode)
+                    val apFont =
+                        ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                    apFont?.let {
+                        styleBuilder.withTextFont(it)
+                    }
+                    if (rootView != null) {
+                        photoEditor?.editText(rootView, inputText, styleBuilder)
+                    }
+                    supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
                 }
-                if (rootView != null) {
-                    photoEditor?.editText(rootView, inputText, styleBuilder)
-                }
-                supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
-            }
-        })
+            })
     }
 
     override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}

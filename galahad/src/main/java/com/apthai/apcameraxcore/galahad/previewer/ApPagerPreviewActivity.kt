@@ -19,7 +19,8 @@ import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.adapter.ApPagerPhotoViewAdapter
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 
-class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
+class ApPagerPreviewActivity :
+    ApCameraBaseActivity<ApPagerPreviewViewModel>(),
     ApPagerPreviewNavigator {
 
     override fun tag(): String = ApPagerPreviewActivity::class.java.simpleName
@@ -94,7 +95,6 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
         }
 
         fetchCurrentPhotos()
-
     }
 
     override fun initial() {}
@@ -154,7 +154,6 @@ class ApPagerPreviewActivity : ApCameraBaseActivity<ApPagerPreviewViewModel>(),
 
             apPagerPhotoViewAdapter?.updateData(apPhotoList = currentPhotoList)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

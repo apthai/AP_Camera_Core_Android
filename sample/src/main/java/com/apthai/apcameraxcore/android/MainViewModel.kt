@@ -8,7 +8,7 @@ import kotlin.coroutines.CoroutineContext
 
 class MainViewModel : ApCameraBaseViewModel<MainNavigator>() {
 
-    private val job : Job by lazy { SupervisorJob() }
+    private val job: Job by lazy { SupervisorJob() }
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Main
 

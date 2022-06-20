@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.RadioGroup
 import android.widget.SeekBar
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorShapesSelectDialogBinding
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
@@ -24,7 +23,7 @@ class ApEditorShapeSelectorFragment : BottomSheetDialogFragment(), SeekBar.OnSee
         fun onShapePicked(shapeType: ShapeType?)
     }
 
-    private var fragmentApEditorShapesSelectDialogBinding : FragmentApEditorShapesSelectDialogBinding?=null
+    private var fragmentApEditorShapesSelectDialogBinding: FragmentApEditorShapesSelectDialogBinding? = null
     private val binding get() = fragmentApEditorShapesSelectDialogBinding
 
     override fun onCreateView(

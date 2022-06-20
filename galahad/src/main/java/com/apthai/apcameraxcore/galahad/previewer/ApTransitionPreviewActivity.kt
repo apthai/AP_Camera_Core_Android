@@ -14,7 +14,8 @@ import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
 import com.bumptech.glide.Glide
 
-class ApTransitionPreviewActivity : ApCameraBaseActivity<ApTransitionPreviewViewModel>(),
+class ApTransitionPreviewActivity :
+    ApCameraBaseActivity<ApTransitionPreviewViewModel>(),
     ApTransitionPreviewNavigator {
 
     override fun tag(): String = ApTransitionPreviewActivity::class.java.simpleName

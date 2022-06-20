@@ -17,7 +17,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class ApEditorStickerSelectorFragment : BottomSheetDialogFragment(),
+class ApEditorStickerSelectorFragment :
+    BottomSheetDialogFragment(),
     StickerListAdapter.OnStickerItemEventListener {
 
     private val mBottomSheetBehaviorCallback: BottomSheetCallback = object : BottomSheetCallback() {

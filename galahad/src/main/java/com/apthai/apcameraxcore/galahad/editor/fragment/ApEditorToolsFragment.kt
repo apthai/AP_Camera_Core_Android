@@ -13,14 +13,16 @@ import com.apthai.apcameraxcore.galahad.editor.fragment.adapter.EditingToolsAdap
 import com.apthai.apcameraxcore.galahad.editor.tools.ToolType
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 
-class ApEditorToolsFragment : ApCameraBaseFragment<ApEditorToolsViewModel>(),
-    ApEditorToolsNavigator, EditingToolsAdapter.OnItemSelected {
+class ApEditorToolsFragment :
+    ApCameraBaseFragment<ApEditorToolsViewModel>(),
+    ApEditorToolsNavigator,
+    EditingToolsAdapter.OnItemSelected {
 
     override fun tag(): String = ApEditorToolsFragment::class.java.simpleName
 
-    companion object{
+    companion object {
 
-        fun getInstance(fromScreenTag : String) : ApEditorToolsFragment = ApEditorToolsFragment().apply {
+        fun getInstance(fromScreenTag: String): ApEditorToolsFragment = ApEditorToolsFragment().apply {
             arguments = Bundle().apply {
                 putString(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG, fromScreenTag)
             }
@@ -32,9 +34,9 @@ class ApEditorToolsFragment : ApCameraBaseFragment<ApEditorToolsViewModel>(),
 
     private var apEditorToolsViewModel: ApEditorToolsViewModel? = null
 
-    private var editingToolsAdapter : EditingToolsAdapter?=null
+    private var editingToolsAdapter: EditingToolsAdapter? = null
 
-    private var listener : ApEditorToolsFragment.OnApEditorToolsEventListener? = null
+    private var listener: ApEditorToolsFragment.OnApEditorToolsEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +54,7 @@ class ApEditorToolsFragment : ApCameraBaseFragment<ApEditorToolsViewModel>(),
         apEditorToolsViewModel = ViewModelProvider.NewInstanceFactory().create(ApEditorToolsViewModel::class.java)
         apEditorToolsViewModel?.setNavigator(this)
 
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             setUpView()
             initial()
         }
@@ -69,7 +71,7 @@ class ApEditorToolsFragment : ApCameraBaseFragment<ApEditorToolsViewModel>(),
 
     override fun initial() {}
 
-    fun setOnApEditorToolsEventListener(listener: OnApEditorToolsEventListener){
+    fun setOnApEditorToolsEventListener(listener: OnApEditorToolsEventListener) {
         this.listener = listener
     }
 
@@ -77,7 +79,7 @@ class ApEditorToolsFragment : ApCameraBaseFragment<ApEditorToolsViewModel>(),
         listener?.onSelectedToolType(toolType)
     }
 
-    interface OnApEditorToolsEventListener{
+    interface OnApEditorToolsEventListener {
 
         fun onSelectedToolType(toolType: ToolType?)
     }

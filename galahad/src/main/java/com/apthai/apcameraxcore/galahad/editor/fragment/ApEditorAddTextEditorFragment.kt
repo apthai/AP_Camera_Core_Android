@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorAddTextDialogBinding
 import com.apthai.apcameraxcore.galahad.editor.ColorPickerAdapter
@@ -30,7 +29,7 @@ class ApEditorAddTextEditorFragment : DialogFragment() {
     private var mColorCode = 0
     private var mTextEditorListener: TextEditorListener? = null
 
-    private var fragmentApEditorAddTextDialogBinding : FragmentApEditorAddTextDialogBinding?=null
+    private var fragmentApEditorAddTextDialogBinding: FragmentApEditorAddTextDialogBinding? = null
     private val binding get() = fragmentApEditorAddTextDialogBinding
 
     interface TextEditorListener {
@@ -40,10 +39,10 @@ class ApEditorAddTextEditorFragment : DialogFragment() {
     override fun onStart() {
         super.onStart()
         val dialog = dialog
-            val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
-            dialog?.window?.setLayout(width, height)
-            dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        val width = ViewGroup.LayoutParams.MATCH_PARENT
+        val height = ViewGroup.LayoutParams.MATCH_PARENT
+        dialog?.window?.setLayout(width, height)
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     override fun onCreateView(

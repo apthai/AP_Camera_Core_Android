@@ -9,17 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.R
 
-class ApPagerPhotoViewAdapter(private val context : Context) : RecyclerView.Adapter<ApPagerPhotoViewHolder>() {
+class ApPagerPhotoViewAdapter(private val context: Context) : RecyclerView.Adapter<ApPagerPhotoViewHolder>() {
 
-    private val inflater : LayoutInflater = LayoutInflater.from(context)
-    private var apPhotoList : MutableList<ApPhoto> = ArrayList()
-    private var listener : OnPhotoViewEditorEventListener?=null
+    private val inflater: LayoutInflater = LayoutInflater.from(context)
+    private var apPhotoList: MutableList<ApPhoto> = ArrayList()
+    private var listener: OnPhotoViewEditorEventListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApPagerPhotoViewHolder {
         val view = inflater.inflate(R.layout.item_ap_previewer_pager_view, parent, false)
         return ApPagerPhotoViewHolder(context, view).listen { position, _ ->
             val currentPhoto = apPhotoList[position]
-            //TODO with itemClick
+            // TODO with itemClick
         }
     }
 
@@ -40,21 +40,21 @@ class ApPagerPhotoViewAdapter(private val context : Context) : RecyclerView.Adap
     override fun getItemCount(): Int = apPhotoList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(apPhotoList : MutableList<ApPhoto>){
+    fun updateData(apPhotoList: MutableList<ApPhoto>) {
         this.apPhotoList = apPhotoList
         try {
             notifyDataSetChanged()
-        }catch (exception : Exception){
+        } catch (exception: Exception) {
             exception.printStackTrace()
         }
     }
 
-    fun setOnPhotoViewEditorEventListener(listener : OnPhotoViewEditorEventListener){
+    fun setOnPhotoViewEditorEventListener(listener: OnPhotoViewEditorEventListener) {
         this.listener = listener
     }
 
     interface OnPhotoViewEditorEventListener {
 
-        fun onPhotoViewEditorItemClick(apPhoto : ApPhoto, view : View)
+        fun onPhotoViewEditorItemClick(apPhoto: ApPhoto, view: View)
     }
 }

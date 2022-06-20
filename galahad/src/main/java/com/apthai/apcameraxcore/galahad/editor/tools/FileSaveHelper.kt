@@ -2,13 +2,11 @@ package com.apthai.apcameraxcore.galahad.editor.tools
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.ContentUris
 import android.content.ContentValues
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.ChecksSdkIntAtLeast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleObserver
@@ -87,7 +85,7 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
                     )
                     val indexColumn = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                     cursor?.moveToFirst()
-                    indexColumn?.let { cIndex->
+                    indexColumn?.let { cIndex ->
                         val filePath = cursor?.getString(cIndex)
                         updateResult(true, filePath, null, editedImageUri, newImageDetails)
                     } ?: kotlin.run {

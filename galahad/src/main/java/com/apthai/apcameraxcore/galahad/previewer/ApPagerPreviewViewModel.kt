@@ -8,7 +8,7 @@ import kotlin.coroutines.CoroutineContext
 
 class ApPagerPreviewViewModel : ApCameraBaseViewModel<ApPagerPreviewNavigator>() {
 
-    private val job : Job by lazy { SupervisorJob() }
+    private val job: Job by lazy { SupervisorJob() }
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main + job
 

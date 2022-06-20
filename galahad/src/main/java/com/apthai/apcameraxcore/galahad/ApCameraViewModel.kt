@@ -3,7 +3,11 @@ package com.apthai.apcameraxcore.galahad
 import android.graphics.Bitmap
 import com.apthai.apcameraxcore.common.ApCameraBaseViewModel
 import com.apthai.apcameraxcore.common.utils.ImageUtil
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 

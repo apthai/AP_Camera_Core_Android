@@ -38,7 +38,7 @@ class StickerListAdapter(
         return this
     }
 
-    fun setOnStickerItemEventListener(listener: OnStickerItemEventListener){
+    fun setOnStickerItemEventListener(listener: OnStickerItemEventListener) {
         this.listener = listener
     }
 
