@@ -130,7 +130,6 @@ class ApCameraActivity :
     }
 
     override fun setUpView() {
-
         apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
             if (apPhotos.isEmpty()) {
                 return@observe
@@ -151,7 +150,9 @@ class ApCameraActivity :
             startCamera()
         } else {
             ActivityCompat.requestPermissions(
-                this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS
+                this,
+                REQUIRED_PERMISSIONS,
+                REQUEST_CODE_PERMISSIONS
             )
         }
 
@@ -224,7 +225,6 @@ class ApCameraActivity :
                     super.onCaptureSuccess(imageProxy)
 
                     imageProxy.image?.let {
-
                         val imageBitmap = ImageUtil.convertImagePoxyToBitmap(
                             it,
                             cameraLensFacing == CameraSelector.LENS_FACING_FRONT
@@ -418,7 +418,6 @@ class ApCameraActivity :
 
     @SuppressLint("ClickableViewAccessibility")
     override fun initialAutoFocusAndPinchToZoom() {
-
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
             override fun onScale(detector: ScaleGestureDetector?): Boolean {
                 val currentZoomRatio =

@@ -99,7 +99,7 @@ class ApEditorStickerSelectorFragment :
             "https://cdn-icons-png.flaticon.com/256/4392/4392467.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392469.png",
             "https://cdn-icons-png.flaticon.com/256/4392/4392471.png",
-            "https://cdn-icons-png.flaticon.com/256/4392/4392522.png",
+            "https://cdn-icons-png.flaticon.com/256/4392/4392522.png"
         )
     }
 }

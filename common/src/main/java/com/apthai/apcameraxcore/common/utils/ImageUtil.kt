@@ -52,8 +52,9 @@ object ImageUtil {
         if (isExternalStorageWritable()) {
             val rootDir = "$absolutePath/$BASE_IMAGE_FOLDER"
             val myFileDir = File(rootDir)
-            if (!myFileDir.exists())
+            if (!myFileDir.exists()) {
                 myFileDir.mkdirs()
+            }
             val myFile = File(myFileDir, fileName)
             if (myFile.exists()) myFile.delete()
             try {

@@ -55,7 +55,6 @@ class ApPreviewActivity :
     }
 
     override fun setUpView() {
-
         setSupportActionBar(binding?.apPreviewToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 

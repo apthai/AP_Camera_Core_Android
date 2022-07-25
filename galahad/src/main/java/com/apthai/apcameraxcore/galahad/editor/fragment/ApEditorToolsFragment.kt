@@ -61,7 +61,6 @@ class ApEditorToolsFragment :
     }
 
     override fun setUpView() {
-
         editingToolsAdapter = EditingToolsAdapter(requireActivity(), this)
 
         val llmTools = LinearLayoutManager(requireActivity(), LinearLayoutManager.VERTICAL, false)
