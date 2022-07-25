@@ -2,6 +2,7 @@ package com.apthai.apcameraxcore.galahad.previewer
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -39,6 +40,12 @@ class ApTransitionPreviewActivity :
 
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+            editedPhotoUri?.let { photoUriStr ->
+                val uri = Uri.parse(photoUriStr)
+                binding?.apPreviewTransitionView?.let { photoPreview ->
+                    Glide.with(this).load(uri).into(photoPreview)
+                }
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {

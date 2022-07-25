@@ -44,6 +44,9 @@ class ApPagerPreviewActivity :
 
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+            editedPhotoUri?.let { photoUriStr ->
+                fetchCurrentPhotos()
+            }
         }
 
     private val viewPagerListener: ViewPager2.OnPageChangeCallback =

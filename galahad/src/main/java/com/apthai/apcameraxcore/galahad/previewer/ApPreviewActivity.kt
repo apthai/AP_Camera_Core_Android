@@ -170,4 +170,11 @@ class ApPreviewActivity :
 
         viewModel?.setSharedCurrentPhotos(currentPhotoList)
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding?.apPreviewRecyclerView?.let {
+            fetchCurrentPhotos()
+        }
+    }
 }
