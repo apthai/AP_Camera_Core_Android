@@ -152,7 +152,7 @@ class ApPagerPreviewActivity :
                 )
             }
 
-            apPagerPhotoViewAdapter?.updateData(apPhotoList = currentPhotoList)
+            apPagerPhotoViewAdapter?.updateData(apPhotoList = currentPhotoList.asReversed())
         }
     }
 

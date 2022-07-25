@@ -70,7 +70,7 @@ class ApPreviewActivity :
         apPhotoViewListAdapter?.setOnPhotoViewItemEventListener(this)
 
         viewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
-            apPhotoViewListAdapter?.updateData(apPhotos)
+            apPhotoViewListAdapter?.updateData(apPhotos.asReversed())
         }
 
         fetchCurrentPhotos()

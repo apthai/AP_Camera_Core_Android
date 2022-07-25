@@ -135,7 +135,8 @@ class ApCameraActivity :
             if (apPhotos.isEmpty()) {
                 return@observe
             }
-            val firstPhoto: ApPhoto = apPhotos[0]
+            val reversePhotos = apPhotos.asReversed()
+            val firstPhoto: ApPhoto = reversePhotos[0]
             binding?.apCameraViewGalleryButton?.let { imageView ->
                 Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
             }
@@ -177,7 +178,6 @@ class ApCameraActivity :
         val cameraProvider = cameraProcessFuture?.get()
         cameraProvider?.let { provider ->
             try {
-
                 val cameraPreview = initializePreviewSurface()
                 currentCameraImageAnalysis = initializeImageAnalysis()
                 currentCameraImageCapture = initializeImageCapture()
