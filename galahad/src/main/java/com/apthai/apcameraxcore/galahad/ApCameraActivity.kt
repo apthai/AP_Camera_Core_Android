@@ -247,8 +247,6 @@ class ApCameraActivity :
     }
 
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
-        val msg = "Photo capture succeeded: ${outputFileResults.savedUri}"
-        Toast.makeText(this@ApCameraActivity, msg, Toast.LENGTH_SHORT).show()
         outputFileResults.savedUri?.let { photoUri ->
             currentPhotoUri = photoUri
             binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
