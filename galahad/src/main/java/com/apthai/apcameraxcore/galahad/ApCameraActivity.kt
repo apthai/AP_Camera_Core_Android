@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.OrientationEventListener
@@ -51,6 +52,7 @@ import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 class ApCameraActivity :
@@ -379,7 +381,9 @@ class ApCameraActivity :
             preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
         }
 
-    override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder().build()
+    override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder()
+        .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+        .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
 
     override fun initializeImageCapture(): ImageCapture = ImageCapture.Builder()
         .setTargetAspectRatio(cameraAspectRatio)
@@ -429,7 +433,6 @@ class ApCameraActivity :
             }
         }
         val scaleGestureDetector = ScaleGestureDetector(this, listener)
-
         binding?.apCameraViewPreview?.let { previewView ->
             previewView.afterMeasured {
                 previewView.setOnTouchListener { _, motionEvent ->
@@ -443,13 +446,21 @@ class ApCameraActivity :
                                 previewView.width.toFloat(),
                                 previewView.height.toFloat()
                             )
-                            val autoFocusPoint = factory.createPoint(motionEvent.x, motionEvent.y)
+                            val afPointWidth = 1.0f / 6.0f
+                            val aePointWidth = afPointWidth * 1.5f
+                            val manualFocusPoint =
+                                factory.createPoint(motionEvent.x, motionEvent.y, afPointWidth)
+                            val manualExposePoint =
+                                factory.createPoint(motionEvent.x, motionEvent.y, aePointWidth)
                             try {
                                 animateAutofocusEvent(motionEvent.x, motionEvent.y)
                                 currentCamera?.cameraControl?.startFocusAndMetering(
                                     FocusMeteringAction.Builder(
-                                        autoFocusPoint,
+                                        manualFocusPoint,
                                         FocusMeteringAction.FLAG_AF
+                                    ).addPoint(
+                                        manualExposePoint,
+                                        FocusMeteringAction.FLAG_AE
                                     ).apply {
                                         disableAutoCancel()
                                     }.build()
@@ -471,14 +482,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (measuredWidth > 0 && measuredHeight > 0) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            block()
-                        }
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
                     }
-                })
+                }
+            })
         }
     }
 
