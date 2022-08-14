@@ -6,6 +6,6 @@ interface ApTransitionPreviewNavigator {
 
     fun getSelectedApPhotoPayload(): ApPhoto?
 
-    fun getPreviewImageUriStrPayload() : String?
-    fun getFromScreenTagPayload() : String?
+    fun getPreviewImageUriStrPayload(): String?
+    fun getFromScreenTagPayload(): String?
 }

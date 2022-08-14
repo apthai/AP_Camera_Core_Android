@@ -49,7 +49,6 @@ import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApJustPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
-import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
@@ -533,14 +532,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    if (measuredWidth > 0 && measuredHeight > 0) {
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        block()
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        if (measuredWidth > 0 && measuredHeight > 0) {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            block()
+                        }
                     }
-                }
-            })
+                })
         }
     }
 

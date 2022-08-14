@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContract
-import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.previewer.ApTransitionPreviewActivity
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 

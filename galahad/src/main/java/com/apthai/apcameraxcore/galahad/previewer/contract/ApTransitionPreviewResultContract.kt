@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContract
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.previewer.ApTransitionPreviewActivity
 
-class ApTransitionPreviewResultContract(private val fromScreenTag : String) : ActivityResultContract<ApPhoto, String?>() {
+class ApTransitionPreviewResultContract(private val fromScreenTag: String) : ActivityResultContract<ApPhoto, String?>() {
 
     companion object {
         const val AP_TRANSITION_PREVIEW_PAYLOAD = "ap_transition_preview_payload"

@@ -22,7 +22,8 @@ import com.bumptech.glide.Glide
 
 class ApTransitionPreviewActivity :
     ApCameraBaseActivity<ApTransitionPreviewViewModel>(),
-    ApTransitionPreviewNavigator, View.OnClickListener {
+    ApTransitionPreviewNavigator,
+    View.OnClickListener {
 
     override fun tag(): String = ApTransitionPreviewActivity::class.java.simpleName
 
@@ -111,7 +112,6 @@ class ApTransitionPreviewActivity :
     }
 
     override fun initial() {
-
         when (getFromScreenTagPayload()) {
             ApCameraActivity::class.java.simpleName -> {
                 binding?.apPreviewTransitionConsoleCancelButton?.setOnClickListener(this)
