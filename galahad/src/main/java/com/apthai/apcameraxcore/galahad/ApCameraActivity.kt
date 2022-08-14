@@ -3,9 +3,11 @@ package com.apthai.apcameraxcore.galahad
 import android.Manifest
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaActionSound
@@ -44,8 +46,11 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApJustPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApTransitionPreviewResultContract
+import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
 import com.google.common.util.concurrent.ListenableFuture
@@ -67,6 +72,12 @@ class ApCameraActivity :
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ).toTypedArray()
+
+        fun getInstance(context: Context, payload: Bundle, fromScreenTag: String): Intent =
+            Intent(context, ApCameraActivity::class.java).apply {
+                putExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST, payload)
+                putExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG, fromScreenTag)
+            }
     }
 
     override fun tag(): String = ApCameraActivity::class.java.simpleName
@@ -97,6 +108,25 @@ class ApCameraActivity :
 
     private val pagerPreviewActivityContract =
         registerForActivityResult(ApPagerPreviewResultContract()) {}
+
+    private val previewTransitionContract =
+        registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
+            previewUri?.let { uri ->
+                if (uri.isEmpty()) return@let
+                val fallbackUri = Uri.parse(uri)
+                currentPhotoUri = fallbackUri
+                currentPhotoUri?.let { latestUri ->
+                    val fallbackIntent = Intent().apply {
+                        putExtra(
+                            ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                            latestUri.toString()
+                        )
+                    }
+                    setResult(Activity.RESULT_OK, fallbackIntent)
+                }
+                finish()
+            }
+        }
 
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
@@ -130,18 +160,29 @@ class ApCameraActivity :
     }
 
     override fun setUpView() {
-        apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
-            if (apPhotos.isEmpty()) {
-                return@observe
-            }
-            val reversePhotos = apPhotos.asReversed()
-            val firstPhoto: ApPhoto = reversePhotos[0]
-            binding?.apCameraViewGalleryButton?.let { imageView ->
-                Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
-            }
-        }
+        /*Initialize payload*/
+        cameraLensFacing = getCameraFacingTypePayload()
+        cameraFlashMode = getCameraFlashTypePayload()
+        cameraAspectRatio = getCameraAspectRatioTypePayload()
+        val isOnlyCamera = getIsOnlyCallCameraPayload()
 
-        fetchCurrentPhotoList()
+        if (!isOnlyCamera) {
+            binding?.apCameraViewGalleryButton?.visibility = View.VISIBLE
+            apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
+                if (apPhotos.isEmpty()) {
+                    return@observe
+                }
+                val reversePhotos = apPhotos.asReversed()
+                val firstPhoto: ApPhoto = reversePhotos[0]
+                binding?.apCameraViewGalleryButton?.let { imageView ->
+                    Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
+                }
+            }
+
+            fetchCurrentPhotoList()
+        } else {
+            binding?.apCameraViewGalleryButton?.visibility = View.GONE
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -206,7 +247,7 @@ class ApCameraActivity :
 
     override fun takePhoto() {
         val imageCapture = currentCameraImageCapture ?: return
-        val fileName = ApCameraUtil.getFileName()
+        val fileName = getCameraFileNamePayload()
         val contentValues = getContentValue(fileName)
         val outputOptions = getOutputFileOption(contentValues)
         playShutterSound()
@@ -249,8 +290,13 @@ class ApCameraActivity :
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
         outputFileResults.savedUri?.let { photoUri ->
             currentPhotoUri = photoUri
-            binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
-                Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+            val isOnlyCamera = getIsOnlyCallCameraPayload()
+            if (isOnlyCamera) {
+                previewTransitionContract.launch(currentPhotoUri.toString())
+            } else {
+                binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                    Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+                }
             }
         }
     }
@@ -340,6 +386,15 @@ class ApCameraActivity :
 
     override fun onDestroy() {
         super.onDestroy()
+        currentPhotoUri?.let { latestUri ->
+            val fallbackIntent = Intent().apply {
+                putExtra(
+                    ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                    latestUri.toString()
+                )
+            }
+            setResult(Activity.RESULT_OK, fallbackIntent)
+        }
         cameraExecutor.shutdown()
     }
 
@@ -391,7 +446,7 @@ class ApCameraActivity :
         put(MediaStore.MediaColumns.DISPLAY_NAME, outputFileName)
         put(MediaStore.MediaColumns.MIME_TYPE, ApCameraUtil.AP_CAMERA_DEFAULT_MIME_TYPE)
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            put(MediaStore.Images.Media.RELATIVE_PATH, ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER)
+            put(MediaStore.Images.Media.RELATIVE_PATH, getCameraDirectoryPathPayload())
         }
     }
 
@@ -478,14 +533,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (measuredWidth > 0 && measuredHeight > 0) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            block()
-                        }
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -612,4 +667,39 @@ class ApCameraActivity :
             apCameraViewModel?.setSharedCurrentPhotos(currentPhotoList)
         }
     }
+
+    override fun getCameraFacingTypePayload(): Int =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FACING_TYPE, cameraLensFacing)
+            ?: cameraLensFacing
+
+    override fun getCameraFlashTypePayload(): Int =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FLASH_TYPE, cameraFlashMode)
+            ?: cameraFlashMode
+
+    override fun getCameraAspectRatioTypePayload(): Int =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getInt(
+                ApCameraConst.ApCameraPayload.AP_CAMERA_ASPECT_RATIO_TYPE,
+                cameraAspectRatio
+            ) ?: cameraAspectRatio
+
+    override fun getCameraDirectoryPathPayload(): String =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_DIRECTORY_ROOT_PATH)
+            ?: ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER
+
+    override fun getCameraFileNamePayload(): String =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_FILE_NAME)
+            ?: ApCameraUtil.getFileName()
+
+    override fun getIsOnlyCallCameraPayload(): Boolean =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getBoolean(ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA, false)
+            ?: false
+
+    override fun getFromScreenTagName(): String =
+        intent.getStringExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG) ?: ""
 }

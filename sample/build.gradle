@@ -45,6 +45,7 @@ dependencies {
     testImplementation "junit:junit:$test_junit_version"
     androidTestImplementation "androidx.test.ext:junit:$test_ext_junit_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$test_espresso_core_version"
+    implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
     ktlint("com.pinterest:ktlint:$ktlint_version") {
         attributes {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))

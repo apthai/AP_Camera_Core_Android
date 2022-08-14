@@ -14,7 +14,7 @@
             android:id="@+id/ap_transition_preview_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Theme.GalahadCameraCore.Toolbar"/>
+            android:theme="@style/Theme.GalahadCameraCore.Toolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
     <FrameLayout
@@ -28,5 +28,37 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:src="@drawable/background_ap_placeholder" />
+
+        <LinearLayout
+            android:id="@+id/ap_preview_transition_console_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/ap_camera_view_item_padding_huge"
+            android:layout_gravity="bottom"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ap_preview_transition_console_cancel_button"
+                style="@style/ApCameraAppBaseTextAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/ap_camera_view_item_padding"
+                android:text="@android:string/cancel"
+                android:textColor="@color/ap_camera_text_white_color" />
+
+            <TextView
+                android:id="@+id/ap_preview_transition_console_ok_button"
+                style="@style/ApCameraAppBaseTextAppearanceSmall"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/ap_camera_view_item_padding"
+                android:text="@android:string/ok"
+                android:textColor="@color/ap_camera_text_white_color" />
+        </LinearLayout>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

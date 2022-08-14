@@ -38,4 +38,13 @@ interface ApCameraNavigator {
     fun launchPagerPreviewPhotoActivity()
 
     fun fetchCurrentPhotoList()
+
+    /*Payload*/
+    fun getCameraFacingTypePayload() : Int
+    fun getCameraFlashTypePayload() : Int
+    fun getCameraAspectRatioTypePayload() : Int
+    fun getCameraDirectoryPathPayload() : String
+    fun getCameraFileNamePayload() : String
+    fun getIsOnlyCallCameraPayload() : Boolean
+    fun getFromScreenTagName() : String
 }
