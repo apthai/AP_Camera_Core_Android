@@ -10,6 +10,8 @@ android {
     defaultConfig {
         minSdk 25
         targetSdk 32
+        versionCode 22081710
+        versionName "1.0.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -60,12 +62,12 @@ dependencies {
     }
     implementation 'androidx.activity:activity-ktx:1.5.0'
     implementation 'androidx.fragment:fragment-ktx:1.5.0'
-    implementation 'com.github.bumptech.glide:glide:4.13.0'
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.burhanrashid52:photoeditor:2.0.0'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.0'
 }
 
 task ktlint(type: JavaExec, group: "verification") {

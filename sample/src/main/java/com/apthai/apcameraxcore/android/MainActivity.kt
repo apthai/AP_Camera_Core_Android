@@ -12,6 +12,7 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.ApCameraActivity
 import com.apthai.apcameraxcore.galahad.contract.ApCameraContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
+import com.bumptech.glide.Glide
 
 class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.OnClickListener {
 
@@ -30,6 +31,9 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
             if (fallbackImageUriStr.isNullOrEmpty()) return@registerForActivityResult
             Toast.makeText(this, "Retrieve PhotoUri Raw $fallbackImageUriStr", Toast.LENGTH_SHORT)
                 .show()
+            binding?.mainImageView?.let { imageView ->
+                Glide.with(this).load(fallbackImageUriStr).into(imageView)
+            }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +71,10 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                             0 -> {
                                 dialog.dismiss()
                                 val cameraBundle = Bundle().apply {
-                                    putBoolean(ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA, true)
+                                    putBoolean(
+                                        ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA,
+                                        true
+                                    )
                                 }
                                 apCameraContract.launch(cameraBundle)
                             }
