@@ -47,4 +47,8 @@ interface ApCameraNavigator {
     fun getCameraFileNamePayload(): String
     fun getIsOnlyCallCameraPayload(): Boolean
     fun getFromScreenTagName(): String
+    fun getCameraMode(): Int
+
+    fun setUpCameraMode()
+    fun setUpCameraViewGalleryForView()
 }

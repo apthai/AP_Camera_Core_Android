@@ -63,23 +63,43 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                     listItems(
                         items = arrayListOf(
                             "Just Capture and Preview",
-                            "Preview with editor"
+                            "Preview with editor",
+                            "Multiple Shot and Preview"
                         )
                     ) { dialog, index, _ ->
                         when (index) {
                             0 -> {
                                 dialog.dismiss()
                                 val cameraBundle = Bundle().apply {
-                                    putBoolean(
-                                        ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA,
-                                        true
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
                                     )
+
+                                }
+                                apCameraContract.launch(cameraBundle)
+                            }
+                            1 -> {
+                                dialog.dismiss()
+                                val cameraBundle = Bundle().apply {
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE
+                                    )
+
                                 }
                                 apCameraContract.launch(cameraBundle)
                             }
                             else -> {
                                 dialog.dismiss()
-                                launchCameraScreen()
+                                val cameraBundle = Bundle().apply {
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE
+                                    )
+
+                                }
+                                apCameraContract.launch(cameraBundle)
                             }
                         }
                     }
