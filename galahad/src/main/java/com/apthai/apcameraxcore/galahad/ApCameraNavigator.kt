@@ -51,4 +51,5 @@ interface ApCameraNavigator {
 
     fun setUpCameraMode()
     fun setUpCameraViewGalleryForView()
+    fun onClickViewGalleryButton()
 }

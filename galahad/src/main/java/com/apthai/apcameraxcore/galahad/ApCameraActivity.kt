@@ -97,6 +97,7 @@ class ApCameraActivity :
     private var currentCamera: Camera? = null
     private var rootDir: String = ""
     private var currentPhotoUri: Uri? = null
+    private var currentPhotoMultipleShot: MutableList<Uri> = mutableListOf()
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -318,7 +319,9 @@ class ApCameraActivity :
                     previewTransitionContract.launch(currentPhotoUri.toString())
                 }
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
-                    previewTransitionContract.launch(currentPhotoUri.toString())
+                    binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                        Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+                    }
                 }
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                     binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
@@ -397,21 +400,29 @@ class ApCameraActivity :
     @SuppressLint("CheckResult")
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.ap_camera_view_capture_button -> {
-                takePhoto()
+            R.id.ap_camera_view_capture_button -> this.takePhoto()
+            R.id.ap_camera_view_switch_button -> this.flipCameraFacing()
+            R.id.ap_camera_view_flash_button -> this.toggleCameraFlashMode()
+            R.id.ap_camera_view_aspect_ratio_button -> this.toggleAspectRatio()
+            R.id.ap_camera_view_gallery_button -> this.onClickViewGalleryButton()
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    override fun onClickViewGalleryButton() {
+        when (this.getCameraMode()) {
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
+
             }
-            R.id.ap_camera_view_switch_button -> {
-                flipCameraFacing()
-            }
-            R.id.ap_camera_view_flash_button -> {
-                toggleCameraFlashMode()
-            }
-            R.id.ap_camera_view_aspect_ratio_button -> {
-                toggleAspectRatio()
-            }
-            R.id.ap_camera_view_gallery_button -> {
+            else -> {
                 MaterialDialog(this).show {
-                    listItems(items = listOf("Grid view", "Pager view")) { dialog, index, _ ->
+                    listItems(
+                        items = listOf(
+                            "Grid view",
+                            "Pager view",
+                            "Other"
+                        )
+                    ) { dialog, index, _ ->
                         dialog.dismiss()
                         when (index) {
                             0 -> launchPreviewPhotoActivity()
@@ -422,6 +433,7 @@ class ApCameraActivity :
                 }
             }
         }
+
     }
 
     override fun onDestroy() {

@@ -44,7 +44,7 @@ class ApPagerPreviewActivity :
 
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
-            editedPhotoUri?.let { photoUriStr ->
+            editedPhotoUri?.let { _ ->
                 fetchCurrentPhotos()
             }
         }
