@@ -473,10 +473,10 @@ class ApCameraActivity :
     @SuppressLint("ClickableViewAccessibility")
     override fun initialAutoFocusAndPinchToZoom() {
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector?): Boolean {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val currentZoomRatio =
                     currentCamera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0.0f
-                val delta = detector?.scaleFactor ?: 0.0f
+                val delta = detector.scaleFactor
                 val zoomRatio = currentZoomRatio * delta
                 currentCamera?.cameraControl?.setZoomRatio(zoomRatio)
                 return true
@@ -555,15 +555,18 @@ class ApCameraActivity :
             duration = 300
             alpha(0F)
             setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(p0: Animator?) {}
+                override fun onAnimationStart(animation: Animator) {
+                }
 
-                override fun onAnimationEnd(p0: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     binding?.apCameraFocusCircleImageView?.visibility = View.INVISIBLE
                 }
 
-                override fun onAnimationCancel(p0: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {
+                }
 
-                override fun onAnimationRepeat(p0: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {
+                }
             })
         }
     }

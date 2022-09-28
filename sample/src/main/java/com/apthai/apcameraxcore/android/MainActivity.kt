@@ -1,5 +1,6 @@
 package com.apthai.apcameraxcore.android
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -17,9 +18,6 @@ import com.bumptech.glide.Glide
 class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.OnClickListener {
 
     override fun tag(): String = MainActivity::class.java.simpleName
-
-    companion object {
-    }
 
     private var activityMainBinding: ActivityMainBinding? = null
     private val binding get() = activityMainBinding
@@ -56,6 +54,7 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
         binding?.mainLaunchCameraButton?.setOnClickListener(this)
     }
 
+    @SuppressLint("CheckResult")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.main_launch_camera_button -> {
