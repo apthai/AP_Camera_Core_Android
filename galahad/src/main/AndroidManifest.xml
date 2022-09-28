@@ -5,7 +5,7 @@
     <application
         android:name=".editor.PhotoApp"
         android:supportsRtl="true"
-        tools:targetApi="n">
+        tools:replace="android:name">
         <activity
             android:name=".ApCameraActivity"
             android:launchMode="singleTask"
@@ -38,7 +38,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.apthai.apcameraxcore.galahad.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
