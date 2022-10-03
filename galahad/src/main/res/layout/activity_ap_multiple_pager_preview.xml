@@ -59,7 +59,7 @@
             android:background="@drawable/ic_baseline_circle_24"
             android:gravity="center"
             android:paddingTop="1.8dp"
-            android:text="5"
+            android:text="@string/text_default_zero"
             android:textAlignment="gravity"
             app:layout_constraintEnd_toEndOf="@+id/act_ap_multiple_pager_preview_btn_confirm"
             app:layout_constraintTop_toTopOf="@+id/act_ap_multiple_pager_preview_btn_confirm" />

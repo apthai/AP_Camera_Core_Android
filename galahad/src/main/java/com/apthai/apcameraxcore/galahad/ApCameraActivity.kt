@@ -15,6 +15,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.OrientationEventListener
@@ -47,6 +48,7 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApJustPreviewResultContract
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApMultiplePagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
@@ -97,7 +99,7 @@ class ApCameraActivity :
     private var currentCamera: Camera? = null
     private var rootDir: String = ""
     private var currentPhotoUri: Uri? = null
-    private var currentPhotoMultipleShot: MutableList<Uri> = mutableListOf()
+    private var currentPhotoMultipleShot: ArrayList<String> = arrayListOf()
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -108,6 +110,13 @@ class ApCameraActivity :
 
     private val pagerPreviewActivityContract =
         registerForActivityResult(ApPagerPreviewResultContract()) {}
+
+    private val apMultiplePagerPreviewActivityContract =
+        registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
+            Log.e(tag(), "apMultiplePagerPreviewActivityContract $it")
+            Log.e(tag(), "apMultiplePagerPreviewActivityContract size ${it.size}")
+        }
+
 
     private val previewTransitionContract =
         registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
@@ -319,9 +328,17 @@ class ApCameraActivity :
                     previewTransitionContract.launch(currentPhotoUri.toString())
                 }
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
-                    binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
-                        Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+                    currentPhotoMultipleShot.add(photoUri.toString())
+                    if (currentPhotoMultipleShot.isNotEmpty()) {
+                        binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                            galleryButtonView.visibility = View.VISIBLE
+                            Glide.with(this).load(currentPhotoUri).circleCrop()
+                                .into(galleryButtonView)
+                        }
+                    } else {
+                        binding?.apCameraViewGalleryButton?.visibility = View.GONE
                     }
+
                 }
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                     binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
@@ -412,7 +429,9 @@ class ApCameraActivity :
     override fun onClickViewGalleryButton() {
         when (this.getCameraMode()) {
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
-
+                if (this.currentPhotoMultipleShot.isNotEmpty()) {
+                    this.launchApMultiplePagerPreviewActivity(this.currentPhotoMultipleShot)
+                }
             }
             else -> {
                 MaterialDialog(this).show {
@@ -667,6 +686,10 @@ class ApCameraActivity :
 
     override fun launchPagerPreviewPhotoActivity() {
         pagerPreviewActivityContract.launch(tag())
+    }
+
+    override fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>) {
+        this.apMultiplePagerPreviewActivityContract.launch(imageUriList)
     }
 
     override fun fetchCurrentPhotoList() {

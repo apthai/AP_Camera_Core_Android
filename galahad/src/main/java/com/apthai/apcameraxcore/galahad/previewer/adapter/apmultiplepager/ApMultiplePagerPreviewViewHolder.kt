@@ -1,5 +1,6 @@
 package com.apthai.apcameraxcore.galahad.previewer.adapter.apmultiplepager
 
+import android.net.Uri
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.common.model.ApImageUriAdapter
@@ -12,7 +13,7 @@ class ApMultiplePagerPreviewViewHolder(private val mItemView: View) :
 
     fun initView(imageUri: ApImageUriAdapter) {
         itemViewBinding.itemApCameraPagerPreviewerView.let {
-            Glide.with(this.mItemView.context).load(imageUri).into(it)
+            Glide.with(this.mItemView.context).load(Uri.parse(imageUri.uriStr)).into(it)
         }
     }
 }

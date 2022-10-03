@@ -451,4 +451,6 @@
 
     <!--Preview screen sector-->
     <string name="ap_galahad_preview_item_photo_view_description">Photo view</string>
+
+    <string name="text_default_zero">0</string>
 </resources>
