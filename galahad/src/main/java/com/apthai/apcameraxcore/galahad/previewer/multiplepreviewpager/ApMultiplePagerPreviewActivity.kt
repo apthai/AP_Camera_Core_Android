@@ -3,6 +3,7 @@ package com.apthai.apcameraxcore.galahad.previewer.multiplepreviewpager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +12,7 @@ import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApImageUriAdapter
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityApMultiplePagerPreviewBinding
+import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.adapter.apmultiplepager.ApMultiplePagerPreviewAdapter
 
 class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPreviewViewModel>(),
@@ -32,6 +34,7 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
     private val _imageUriAdapterList: ArrayList<ApImageUriAdapter> = arrayListOf()
     private val _imageUriList: ArrayList<String> = arrayListOf()
     private var _currentPositionViewPagerSelected: Int = 0
+    private var _currentSelectedPhotoUri: String = ""
 
     override fun tag(): String = ApMultiplePagerPreviewActivity::class.java.simpleName
 
@@ -59,13 +62,9 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
                 finish()
             }
             R.id.ap_preview_action_editor -> {
-//                currentSelectedPhotoUri?.let { photoUri ->
-//                    val photoUriRaw = photoUri.toString()
-//                    apEditorActivityContract.launch(photoUriRaw)
-//                } ?: kotlin.run {
-//                    Toast.makeText(this, "Current selected Photo unavailable", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
+                if (this._currentSelectedPhotoUri.isNotEmpty()) {
+                    this.apEditorActivityContract.launch(this._currentSelectedPhotoUri)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -106,6 +105,11 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 _currentPositionViewPagerSelected = position
+                apMultiplePagerPreviewAdapter?.let { adt ->
+                    adt.getItemByPosition(position)?.let { imageAdapter ->
+                        _currentSelectedPhotoUri = imageAdapter.uriStr
+                    }
+                }
                 checkUpdateCheckedItemCheckedView()
             }
         }
@@ -146,4 +150,11 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
 
     override fun getItemImageSelectedList(): ArrayList<ApImageUriAdapter> =
         this.apMultiplePagerPreviewAdapter?.getItemSelected() ?: arrayListOf()
+
+    private val apEditorActivityContract =
+        registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+            editedPhotoUri?.let { uriStr ->
+                Log.e(tag(), "apEditorActivityContract result : $uriStr ")
+            }
+        }
 }

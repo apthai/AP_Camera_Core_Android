@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
@@ -144,6 +145,7 @@ class ApEditorActivity :
 
         getPhotoUriPayload()?.let { photoUriStr ->
             val photoUri = Uri.parse(photoUriStr)
+            Log.e(tag(),"getPhotoUriPayload $photoUri")
             binding?.apEditorPhotoEditorView?.let {
                 Glide.with(this).load(photoUri).into(it.source)
             }
@@ -310,6 +312,7 @@ class ApEditorActivity :
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         saveImageUri = uri
+                                        Log.e(tag(),"saveImageUri $saveImageUri")
                                         binding?.apEditorPhotoEditorView?.let { photoEditorView ->
                                             Glide.with(this@ApEditorActivity).load(saveImageUri)
                                                 .into(photoEditorView.source)
