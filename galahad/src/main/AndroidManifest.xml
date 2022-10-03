@@ -11,30 +11,40 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".previewer.ApPreviewActivity"
+        <activity
+            android:name=".previewer.ApPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".editor.ApEditorActivity"
+        <activity
+            android:name=".editor.ApEditorActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".previewer.ApTransitionPreviewActivity"
+        <activity
+            android:name=".previewer.ApTransitionPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".previewer.ApPagerPreviewActivity"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.ApPagerPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.multiplepreviewpager.ApMultiplePagerPreviewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
+            tools:ignore="LockedOrientationActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -43,7 +53,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 </manifest>
