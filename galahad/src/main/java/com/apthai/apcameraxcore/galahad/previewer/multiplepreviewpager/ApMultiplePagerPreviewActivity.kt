@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
@@ -144,6 +143,7 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
                     imageUriList
                 )
             setResult(RESULT_OK, imageIntentResult)
+            finish()
         } else {
             this.showSnackBar("Please select image")
         }

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
+import com.apthai.apcameraxcore.android.adapter.SimpleImageViewPagerAdapter
 import com.apthai.apcameraxcore.android.databinding.ActivityMainBinding
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.ApCameraActivity
@@ -23,15 +24,12 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     private val binding get() = activityMainBinding
 
     private var mainViewModel: MainViewModel? = null
+    private var simpleImageUriAdapter: SimpleImageViewPagerAdapter? = null
 
     private val apCameraContract =
-        registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStr ->
-            if (fallbackImageUriStr.isNullOrEmpty()) return@registerForActivityResult
-            Toast.makeText(this, "Retrieve PhotoUri Raw $fallbackImageUriStr", Toast.LENGTH_SHORT)
-                .show()
-            binding?.mainImageView?.let { imageView ->
-                Glide.with(this).load(fallbackImageUriStr).into(imageView)
-            }
+        registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStrList ->
+            if (fallbackImageUriStrList.isEmpty()) return@registerForActivityResult
+            this.setUpViewPagerAdapter(fallbackImageUriStrList)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,6 +50,7 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
     override fun initial() {
         binding?.mainLaunchCameraButton?.setOnClickListener(this)
+        this.setUpViewPagerAdapter(arrayListOf())
     }
 
     @SuppressLint("CheckResult")
@@ -111,5 +110,12 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     override fun launchCameraScreen() {
         val cameraIntent = Intent(this, ApCameraActivity::class.java)
         startActivity(cameraIntent)
+    }
+
+    override fun setUpViewPagerAdapter(imageUriList: ArrayList<String>) {
+        this.simpleImageUriAdapter = SimpleImageViewPagerAdapter(imageUriList)
+        this.binding?.mainViewPager?.apply {
+            adapter = simpleImageUriAdapter
+        }
     }
 }

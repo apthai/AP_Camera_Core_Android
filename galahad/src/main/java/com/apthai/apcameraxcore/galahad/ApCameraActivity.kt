@@ -51,6 +51,7 @@ import com.apthai.apcameraxcore.galahad.previewer.contract.ApJustPreviewResultCo
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApMultiplePagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
+import com.apthai.apcameraxcore.galahad.previewer.multiplepreviewpager.ApMultiplePagerPreviewActivity
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 import com.apthai.apcameraxcore.galahad.util.ApCameraUtil
 import com.bumptech.glide.Glide
@@ -115,6 +116,13 @@ class ApCameraActivity :
         registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
             Log.e(tag(), "apMultiplePagerPreviewActivityContract $it")
             Log.e(tag(), "apMultiplePagerPreviewActivityContract size ${it.size}")
+            val intent =
+                intent.putStringArrayListExtra(
+                    ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                    it
+                )
+            setResult(RESULT_OK, intent)
+            finish()
         }
 
 
