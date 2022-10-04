@@ -13,4 +13,5 @@ interface ApMultiplePagerPreviewNavigator {
     fun checkUpdateCheckedItemCheckedView()
     fun setCountSelectedImage(amountSelected: Int)
     fun getItemImageSelectedList(): ArrayList<ApImageUriAdapter>
+    fun updateNewImage(uriStr: String, currentPosition: Int)
 }

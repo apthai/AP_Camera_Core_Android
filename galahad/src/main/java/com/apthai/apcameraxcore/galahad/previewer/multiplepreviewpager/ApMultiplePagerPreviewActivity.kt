@@ -3,7 +3,6 @@ package com.apthai.apcameraxcore.galahad.previewer.multiplepreviewpager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProvider
@@ -151,10 +150,25 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
     override fun getItemImageSelectedList(): ArrayList<ApImageUriAdapter> =
         this.apMultiplePagerPreviewAdapter?.getItemSelected() ?: arrayListOf()
 
+    override fun updateNewImage(uriStr: String, currentPosition: Int) {
+        this.apMultiplePagerPreviewAdapter?.updatePathUriByPosition(
+            uriStr,
+            currentPosition
+        )
+        this._imageUriList[this._currentPositionViewPagerSelected] = uriStr
+        this._imageUriList.add(this._currentPositionViewPagerSelected, uriStr)
+        this.apMultiplePagerPreviewAdapter?.getItemByPosition(this._currentPositionViewPagerSelected)
+            ?.let {
+                this._imageUriAdapterList[this._currentPositionViewPagerSelected] = it
+            }
+    }
+
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
             editedPhotoUri?.let { uriStr ->
-                Log.e(tag(), "apEditorActivityContract result : $uriStr ")
+                this.updateNewImage(uriStr, this._currentPositionViewPagerSelected)
+                this.viewModel.removeFileFromUri(uriStr)
             }
         }
+
 }

@@ -44,6 +44,17 @@ class ApMultiplePagerPreviewAdapter(private val imageUri: ArrayList<ApImageUriAd
         return this.imageUri.filter { item -> item.isChecked } as ArrayList<ApImageUriAdapter>
     }
 
+    fun updatePathUriByPosition(uriStr: String, position: Int) {
+        if (this.isTurePosition(position)) {
+            if (uriStr.isNotEmpty()) {
+                val item = this.imageUri[position]
+                item.uriStr = uriStr
+                this.imageUri[position] = item
+                notifyItemChanged(position, this.imageUri[position])
+            }
+        }
+    }
+
     private fun isTurePosition(position: Int): Boolean =
         position >= 0 && position + 1 <= imageUri.size
 }
