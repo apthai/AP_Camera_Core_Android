@@ -14,4 +14,5 @@ interface ApMultiplePagerPreviewNavigator {
     fun setCountSelectedImage(amountSelected: Int)
     fun getItemImageSelectedList(): ArrayList<ApImageUriAdapter>
     fun updateNewImage(uriStr: String, currentPosition: Int)
+    fun showSnackBar(message: String)
 }

@@ -2,6 +2,7 @@ package com.apthai.apcameraxcore.galahad.previewer.multiplepreviewpager
 
 import android.net.Uri
 import com.apthai.apcameraxcore.common.ApCameraBaseViewModel
+import com.apthai.apcameraxcore.common.model.ApImageUriAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -23,5 +24,13 @@ class ApMultiplePagerPreviewViewModel : ApCameraBaseViewModel<ApMultiplePagerPre
                 file.delete()
             }
         }
+    }
+
+    fun imageAdapterToImageListStr(imageUriAdapter: MutableList<ApImageUriAdapter>): ArrayList<String> {
+        val imageList: ArrayList<String> = arrayListOf()
+        imageUriAdapter.forEach {
+            imageList.add(it.uriStr)
+        }
+        return imageList
     }
 }

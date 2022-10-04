@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
@@ -13,6 +14,7 @@ import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.ActivityApMultiplePagerPreviewBinding
 import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.adapter.apmultiplepager.ApMultiplePagerPreviewAdapter
+import com.google.android.material.snackbar.Snackbar
 
 class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPreviewViewModel>(),
     ApMultiplePagerPreviewNavigator {
@@ -76,7 +78,7 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
             this.onClickMenuItemChecked()
         }
         this.binding.actApMultiplePagerPreviewBtnConfirm.setOnClickListener {
-
+            this.onClickMenuConfirm()
         }
     }
 
@@ -132,7 +134,19 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
     }
 
     override fun onClickMenuConfirm() {
-
+        val imageUriList = this.viewModel.imageAdapterToImageListStr(
+            this.apMultiplePagerPreviewAdapter?.getItemSelected() ?: mutableListOf()
+        )
+        if (imageUriList.isNotEmpty()) {
+            val imageIntentResult =
+                intent.putStringArrayListExtra(
+                    CONST_IMAGE_LIST_FOR_RESULT_NAME,
+                    imageUriList
+                )
+            setResult(RESULT_OK, imageIntentResult)
+        } else {
+            this.showSnackBar("Please select image")
+        }
     }
 
     override fun checkUpdateCheckedItemCheckedView() {
@@ -170,5 +184,13 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
                 this.viewModel.removeFileFromUri(uriStr)
             }
         }
+
+    override fun showSnackBar(message: String) {
+        val snb = Snackbar.make(this.binding.root, message, Snackbar.LENGTH_SHORT)
+        snb.setAction(R.string.ap_camera_text_close) {
+            snb.dismiss()
+        }
+        snb.show()
+    }
 
 }
