@@ -1,50 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.apthai.apcameraxcore.galahad">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <application
         android:name=".editor.PhotoApp"
         android:supportsRtl="true"
-        tools:targetApi="n">
+        tools:replace="android:name">
         <activity
             android:name=".ApCameraActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".previewer.ApPreviewActivity"
+        <activity
+            android:name=".previewer.ApPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".editor.ApEditorActivity"
+        <activity
+            android:name=".editor.ApEditorActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
 
-        <activity android:name=".previewer.ApTransitionPreviewActivity"
+        <activity
+            android:name=".previewer.ApTransitionPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
-        <activity android:name=".previewer.ApPagerPreviewActivity"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.ApPagerPreviewActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
-            tools:ignore="LockedOrientationActivity"/>
+            tools:ignore="LockedOrientationActivity" />
+        <activity
+            android:name=".previewer.multiplepreviewpager.ApMultiplePagerPreviewActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.GalahadCameraCore.Fullscreen"
+            tools:ignore="LockedOrientationActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.apthai.apcameraxcore.galahad.provider"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
     </application>
 </manifest>

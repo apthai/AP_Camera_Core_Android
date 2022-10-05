@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context=".previewer.multiplepreviewpager.ApMultiplePagerPreviewActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/Theme.GalahadCameraCore.Toolbar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/act_ap_multiple_pager_preview_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/Theme.GalahadCameraCore.Toolbar" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/act_ap_multiple_pager_preview_view_pager"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/ap_camera_view_item_padding_normal_half"
+            app:layout_constraintBottom_toTopOf="@+id/act_ap_multiple_pager_preview_item_checked"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckedTextView
+            android:id="@+id/act_ap_multiple_pager_preview_item_checked"
+            style="@style/ApCameraAppBaseTextAppearanceBoldSmall"
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
+            android:layout_marginStart="@dimen/ap_camera_view_item_padding_double"
+            android:layout_marginBottom="@dimen/ap_camera_view_item_padding"
+            android:background="@drawable/background_ap_selector_image"
+            android:checked="false"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/act_ap_multiple_pager_preview_text_count"
+            style="@style/ApCameraAppBaseTextAppearanceBoldSmall"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="-6dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/ic_baseline_circle_24"
+            android:gravity="center"
+            android:paddingTop="1.8dp"
+            android:text="@string/text_default_zero"
+            android:textAlignment="gravity"
+            app:layout_constraintEnd_toEndOf="@+id/act_ap_multiple_pager_preview_btn_confirm"
+            app:layout_constraintTop_toTopOf="@+id/act_ap_multiple_pager_preview_btn_confirm" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/act_ap_multiple_pager_preview_btn_confirm"
+            android:layout_width="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
+            android:layout_height="@dimen/frm_main_edit_picture_tools_ic_send_size_container"
+            android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+            android:layout_marginBottom="@dimen/ap_camera_view_item_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_send_24" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

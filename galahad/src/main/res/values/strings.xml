@@ -3,6 +3,7 @@
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="ap_camera_view_circle_focus_button_description">autofocus</string>
     <string name="ap_camera_view_gallery_thumbnail_button_text">Gallery</string>
+    <string name="ap_camera_text_close">Close</string>
 
     <!--Photo Editor-->
     <string name="ap_editor_select_shape_menu_brush_text_label">Brush</string>
@@ -451,4 +452,6 @@
 
     <!--Preview screen sector-->
     <string name="ap_galahad_preview_item_photo_view_description">Photo view</string>
+
+    <string name="text_default_zero">0</string>
 </resources>

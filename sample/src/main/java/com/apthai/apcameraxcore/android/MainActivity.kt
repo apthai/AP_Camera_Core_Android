@@ -1,5 +1,6 @@
 package com.apthai.apcameraxcore.android
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -7,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.list.listItems
+import com.apthai.apcameraxcore.android.adapter.SimpleImageViewPagerAdapter
 import com.apthai.apcameraxcore.android.databinding.ActivityMainBinding
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.galahad.ApCameraActivity
@@ -18,22 +20,16 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
     override fun tag(): String = MainActivity::class.java.simpleName
 
-    companion object {
-    }
-
     private var activityMainBinding: ActivityMainBinding? = null
     private val binding get() = activityMainBinding
 
     private var mainViewModel: MainViewModel? = null
+    private var simpleImageUriAdapter: SimpleImageViewPagerAdapter? = null
 
     private val apCameraContract =
-        registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStr ->
-            if (fallbackImageUriStr.isNullOrEmpty()) return@registerForActivityResult
-            Toast.makeText(this, "Retrieve PhotoUri Raw $fallbackImageUriStr", Toast.LENGTH_SHORT)
-                .show()
-            binding?.mainImageView?.let { imageView ->
-                Glide.with(this).load(fallbackImageUriStr).into(imageView)
-            }
+        registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStrList ->
+            if (fallbackImageUriStrList.isEmpty()) return@registerForActivityResult
+            this.setUpViewPagerAdapter(fallbackImageUriStrList)
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,8 +50,10 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
     override fun initial() {
         binding?.mainLaunchCameraButton?.setOnClickListener(this)
+        this.setUpViewPagerAdapter(arrayListOf())
     }
 
+    @SuppressLint("CheckResult")
     override fun onClick(view: View?) {
         when (view?.id) {
             R.id.main_launch_camera_button -> {
@@ -64,23 +62,43 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                     listItems(
                         items = arrayListOf(
                             "Just Capture and Preview",
-                            "Preview with editor"
+                            "Preview with editor",
+                            "Multiple Shot and Preview"
                         )
                     ) { dialog, index, _ ->
                         when (index) {
                             0 -> {
                                 dialog.dismiss()
                                 val cameraBundle = Bundle().apply {
-                                    putBoolean(
-                                        ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA,
-                                        true
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
                                     )
+
+                                }
+                                apCameraContract.launch(cameraBundle)
+                            }
+                            1 -> {
+                                dialog.dismiss()
+                                val cameraBundle = Bundle().apply {
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE
+                                    )
+
                                 }
                                 apCameraContract.launch(cameraBundle)
                             }
                             else -> {
                                 dialog.dismiss()
-                                launchCameraScreen()
+                                val cameraBundle = Bundle().apply {
+                                    putInt(
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                        ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE
+                                    )
+
+                                }
+                                apCameraContract.launch(cameraBundle)
                             }
                         }
                     }
@@ -92,5 +110,12 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     override fun launchCameraScreen() {
         val cameraIntent = Intent(this, ApCameraActivity::class.java)
         startActivity(cameraIntent)
+    }
+
+    override fun setUpViewPagerAdapter(imageUriList: ArrayList<String>) {
+        this.simpleImageUriAdapter = SimpleImageViewPagerAdapter(imageUriList)
+        this.binding?.mainViewPager?.apply {
+            adapter = simpleImageUriAdapter
+        }
     }
 }

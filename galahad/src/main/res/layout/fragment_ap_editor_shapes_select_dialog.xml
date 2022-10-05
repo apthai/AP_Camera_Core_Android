@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -18,35 +17,43 @@
 
         <RadioButton
             android:id="@+id/ap_editor_select_shape_dialog_shape_brush_type_radio_text"
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
+            android:buttonTint="@color/ap_camera_text_title_hint_color"
             android:checked="true"
-            style="@style/ApCameraAppBaseTextAppearanceSmall"
-            android:text="@string/ap_editor_select_shape_menu_brush_text_label" />
+            android:text="@string/ap_editor_select_shape_menu_brush_text_label"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <RadioButton
             android:id="@+id/ap_editor_select_shape_dialog_shape_line_type_radio_text"
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
-            style="@style/ApCameraAppBaseTextAppearanceSmall"
-            android:text="@string/ap_editor_tool_label_line" />
+            android:buttonTint="@color/ap_camera_text_title_hint_color"
+            android:text="@string/ap_editor_tool_label_line"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <RadioButton
             android:id="@+id/ap_editor_select_shape_dialog_shape_oval_type_radio_text"
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
-            android:text="@string/ap_editor_select_shape_menu_oval_text_label" />
+            android:buttonTint="@color/ap_camera_text_title_hint_color"
+            android:text="@string/ap_editor_select_shape_menu_oval_text_label"
+            tools:ignore="TouchTargetSizeCheck,TextContrastCheck" />
 
         <RadioButton
             android:id="@+id/ap_editor_select_shape_dialog_shape_rectangle_type_radio_text"
+            style="@style/ApCameraAppBaseTextAppearanceSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/ApCameraAppBaseTextAppearanceSmall"
-            android:text="@string/ap_editor_select_shape_menu_rectangle_text_label" />
+            android:buttonTint="@color/ap_camera_text_title_hint_color"
+            android:text="@string/ap_editor_select_shape_menu_rectangle_text_label"
+            tools:ignore="TouchTargetSizeCheck" />
 
     </RadioGroup>
 
@@ -57,7 +64,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/ap_camera_text_red_color"
         android:progress="25"
+        android:progressTint="@color/ap_camera_text_title_hint_color"
+        android:thumbTint="@color/ap_camera_text_title_hint_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_size_title_text_label" />
@@ -71,45 +81,47 @@
         android:layout_marginEnd="8dp"
         android:max="255"
         android:progress="255"
+        android:progressTint="@color/ap_camera_text_title_hint_color"
+        android:thumbTint="@color/ap_camera_text_title_hint_color"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_opacity_title_text_label" />
 
     <TextView
         android:id="@+id/ap_editor_select_shape_dialog_shape_size_title_text_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/ap_editor_select_brush_size_dialog_text_title_label"
-        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_type_radio_group" />
 
     <TextView
         android:id="@+id/ap_editor_select_shape_dialog_shape_opacity_title_text_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:text="@string/ap_editor_select_opacity_dialog_text_title_label"
-        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ap_editor_select_shape_dialog_shape_size_title_text_label" />
 
     <TextView
         android:id="@+id/ap_editor_select_shape_dialog_shape_type_title_text_label"
+        style="@style/ApCameraAppBaseTextAppearanceMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/ap_editor_select_shape_dialog_text_title_label"
-        style="@style/ApCameraAppBaseTextAppearanceMedium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -122,8 +134,8 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="@dimen/ap_camera_view_item_padding_double"
         android:layout_marginBottom="@dimen/ap_camera_view_item_padding"
-        android:orientation="horizontal"
         android:background="#80FFFFFF"
+        android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

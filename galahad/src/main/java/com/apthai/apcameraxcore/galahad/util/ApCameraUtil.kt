@@ -13,7 +13,6 @@ object ApCameraUtil {
         SimpleDateFormat(AP_CAMERA_DEFAULT_FILENAME_FORMAT, Locale.US).format(System.currentTimeMillis())
 
     object Generic {
-
         const val AP_CAMERA_DEFAULT_FROM_SCREEN_TAG = "ap_base_camera_from_screen_tag_apc"
     }
 }

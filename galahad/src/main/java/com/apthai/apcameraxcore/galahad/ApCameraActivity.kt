@@ -47,6 +47,7 @@ import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.common.utils.ImageUtil
 import com.apthai.apcameraxcore.galahad.databinding.ActivityGalahadCameraBinding
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApJustPreviewResultContract
+import com.apthai.apcameraxcore.galahad.previewer.contract.ApMultiplePagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPagerPreviewResultContract
 import com.apthai.apcameraxcore.galahad.previewer.contract.ApPreviewResultContract
 import com.apthai.apcameraxcore.galahad.util.ApCameraConst
@@ -97,6 +98,7 @@ class ApCameraActivity :
     private var currentCamera: Camera? = null
     private var rootDir: String = ""
     private var currentPhotoUri: Uri? = null
+    private var currentPhotoMultipleShot: ArrayList<String> = arrayListOf()
 
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
@@ -108,6 +110,18 @@ class ApCameraActivity :
     private val pagerPreviewActivityContract =
         registerForActivityResult(ApPagerPreviewResultContract()) {}
 
+    private val apMultiplePagerPreviewActivityContract =
+        registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
+            val intent =
+                intent.putStringArrayListExtra(
+                    ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                    it
+                )
+            setResult(RESULT_OK, intent)
+            finish()
+        }
+
+
     private val previewTransitionContract =
         registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
             previewUri?.let { uri ->
@@ -116,9 +130,9 @@ class ApCameraActivity :
                 currentPhotoUri = fallbackUri
                 currentPhotoUri?.let { latestUri ->
                     val fallbackIntent = Intent().apply {
-                        putExtra(
+                        putStringArrayListExtra(
                             ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
-                            latestUri.toString()
+                            arrayListOf(latestUri.toString())
                         )
                     }
                     setResult(Activity.RESULT_OK, fallbackIntent)
@@ -163,25 +177,48 @@ class ApCameraActivity :
         cameraLensFacing = getCameraFacingTypePayload()
         cameraFlashMode = getCameraFlashTypePayload()
         cameraAspectRatio = getCameraAspectRatioTypePayload()
-        val isOnlyCamera = getIsOnlyCallCameraPayload()
+//        val isOnlyCamera = getIsOnlyCallCameraPayload()
 
-        if (!isOnlyCamera) {
-            binding?.apCameraViewGalleryButton?.visibility = View.VISIBLE
-            apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
-                if (apPhotos.isEmpty()) {
-                    return@observe
-                }
-                val reversePhotos = apPhotos.asReversed()
-                val firstPhoto: ApPhoto = reversePhotos[0]
-                binding?.apCameraViewGalleryButton?.let { imageView ->
-                    Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
-                }
+        this.setUpCameraMode()
+
+//        if (!isOnlyCamera) {
+//            this.setUpCameraViewGalleryForView()
+//        } else {
+//            binding?.apCameraViewGalleryButton?.visibility = View.GONE
+//        }
+    }
+
+    override fun setUpCameraMode() {
+        when (this.getCameraMode()) {
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE -> {
+                binding?.apCameraViewGalleryButton?.visibility = View.GONE
             }
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
+                binding?.apCameraViewGalleryButton?.visibility = View.GONE
 
-            fetchCurrentPhotoList()
-        } else {
-            binding?.apCameraViewGalleryButton?.visibility = View.GONE
+            }
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
+                this.setUpCameraViewGalleryForView()
+            }
+            else -> {
+                binding?.apCameraViewGalleryButton?.visibility = View.GONE
+            }
         }
+    }
+
+    override fun setUpCameraViewGalleryForView() {
+        binding?.apCameraViewGalleryButton?.visibility = View.VISIBLE
+        apCameraViewModel?.shareCurrentPhotos?.observe(this) { apPhotos ->
+            if (apPhotos.isEmpty()) {
+                return@observe
+            }
+            val reversePhotos = apPhotos.asReversed()
+            val firstPhoto: ApPhoto = reversePhotos[0]
+            binding?.apCameraViewGalleryButton?.let { imageView ->
+                Glide.with(this).load(firstPhoto.uriPath).circleCrop().into(imageView)
+            }
+        }
+        fetchCurrentPhotoList()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -289,14 +326,42 @@ class ApCameraActivity :
     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
         outputFileResults.savedUri?.let { photoUri ->
             currentPhotoUri = photoUri
-            val isOnlyCamera = getIsOnlyCallCameraPayload()
-            if (isOnlyCamera) {
-                previewTransitionContract.launch(currentPhotoUri.toString())
-            } else {
-                binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
-                    Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+//            val isOnlyCamera = getIsOnlyCallCameraPayload()
+            when (this.getCameraMode()) {
+                ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE -> {
+                    previewTransitionContract.launch(currentPhotoUri.toString())
+                }
+                ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
+                    currentPhotoMultipleShot.add(photoUri.toString())
+                    if (currentPhotoMultipleShot.isNotEmpty()) {
+                        binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                            galleryButtonView.visibility = View.VISIBLE
+                            Glide.with(this).load(currentPhotoUri).circleCrop()
+                                .into(galleryButtonView)
+                        }
+                    } else {
+                        binding?.apCameraViewGalleryButton?.visibility = View.GONE
+                    }
+
+                }
+                ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
+                    binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+                        Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+                    }
+                }
+                else -> {
+                    previewTransitionContract.launch(currentPhotoUri.toString())
                 }
             }
+
+            //previous version
+//            if (isOnlyCamera) {
+//                previewTransitionContract.launch(currentPhotoUri.toString())
+//            } else {
+//                binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
+//                    Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
+//                }
+//            }
         }
     }
 
@@ -356,21 +421,31 @@ class ApCameraActivity :
     @SuppressLint("CheckResult")
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.ap_camera_view_capture_button -> {
-                takePhoto()
+            R.id.ap_camera_view_capture_button -> this.takePhoto()
+            R.id.ap_camera_view_switch_button -> this.flipCameraFacing()
+            R.id.ap_camera_view_flash_button -> this.toggleCameraFlashMode()
+            R.id.ap_camera_view_aspect_ratio_button -> this.toggleAspectRatio()
+            R.id.ap_camera_view_gallery_button -> this.onClickViewGalleryButton()
+        }
+    }
+
+    @SuppressLint("CheckResult")
+    override fun onClickViewGalleryButton() {
+        when (this.getCameraMode()) {
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
+                if (this.currentPhotoMultipleShot.isNotEmpty()) {
+                    this.launchApMultiplePagerPreviewActivity(this.currentPhotoMultipleShot)
+                }
             }
-            R.id.ap_camera_view_switch_button -> {
-                flipCameraFacing()
-            }
-            R.id.ap_camera_view_flash_button -> {
-                toggleCameraFlashMode()
-            }
-            R.id.ap_camera_view_aspect_ratio_button -> {
-                toggleAspectRatio()
-            }
-            R.id.ap_camera_view_gallery_button -> {
+            else -> {
                 MaterialDialog(this).show {
-                    listItems(items = listOf("Grid view", "Pager view")) { dialog, index, _ ->
+                    listItems(
+                        items = listOf(
+                            "Grid view",
+                            "Pager view",
+                            "Other"
+                        )
+                    ) { dialog, index, _ ->
                         dialog.dismiss()
                         when (index) {
                             0 -> launchPreviewPhotoActivity()
@@ -381,6 +456,7 @@ class ApCameraActivity :
                 }
             }
         }
+
     }
 
     override fun onDestroy() {
@@ -473,10 +549,10 @@ class ApCameraActivity :
     @SuppressLint("ClickableViewAccessibility")
     override fun initialAutoFocusAndPinchToZoom() {
         val listener = object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
-            override fun onScale(detector: ScaleGestureDetector?): Boolean {
+            override fun onScale(detector: ScaleGestureDetector): Boolean {
                 val currentZoomRatio =
                     currentCamera?.cameraInfo?.zoomState?.value?.zoomRatio ?: 0.0f
-                val delta = detector?.scaleFactor ?: 0.0f
+                val delta = detector.scaleFactor
                 val zoomRatio = currentZoomRatio * delta
                 currentCamera?.cameraControl?.setZoomRatio(zoomRatio)
                 return true
@@ -532,14 +608,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (measuredWidth > 0 && measuredHeight > 0) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            block()
-                        }
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -555,15 +631,18 @@ class ApCameraActivity :
             duration = 300
             alpha(0F)
             setListener(object : Animator.AnimatorListener {
-                override fun onAnimationStart(p0: Animator?) {}
+                override fun onAnimationStart(animation: Animator) {
+                }
 
-                override fun onAnimationEnd(p0: Animator?) {
+                override fun onAnimationEnd(animation: Animator) {
                     binding?.apCameraFocusCircleImageView?.visibility = View.INVISIBLE
                 }
 
-                override fun onAnimationCancel(p0: Animator?) {}
+                override fun onAnimationCancel(animation: Animator) {
+                }
 
-                override fun onAnimationRepeat(p0: Animator?) {}
+                override fun onAnimationRepeat(animation: Animator) {
+                }
             })
         }
     }
@@ -611,6 +690,10 @@ class ApCameraActivity :
 
     override fun launchPagerPreviewPhotoActivity() {
         pagerPreviewActivityContract.launch(tag())
+    }
+
+    override fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>) {
+        this.apMultiplePagerPreviewActivityContract.launch(imageUriList)
     }
 
     override fun fetchCurrentPhotoList() {
@@ -701,4 +784,10 @@ class ApCameraActivity :
 
     override fun getFromScreenTagName(): String =
         intent.getStringExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG) ?: ""
+
+    override fun getCameraMode(): Int =
+        intent?.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+            ?.getInt(
+                ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME
+            ) ?: ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
 }

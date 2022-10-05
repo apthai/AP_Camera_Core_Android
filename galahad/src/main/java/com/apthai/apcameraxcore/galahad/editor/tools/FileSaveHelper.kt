@@ -110,9 +110,15 @@ class FileSaveHelper(private val mContentResolver: ContentResolver) : LifecycleO
         imageCollection: Uri
     ): Uri? {
         newImageDetails.put(MediaStore.Images.Media.DISPLAY_NAME, fileNameToSave)
-        newImageDetails.put(MediaStore.Images.Media.MIME_TYPE, ApCameraUtil.AP_CAMERA_DEFAULT_MIME_TYPE)
+        newImageDetails.put(
+            MediaStore.Images.Media.MIME_TYPE,
+            ApCameraUtil.AP_CAMERA_DEFAULT_MIME_TYPE
+        )
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            newImageDetails.put(MediaStore.Images.Media.RELATIVE_PATH, ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER)
+            newImageDetails.put(
+                MediaStore.Images.Media.RELATIVE_PATH,
+                ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER
+            )
         }
         val editedImageUri = mContentResolver.insert(imageCollection, newImageDetails)
         editedImageUri?.let { imageUri ->
