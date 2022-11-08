@@ -67,11 +67,20 @@ class ApCameraActivity :
     companion object {
 
         private const val REQUEST_CODE_PERMISSIONS = 112
-        private val REQUIRED_PERMISSIONS = mutableListOf(
-            Manifest.permission.CAMERA,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ).toTypedArray()
+        private val REQUIRED_PERMISSIONS =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                )
+            } else {
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            }
 
         fun getInstance(context: Context, payload: Bundle, fromScreenTag: String): Intent =
             Intent(context, ApCameraActivity::class.java).apply {
@@ -226,8 +235,7 @@ class ApCameraActivity :
         if (isCameraPermissionsGranted()) {
             startCamera()
         } else {
-            ActivityCompat.requestPermissions(
-                this,
+            requestPermissions(
                 REQUIRED_PERMISSIONS,
                 REQUEST_CODE_PERMISSIONS
             )
@@ -242,9 +250,39 @@ class ApCameraActivity :
         cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
-    override fun isCameraPermissionsGranted(): Boolean = REQUIRED_PERMISSIONS.all { permission ->
-        ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
-    }
+    override fun isCameraPermissionsGranted(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.RECORD_AUDIO,
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_MEDIA_IMAGES
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.READ_MEDIA_VIDEO
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                    )
+        } else {
+            (ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(
+                        this, Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+                    )
+        }
 
     override fun startCamera() {
         cameraProcessFuture = ProcessCameraProvider.getInstance(this).apply {
@@ -478,19 +516,22 @@ class ApCameraActivity :
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (requestCode == REQUEST_CODE_PERMISSIONS) {
-            if (isCameraPermissionsGranted()) {
-                startCamera()
-            } else {
-                Toast.makeText(
-                    this,
-                    "Permissions not granted by the user.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                finish()
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        val permissionOK: MutableList<Int> = mutableListOf()
+        for (item in grantResults) {
+            if (item != PackageManager.PERMISSION_GRANTED) {
+                permissionOK.add(item)
             }
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (permissionOK.isEmpty()) {
+            startCamera()
+        } else {
+            Toast.makeText(
+                this,
+                "Permissions not granted by the user.",
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
