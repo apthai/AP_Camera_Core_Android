@@ -81,11 +81,13 @@ class ApEditorEmojiSelectorFragment :
          * @param context context
          * @return list of emoji unicode
          */
-        fun getEmojis(context: Context?): ArrayList<String> {
+        private fun getEmojis(context: Context?): ArrayList<String> {
             val convertedEmojiList = ArrayList<String>()
-            val emojiList = context!!.resources.getStringArray(R.array.photo_editor_emoji)
-            for (emojiUnicode in emojiList) {
-                convertedEmojiList.add(convertEmoji(emojiUnicode))
+            val emojiList = context?.resources?.getStringArray(R.array.photo_editor_emoji)
+            emojiList?.let { emojiUnicodeList ->
+                for (emojiUnicode in emojiUnicodeList) {
+                    convertedEmojiList.add(convertEmoji(emojiUnicode))
+                }
             }
             return convertedEmojiList
         }
