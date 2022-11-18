@@ -1,9 +1,9 @@
 # AP_Camera_Core_Android
-## LAST VERSION 1.1.1
-- support android 13
+## LAST VERSION 1.1.2
+- fixed bug Emoji
 ## New Features
 - Added mulltiple shooting modes.
-## How to use version 1.1.1
+## How to use version 1.1.2
 
 Create ActivityResultContract for ApCameraContract
 ```kotlin
