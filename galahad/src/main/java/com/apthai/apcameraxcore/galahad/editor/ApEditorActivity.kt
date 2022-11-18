@@ -103,9 +103,8 @@ class ApEditorActivity :
         apEditorViewModel =
             ViewModelProvider.NewInstanceFactory().create(ApEditorViewModel::class.java)
         apEditorViewModel?.setNavigator(this)
-
+        setUpView()
         if (savedInstanceState == null) {
-            setUpView()
             initial()
         }
     }
