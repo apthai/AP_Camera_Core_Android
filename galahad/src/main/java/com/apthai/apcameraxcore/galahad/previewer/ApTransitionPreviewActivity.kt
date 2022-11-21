@@ -125,7 +125,7 @@ class ApTransitionPreviewActivity :
     }
 
     override fun getSelectedApPhotoPayload(): ApPhoto? =
-        intent?.getParcelableExtra(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
+        intent?.parcelable(ApTransitionPreviewResultContract.AP_TRANSITION_PREVIEW_PAYLOAD)
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         if (getFromScreenTagPayload() != ApCameraActivity::class.java.simpleName) {

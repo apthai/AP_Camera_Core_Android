@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.apthai.apcameraxcore.common.model.ApPhoto
 import com.apthai.apcameraxcore.galahad.R
 
+@Suppress("unused")
 class ApPagerPhotoViewAdapter(private val context: Context) : RecyclerView.Adapter<ApPagerPhotoViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
@@ -17,8 +18,8 @@ class ApPagerPhotoViewAdapter(private val context: Context) : RecyclerView.Adapt
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ApPagerPhotoViewHolder {
         val view = inflater.inflate(R.layout.item_ap_previewer_pager_view, parent, false)
-        return ApPagerPhotoViewHolder(context, view).listen { position, _ ->
-            val currentPhoto = apPhotoList[position]
+        return ApPagerPhotoViewHolder(context, view).listen { _, _ ->
+//            val currentPhoto = apPhotoList[position]
             // TODO with itemClick
         }
     }
