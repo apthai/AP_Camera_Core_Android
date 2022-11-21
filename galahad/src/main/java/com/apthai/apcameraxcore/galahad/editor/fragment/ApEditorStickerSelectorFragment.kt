@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.apthai.apcameraxcore.galahad.R
 import com.apthai.apcameraxcore.galahad.databinding.FragmentApEditorStickerEmojiDialogBinding
@@ -49,9 +50,16 @@ class ApEditorStickerSelectorFragment :
             val params = (ctView.parent as View).layoutParams as CoordinatorLayout.LayoutParams
             val behavior = params.behavior
             if (behavior != null && behavior is BottomSheetBehavior<*>) {
-                behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
+//                behavior.setBottomSheetCallback(mBottomSheetBehaviorCallback)
+                behavior.addBottomSheetCallback(mBottomSheetBehaviorCallback)
             }
-            (ctView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
+            (ctView.parent as View).setBackgroundColor(
+                ContextCompat.getColor(
+                    requireContext(),
+                    android.R.color.transparent
+                )
+            )
+//            (ctView.parent as View).setBackgroundColor(resources.getColor(android.R.color.transparent))
             val gridLayoutManager = GridLayoutManager(activity, 3)
             binding?.apEditorEmojiStickerRecyclerView?.layoutManager = gridLayoutManager
             stickerListAdapter = StickerListAdapter(requireActivity(), stickerPathList)
