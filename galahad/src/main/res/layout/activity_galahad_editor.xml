@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ap_editor_root_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -62,6 +61,7 @@
                         style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
                         android:layout_width="@dimen/top_tool_icon_width"
                         android:layout_height="@dimen/top_tool_icon_width"
+                        android:layout_marginEnd="@dimen/ap_camera_view_item_padding"
                         android:contentDescription="@string/ap_editor_tools_undo_image_view_description"
                         android:insetLeft="0dp"
                         android:insetTop="0dp"
@@ -103,33 +103,50 @@
                         app:strokeWidth="1dp" />
                 </LinearLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/ap_editor_save_button"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="@dimen/ap_camera_view_item_padding_double"
-                    android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
                     android:layout_weight="2"
-                    android:fontFamily="@font/ap_galahad_camera_bold"
-                    android:padding="@dimen/ap_camera_view_item_padding_normal_half"
-                    android:text="@string/ap_camera_text_save"
-                    android:textColor="@android:color/white"
-                    app:backgroundTint="@android:color/transparent"
-                    app:cornerRadius="16dp"
-                    app:rippleColor="#F3F3F3"
-                    app:strokeColor="@color/white"
-                    app:strokeWidth="1dp" />
+                    android:gravity="end">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/ap_editor_save_button"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/ap_camera_view_item_padding_double"
+                        android:layout_marginEnd="@dimen/ap_camera_view_item_padding_double"
+                        android:fontFamily="@font/ap_galahad_camera_bold"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/ap_camera_view_item_padding_double"
+                        android:paddingTop="@dimen/ap_camera_view_item_padding"
+                        android:paddingEnd="@dimen/ap_camera_view_item_padding_double"
+                        android:paddingBottom="@dimen/ap_camera_view_item_padding"
+                        android:text="@string/ap_camera_text_save"
+                        android:textColor="@android:color/white"
+                        app:backgroundTint="@android:color/transparent"
+                        app:cornerRadius="16dp"
+                        app:icon="@drawable/ic_baseline_done_24"
+                        app:iconPadding="5dp"
+                        app:iconSize="20dp"
+                        app:iconTint="@color/white"
+                        app:rippleColor="#F3F3F3"
+                        app:strokeColor="@color/white"
+                        app:strokeWidth="1dp" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
             </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/ap_editor_container_tools_view"
+                android:layout_width="80dp"
+                android:layout_height="0dp"
+                android:layout_gravity="end"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/ap_editor_photo_editor_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/ap_editor_container_tools_view"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:orientation="vertical" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
