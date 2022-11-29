@@ -222,10 +222,10 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                     val cameraBundle = Bundle().apply {
                         putInt(
                             ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
-                            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_CHOOSE_GALLERY_MULTIPLE_MODE
+                            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE
                         )
                         putStringArrayList(
-                            ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_URI_LIST_CONST_NAME,
+                            ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME,
                             rsList.map { it.toString() } as ArrayList<String>
                         )
                     }

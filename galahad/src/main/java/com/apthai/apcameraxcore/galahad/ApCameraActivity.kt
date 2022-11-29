@@ -212,7 +212,7 @@ class ApCameraActivity :
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                 this.setUpCameraViewGalleryForView()
             }
-            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_CHOOSE_GALLERY_MULTIPLE_MODE -> {
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
                 val imageList = getImageUriFromIntentListString()
                 if (imageList.isNotEmpty()) {
@@ -844,7 +844,7 @@ class ApCameraActivity :
 
     override fun getImageUriFromIntentListString(): ArrayList<String> {
         return this.getPlayLoadBundle()
-            ?.getStringArrayList(ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_URI_LIST_CONST_NAME)
+            ?.getStringArrayList(ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME)
             ?: arrayListOf()
     }
 
