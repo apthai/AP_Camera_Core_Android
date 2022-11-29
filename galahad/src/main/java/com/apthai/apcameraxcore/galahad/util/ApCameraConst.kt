@@ -19,9 +19,15 @@ object ApCameraConst {
 
         /**
          * AP_CAMERA_VAL_VIEW_GALLERY_MODE = 2
-         * Select Multiple image in gallery and preview
+         * Select Multiple image in gallery and preview for ap camera folder
          * **/
         const val AP_CAMERA_VAL_VIEW_GALLERY_MODE: Int = 2
+
+        /**
+         * AP_CAMERA_VAL_CHOOSE_GALLERY_MULTIPLE_MODE = 2
+         * choose gallery multiple image in gallery and preview
+         * **/
+        const val AP_CAMERA_VAL_CHOOSE_GALLERY_MULTIPLE_MODE: Int = 3
     }
 
     object ApCameraPayload {
@@ -36,6 +42,7 @@ object ApCameraConst {
         const val AP_CAMERA_IS_ONLY_CALL_CAMERA: String = "ap_camera_screen_is_only_call_camera_apc"
         const val AP_CAMERA_OUTPUT_URI_STRING: String =
             "ap_camera_screen_output_path_uri_string_apc"
+        const val AP_CAMERA_INPUT_IMAGE_URI_LIST_CONST_NAME = "ap_camera_input_path_uri_string"
     }
 
     object ApPreviewPayload {

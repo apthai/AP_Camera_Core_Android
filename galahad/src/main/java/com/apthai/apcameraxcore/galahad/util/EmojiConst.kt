@@ -401,6 +401,6 @@ object EmojiConst {
         "u+1f3aa",
         "u+1f3ad",
         "u+1f4cd",
-        "u+1f6a9",
+        "u+1f6a9"
     )
 }

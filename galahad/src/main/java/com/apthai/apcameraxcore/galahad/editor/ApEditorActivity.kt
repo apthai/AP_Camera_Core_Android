@@ -58,7 +58,7 @@ class ApEditorActivity :
         const val AP_EDITOR_PHOTO_PAYLOAD = "ap_editor_photo_payload"
         fun getInstance(
             context: Context,
-            photoUriStr: String = "",
+            photoUriStr: String = ""
         ): Intent =
             Intent(context, ApEditorActivity::class.java).apply {
                 putExtra(AP_EDITOR_PHOTO_PAYLOAD, photoUriStr)
@@ -213,21 +213,21 @@ class ApEditorActivity :
             ToolType.TEXT -> {
                 val textEditorDialogFragment = ApEditorAddTextEditorFragment.show(this)
                 textEditorDialogFragment.setOnTextEditorListener(object :
-                    ApEditorAddTextEditorFragment.TextEditorListener {
-                    override fun onDone(inputText: String?, colorCode: Int) {
-                        val styleBuilder = TextStyleBuilder()
-                        styleBuilder.withTextColor(colorCode)
-                        val apFont = ResourcesCompat.getFont(
-                            this@ApEditorActivity,
-                            R.font.ap_galahad_camera_bold
-                        )
-                        apFont?.let {
-                            styleBuilder.withTextFont(it)
+                        ApEditorAddTextEditorFragment.TextEditorListener {
+                        override fun onDone(inputText: String?, colorCode: Int) {
+                            val styleBuilder = TextStyleBuilder()
+                            styleBuilder.withTextColor(colorCode)
+                            val apFont = ResourcesCompat.getFont(
+                                this@ApEditorActivity,
+                                R.font.ap_galahad_camera_bold
+                            )
+                            apFont?.let {
+                                styleBuilder.withTextFont(it)
+                            }
+                            photoEditor?.addText(inputText, styleBuilder)
+                            supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
                         }
-                        photoEditor?.addText(inputText, styleBuilder)
-                        supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
-                    }
-                })
+                    })
             }
             ToolType.ERASER -> {
                 photoEditor?.brushEraser()
@@ -276,7 +276,6 @@ class ApEditorActivity :
 
     @RequiresPermission(allOf = [Manifest.permission.WRITE_EXTERNAL_STORAGE])
     private fun saveImage() {
-
         val fileName = ApCameraUtil.getFileName()
 
         val hasStoragePermission = ContextCompat.checkSelfPermission(
@@ -375,21 +374,21 @@ class ApEditorActivity :
         val textEditorDialogFragment =
             ApEditorAddTextEditorFragment.show(this, text.toString(), colorCode)
         textEditorDialogFragment.setOnTextEditorListener(object :
-            ApEditorAddTextEditorFragment.TextEditorListener {
-            override fun onDone(inputText: String?, colorCode: Int) {
-                val styleBuilder = TextStyleBuilder()
-                styleBuilder.withTextColor(colorCode)
-                val apFont =
-                    ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
-                apFont?.let {
-                    styleBuilder.withTextFont(it)
+                ApEditorAddTextEditorFragment.TextEditorListener {
+                override fun onDone(inputText: String?, colorCode: Int) {
+                    val styleBuilder = TextStyleBuilder()
+                    styleBuilder.withTextColor(colorCode)
+                    val apFont =
+                        ResourcesCompat.getFont(this@ApEditorActivity, R.font.ap_galahad_camera_bold)
+                    apFont?.let {
+                        styleBuilder.withTextFont(it)
+                    }
+                    if (rootView != null) {
+                        photoEditor?.editText(rootView, inputText, styleBuilder)
+                    }
+                    supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
                 }
-                if (rootView != null) {
-                    photoEditor?.editText(rootView, inputText, styleBuilder)
-                }
-                supportActionBar?.title = getString(R.string.ap_editor_tool_label_text)
-            }
-        })
+            })
     }
 
     override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {}
@@ -412,7 +411,7 @@ class ApEditorActivity :
             }
             R.id.ap_preview_action_editor -> {
                 apEditorToolsFragment?.let { toolsFragment ->
-                   supportFragmentManager.beginTransaction()
+                    supportFragmentManager.beginTransaction()
                     if (toolsFragment.isVisible) {
                         hideApEditorToolsFragment()
                     } else {

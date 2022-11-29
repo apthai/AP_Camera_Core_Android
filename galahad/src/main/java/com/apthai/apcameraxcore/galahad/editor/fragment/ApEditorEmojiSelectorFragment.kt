@@ -90,8 +90,9 @@ class ApEditorEmojiSelectorFragment :
             EmojiConst.EMOJI_LIST.toMutableList().let { emojiUnicodeList ->
                 for (emojiUnicode in emojiUnicodeList) {
                     val emoji = convertEmoji(emojiUnicode)
-                    if (emoji.isNotEmpty())
+                    if (emoji.isNotEmpty()) {
                         convertedEmojiList.add(emoji)
+                    }
                 }
             }
             return convertedEmojiList
