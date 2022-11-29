@@ -181,6 +181,7 @@ class ApMultiplePagerPreviewActivity :
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
             editedPhotoUri?.let { uriStr ->
+                this._currentSelectedPhotoUri = uriStr
                 this.updateNewImage(uriStr, this._currentPositionViewPagerSelected)
                 this.viewModel.removeFileFromUri(uriStr)
             }
