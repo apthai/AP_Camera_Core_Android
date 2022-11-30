@@ -1,5 +1,5 @@
 # AP_Camera_Core_Android
-
+AP Camera Library for open camera on android is easy using  with various features
 ![](image/img-full-1.jpg)
 
 ![](image/img-gif-1.gif)
