@@ -111,7 +111,7 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
         when (view?.id) {
             R.id.main_launch_camera_button -> {
                 MaterialDialog(this).show {
-                    title(text = "Select once")
+                    title(text = "Select Mode")
                     listItems(
                         items = arrayListOf(
                             "Just Capture and Preview",
