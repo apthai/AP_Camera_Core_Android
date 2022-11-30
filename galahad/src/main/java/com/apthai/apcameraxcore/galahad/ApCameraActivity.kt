@@ -72,7 +72,7 @@ class ApCameraActivity :
                 arrayOf(
                     Manifest.permission.CAMERA,
                     Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.READ_MEDIA_VIDEO
                 )
             } else {
                 arrayOf(
@@ -130,7 +130,6 @@ class ApCameraActivity :
             finish()
         }
 
-
     private val previewTransitionContract =
         registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
             previewUri?.let { uri ->
@@ -181,6 +180,11 @@ class ApCameraActivity :
         this.orientationEventListener.disable()
     }
 
+//    override fun onResume() {
+//        super.onResume()
+//        Log.e(tag(), "chooseGalleryActResultContract onResume ")
+//    }
+
     override fun setUpView() {
         /*Initialize payload*/
         cameraLensFacing = getCameraFacingTypePayload()
@@ -204,10 +208,20 @@ class ApCameraActivity :
             }
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
-
             }
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                 this.setUpCameraViewGalleryForView()
+            }
+            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE -> {
+                binding?.apCameraViewGalleryButton?.visibility = View.GONE
+                val imageList = getImageUriFromIntentListString()
+                if (imageList.isNotEmpty()) {
+                    this.launchApMultiplePagerPreviewActivity(imageList)
+                } else {
+                    Toast.makeText(this, "image your is empty..", Toast.LENGTH_SHORT).show()
+                    setResult(RESULT_CANCELED)
+                    finish()
+                }
             }
             else -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
@@ -252,36 +266,42 @@ class ApCameraActivity :
 
     override fun isCameraPermissionsGranted(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED &&
+            (
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.RECORD_AUDIO,
-                    ) == PackageManager.PERMISSION_GRANTED &&
+                    this,
+                    Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.READ_MEDIA_IMAGES
-                    ) == PackageManager.PERMISSION_GRANTED &&
+                    this,
+                    Manifest.permission.READ_MEDIA_IMAGES
+                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.READ_MEDIA_VIDEO
-                    ) == PackageManager.PERMISSION_GRANTED &&
+                    this,
+                    Manifest.permission.READ_MEDIA_VIDEO
+                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
-                    )
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                )
         } else {
-            (ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.CAMERA
-            ) == PackageManager.PERMISSION_GRANTED &&
+            (
+                ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.CAMERA
+                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                        this, Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-                    )
+                    this,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                )
         }
 
     override fun startCamera() {
@@ -380,7 +400,6 @@ class ApCameraActivity :
                     } else {
                         binding?.apCameraViewGalleryButton?.visibility = View.GONE
                     }
-
                 }
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                     binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
@@ -392,7 +411,7 @@ class ApCameraActivity :
                 }
             }
 
-            //previous version
+            // previous version
 //            if (isOnlyCamera) {
 //                previewTransitionContract.launch(currentPhotoUri.toString())
 //            } else {
@@ -494,7 +513,6 @@ class ApCameraActivity :
                 }
             }
         }
-
     }
 
     override fun onDestroy() {
@@ -649,14 +667,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                ViewTreeObserver.OnGlobalLayoutListener {
-                override fun onGlobalLayout() {
-                    if (measuredWidth > 0 && measuredHeight > 0) {
-                        viewTreeObserver.removeOnGlobalLayoutListener(this)
-                        block()
+                    ViewTreeObserver.OnGlobalLayoutListener {
+                    override fun onGlobalLayout() {
+                        if (measuredWidth > 0 && measuredHeight > 0) {
+                            viewTreeObserver.removeOnGlobalLayoutListener(this)
+                            block()
+                        }
                     }
-                }
-            })
+                })
         }
     }
 
@@ -791,35 +809,29 @@ class ApCameraActivity :
         }
     }
 
-    override fun getCameraFacingTypePayload(): Int =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FACING_TYPE, cameraLensFacing)
-            ?: cameraLensFacing
+    override fun getCameraFacingTypePayload(): Int = this.getPlayLoadBundle()
+        ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FACING_TYPE, cameraLensFacing)
+        ?: cameraLensFacing
 
-    override fun getCameraFlashTypePayload(): Int =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FLASH_TYPE, cameraFlashMode)
-            ?: cameraFlashMode
+    override fun getCameraFlashTypePayload(): Int = this.getPlayLoadBundle()
+        ?.getInt(ApCameraConst.ApCameraPayload.AP_CAMERA_FLASH_TYPE, cameraFlashMode)
+        ?: cameraFlashMode
 
-    override fun getCameraAspectRatioTypePayload(): Int =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getInt(
-                ApCameraConst.ApCameraPayload.AP_CAMERA_ASPECT_RATIO_TYPE,
-                cameraAspectRatio
-            ) ?: cameraAspectRatio
+    override fun getCameraAspectRatioTypePayload(): Int = this.getPlayLoadBundle()?.getInt(
+        ApCameraConst.ApCameraPayload.AP_CAMERA_ASPECT_RATIO_TYPE,
+        cameraAspectRatio
+    ) ?: cameraAspectRatio
 
-    override fun getCameraDirectoryPathPayload(): String =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_DIRECTORY_ROOT_PATH)
-            ?: ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER
+    override fun getCameraDirectoryPathPayload(): String = this.getPlayLoadBundle()
+        ?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_DIRECTORY_ROOT_PATH)
+        ?: ApCameraUtil.AP_CAMERA_DEFAULT_FOLDER
 
     override fun getCameraFileNamePayload(): String =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_FILE_NAME)
+        this.getPlayLoadBundle()?.getString(ApCameraConst.ApCameraPayload.AP_CAMERA_FILE_NAME)
             ?: ApCameraUtil.getFileName()
 
     override fun getIsOnlyCallCameraPayload(): Boolean =
-        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+        this.getPlayLoadBundle()
             ?.getBoolean(ApCameraConst.ApCameraPayload.AP_CAMERA_IS_ONLY_CALL_CAMERA, false)
             ?: false
 
@@ -827,8 +839,15 @@ class ApCameraActivity :
         intent.getStringExtra(ApCameraUtil.Generic.AP_CAMERA_DEFAULT_FROM_SCREEN_TAG) ?: ""
 
     override fun getCameraMode(): Int =
-        intent?.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
-            ?.getInt(
-                ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME
-            ) ?: ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
+        this.getPlayLoadBundle()?.getInt(ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME)
+            ?: ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
+
+    override fun getImageUriFromIntentListString(): ArrayList<String> {
+        return this.getPlayLoadBundle()
+            ?.getStringArrayList(ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME)
+            ?: arrayListOf()
+    }
+
+    override fun getPlayLoadBundle(): Bundle? =
+        intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
 }

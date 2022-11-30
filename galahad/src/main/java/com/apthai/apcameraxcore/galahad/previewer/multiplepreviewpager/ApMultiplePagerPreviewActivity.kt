@@ -15,7 +15,8 @@ import com.apthai.apcameraxcore.galahad.editor.contract.ApEditorResultContract
 import com.apthai.apcameraxcore.galahad.previewer.adapter.apmultiplepager.ApMultiplePagerPreviewAdapter
 import com.google.android.material.snackbar.Snackbar
 
-class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPreviewViewModel>(),
+class ApMultiplePagerPreviewActivity :
+    ApCameraBaseActivity<ApMultiplePagerPreviewViewModel>(),
     ApMultiplePagerPreviewNavigator {
 
     companion object {
@@ -180,6 +181,7 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
     private val apEditorActivityContract =
         registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
             editedPhotoUri?.let { uriStr ->
+                this._currentSelectedPhotoUri = uriStr
                 this.updateNewImage(uriStr, this._currentPositionViewPagerSelected)
                 this.viewModel.removeFileFromUri(uriStr)
             }
@@ -192,5 +194,4 @@ class ApMultiplePagerPreviewActivity : ApCameraBaseActivity<ApMultiplePagerPrevi
         }
         snb.show()
     }
-
 }

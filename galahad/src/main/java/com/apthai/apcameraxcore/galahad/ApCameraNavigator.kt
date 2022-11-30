@@ -1,7 +1,7 @@
 package com.apthai.apcameraxcore.galahad
 
 import android.content.ContentValues
-import android.net.Uri
+import android.os.Bundle
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
@@ -55,4 +55,6 @@ interface ApCameraNavigator {
     fun onClickViewGalleryButton()
 
     fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>)
+    fun getImageUriFromIntentListString(): ArrayList<String>
+    fun getPlayLoadBundle(): Bundle?
 }

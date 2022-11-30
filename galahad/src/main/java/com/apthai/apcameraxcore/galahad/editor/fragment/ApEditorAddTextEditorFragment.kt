@@ -79,7 +79,7 @@ class ApEditorAddTextEditorFragment : DialogFragment() {
         binding?.apEditorAddTextDialogTextField?.setTextColor(mColorCode)
         binding?.apEditorAddTextDialogTextField?.typeface =
             ResourcesCompat.getFont(requireActivity(), R.font.ap_galahad_camera_bold)
-        mInputMethodManager?.showSoftInput(binding?.apEditorAddTextDialogTextField,0)
+        mInputMethodManager?.showSoftInput(binding?.apEditorAddTextDialogTextField, 0)
 //        mInputMethodManager?.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 
         // Make a callback on activity when user is done with text editing

@@ -19,9 +19,16 @@ object ApCameraConst {
 
         /**
          * AP_CAMERA_VAL_VIEW_GALLERY_MODE = 2
-         * Select Multiple image in gallery and preview
+         * Select Multiple image in gallery and preview for ap camera folder
          * **/
         const val AP_CAMERA_VAL_VIEW_GALLERY_MODE: Int = 2
+
+        /**
+         * AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE = 3
+         * Only edit your photo and see the preview (Choose your photo from gallery and in the future will be able to support url another )
+         * bundle input type is StringArrayList
+         * **/
+        const val AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE: Int = 3
     }
 
     object ApCameraPayload {
@@ -36,6 +43,7 @@ object ApCameraConst {
         const val AP_CAMERA_IS_ONLY_CALL_CAMERA: String = "ap_camera_screen_is_only_call_camera_apc"
         const val AP_CAMERA_OUTPUT_URI_STRING: String =
             "ap_camera_screen_output_path_uri_string_apc"
+        const val AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME = "ap_camera_input_image_path_string"
     }
 
     object ApPreviewPayload {
