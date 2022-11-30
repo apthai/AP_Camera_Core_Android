@@ -1,6 +1,6 @@
 # AP_Camera_Core_Android
 
-![](image/im-1.jpg) ![](image/im-2.jpg) ![](image/im-3.jpg) ![](image/im-4.jpg) ![](image/im-5.jpg)
+![](image/img-full-1.jpg)
 
 ## LAST VERSION 1.1.4
 
