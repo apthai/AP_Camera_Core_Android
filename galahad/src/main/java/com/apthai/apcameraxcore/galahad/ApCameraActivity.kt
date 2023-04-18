@@ -24,6 +24,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
 import androidx.camera.core.CameraInfoUnavailableException
@@ -119,16 +120,8 @@ class ApCameraActivity :
     private val pagerPreviewActivityContract =
         registerForActivityResult(ApPagerPreviewResultContract()) {}
 
-    private val apMultiplePagerPreviewActivityContract =
-        registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
-            val intent =
-                intent.putStringArrayListExtra(
-                    ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
-                    it
-                )
-            setResult(RESULT_OK, intent)
-            finish()
-        }
+    private var _apMultiplePagerPreviewActivityContract: ActivityResultLauncher<ArrayList<String>>? =
+        null
 
     private val previewTransitionContract =
         registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
@@ -164,6 +157,7 @@ class ApCameraActivity :
         apCameraViewModel?.setNavigator(this)
 
         this.rootDir = this.externalCacheDir!!.absolutePath
+        this.initActivityContract()
         if (savedInstanceState == null) {
             setUpView()
             initial()
@@ -206,12 +200,15 @@ class ApCameraActivity :
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
             }
+
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
             }
+
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                 this.setUpCameraViewGalleryForView()
             }
+
             ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
                 val imageList = getImageUriFromIntentListString()
@@ -223,6 +220,7 @@ class ApCameraActivity :
                     finish()
                 }
             }
+
             else -> {
                 binding?.apCameraViewGalleryButton?.visibility = View.GONE
             }
@@ -242,6 +240,10 @@ class ApCameraActivity :
             }
         }
         fetchCurrentPhotoList()
+    }
+
+    override fun initActivityContract() {
+        this.initAPMultiplePagerPreviewActivityContract()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -267,41 +269,41 @@ class ApCameraActivity :
     override fun isCameraPermissionsGranted(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             (
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_MEDIA_VIDEO
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-                )
+                        this,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.RECORD_AUDIO
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_MEDIA_IMAGES
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_MEDIA_VIDEO
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED
+                    )
         } else {
             (
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-                )
+                        this,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                    )
         }
 
     override fun startCamera() {
@@ -389,6 +391,7 @@ class ApCameraActivity :
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE -> {
                     previewTransitionContract.launch(currentPhotoUri.toString())
                 }
+
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
                     currentPhotoMultipleShot.add(photoUri.toString())
                     if (currentPhotoMultipleShot.isNotEmpty()) {
@@ -401,11 +404,13 @@ class ApCameraActivity :
                         binding?.apCameraViewGalleryButton?.visibility = View.GONE
                     }
                 }
+
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE -> {
                     binding?.apCameraViewGalleryButton?.let { galleryButtonView ->
                         Glide.with(this).load(currentPhotoUri).circleCrop().into(galleryButtonView)
                     }
                 }
+
                 else -> {
                     previewTransitionContract.launch(currentPhotoUri.toString())
                 }
@@ -451,6 +456,7 @@ class ApCameraActivity :
                     )
                 )
             }
+
             ImageCapture.FLASH_MODE_ON -> {
                 cameraFlashMode = ImageCapture.FLASH_MODE_OFF
                 binding?.apCameraViewFlashButton?.setImageDrawable(
@@ -460,6 +466,7 @@ class ApCameraActivity :
                     )
                 )
             }
+
             ImageCapture.FLASH_MODE_OFF -> {
                 cameraFlashMode = ImageCapture.FLASH_MODE_AUTO
                 binding?.apCameraViewFlashButton?.setImageDrawable(
@@ -494,6 +501,7 @@ class ApCameraActivity :
                     this.launchApMultiplePagerPreviewActivity(this.currentPhotoMultipleShot)
                 }
             }
+
             else -> {
                 MaterialDialog(this).show {
                     listItems(
@@ -598,6 +606,7 @@ class ApCameraActivity :
             AspectRatio.RATIO_4_3 -> {
                 cameraAspectRatio = AspectRatio.RATIO_16_9
             }
+
             AspectRatio.RATIO_16_9 -> {
                 cameraAspectRatio = AspectRatio.RATIO_4_3
             }
@@ -626,6 +635,7 @@ class ApCameraActivity :
                         MotionEvent.ACTION_DOWN -> {
                             true
                         }
+
                         MotionEvent.ACTION_UP -> {
                             val factory: MeteringPointFactory = SurfaceOrientedMeteringPointFactory(
                                 previewView.width.toFloat(),
@@ -655,6 +665,7 @@ class ApCameraActivity :
                             }
                             true
                         }
+
                         else -> false
                     }
                 }
@@ -667,14 +678,14 @@ class ApCameraActivity :
             block()
         } else {
             viewTreeObserver.addOnGlobalLayoutListener(object :
-                    ViewTreeObserver.OnGlobalLayoutListener {
-                    override fun onGlobalLayout() {
-                        if (measuredWidth > 0 && measuredHeight > 0) {
-                            viewTreeObserver.removeOnGlobalLayoutListener(this)
-                            block()
-                        }
+                ViewTreeObserver.OnGlobalLayoutListener {
+                override fun onGlobalLayout() {
+                    if (measuredWidth > 0 && measuredHeight > 0) {
+                        viewTreeObserver.removeOnGlobalLayoutListener(this)
+                        block()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -714,6 +725,7 @@ class ApCameraActivity :
                     play(MediaActionSound.SHUTTER_CLICK)
                 }
             }
+
             else -> {}
         }
     }
@@ -752,7 +764,7 @@ class ApCameraActivity :
     }
 
     override fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>) {
-        this.apMultiplePagerPreviewActivityContract.launch(imageUriList)
+        this._apMultiplePagerPreviewActivityContract?.launch(imageUriList)
     }
 
     override fun fetchCurrentPhotoList() {
@@ -850,4 +862,19 @@ class ApCameraActivity :
 
     override fun getPlayLoadBundle(): Bundle? =
         intent.getBundleExtra(ApCameraConst.ApCameraPayload.AP_CAMERA_BUNDLE_PAYLOAD_CONST)
+
+    //TODO START FOR INITIAL CONTRACT API
+    private fun initAPMultiplePagerPreviewActivityContract() {
+        this._apMultiplePagerPreviewActivityContract =
+            registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
+                val intent =
+                    intent.putStringArrayListExtra(
+                        ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                        it
+                    )
+                setResult(RESULT_OK, intent)
+                finish()
+            }
+    }
+    //TODO END FOR INITIAL CONTRACT API
 }

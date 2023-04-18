@@ -57,4 +57,6 @@ interface ApCameraNavigator {
     fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>)
     fun getImageUriFromIntentListString(): ArrayList<String>
     fun getPlayLoadBundle(): Bundle?
+
+    fun initActivityContract()
 }
