@@ -113,34 +113,10 @@ class ApCameraActivity :
     private val cameraRunnable: Runnable = Runnable {
         bindCamera()
     }
-
-    private val previewActivityContract =
-        registerForActivityResult(ApPreviewResultContract()) {}
-
-    private val pagerPreviewActivityContract =
-        registerForActivityResult(ApPagerPreviewResultContract()) {}
-
-    private var _apMultiplePagerPreviewActivityContract: ActivityResultLauncher<ArrayList<String>>? =
-        null
-
-    private val previewTransitionContract =
-        registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
-            previewUri?.let { uri ->
-                if (uri.isEmpty()) return@let
-                val fallbackUri = Uri.parse(uri)
-                currentPhotoUri = fallbackUri
-                currentPhotoUri?.let { latestUri ->
-                    val fallbackIntent = Intent().apply {
-                        putStringArrayListExtra(
-                            ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
-                            arrayListOf(latestUri.toString())
-                        )
-                    }
-                    setResult(Activity.RESULT_OK, fallbackIntent)
-                }
-                finish()
-            }
-        }
+    private var _previewActivityContract: ActivityResultLauncher<String>? = null
+    private var _pagerPreviewActivityContract: ActivityResultLauncher<String>? = null
+    private var _apMultiPagerPreviewActContract: ActivityResultLauncher<ArrayList<String>>? = null
+    private var _previewTransitionContract: ActivityResultLauncher<String>? = null
 
     private var currentPhotoList: MutableList<ApPhoto> = ArrayList()
 
@@ -243,7 +219,10 @@ class ApCameraActivity :
     }
 
     override fun initActivityContract() {
+        this.initPreviewActivityContract()
+        this.initPagerPreviewActivityContract()
         this.initAPMultiplePagerPreviewActivityContract()
+        this.initPreviewTransitionContract()
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -389,7 +368,7 @@ class ApCameraActivity :
 //            val isOnlyCamera = getIsOnlyCallCameraPayload()
             when (this.getCameraMode()) {
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE -> {
-                    previewTransitionContract.launch(currentPhotoUri.toString())
+                    this._previewTransitionContract?.launch(currentPhotoUri.toString())
                 }
 
                 ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE -> {
@@ -412,7 +391,7 @@ class ApCameraActivity :
                 }
 
                 else -> {
-                    previewTransitionContract.launch(currentPhotoUri.toString())
+                    this._previewTransitionContract?.launch(currentPhotoUri.toString())
                 }
             }
 
@@ -756,15 +735,15 @@ class ApCameraActivity :
     }
 
     override fun launchPreviewPhotoActivity() {
-        previewActivityContract.launch(tag())
+        this._previewActivityContract?.launch(tag())
     }
 
     override fun launchPagerPreviewPhotoActivity() {
-        pagerPreviewActivityContract.launch(tag())
+        this._pagerPreviewActivityContract?.launch(tag())
     }
 
     override fun launchApMultiplePagerPreviewActivity(imageUriList: ArrayList<String>) {
-        this._apMultiplePagerPreviewActivityContract?.launch(imageUriList)
+        this._apMultiPagerPreviewActContract?.launch(imageUriList)
     }
 
     override fun fetchCurrentPhotoList() {
@@ -865,7 +844,7 @@ class ApCameraActivity :
 
     //TODO START FOR INITIAL CONTRACT API
     private fun initAPMultiplePagerPreviewActivityContract() {
-        this._apMultiplePagerPreviewActivityContract =
+        this._apMultiPagerPreviewActContract =
             registerForActivityResult(ApMultiplePagerPreviewResultContract()) {
                 val intent =
                     intent.putStringArrayListExtra(
@@ -875,6 +854,36 @@ class ApCameraActivity :
                 setResult(RESULT_OK, intent)
                 finish()
             }
+    }
+
+    private fun initPreviewTransitionContract() {
+        this._previewTransitionContract =
+            registerForActivityResult(ApJustPreviewResultContract(tag())) { previewUri ->
+                previewUri?.let { uri ->
+                    if (uri.isEmpty()) return@let
+                    val fallbackUri = Uri.parse(uri)
+                    currentPhotoUri = fallbackUri
+                    currentPhotoUri?.let { latestUri ->
+                        val fallbackIntent = Intent().apply {
+                            putStringArrayListExtra(
+                                ApCameraConst.ApCameraPayload.AP_CAMERA_OUTPUT_URI_STRING,
+                                arrayListOf(latestUri.toString())
+                            )
+                        }
+                        setResult(Activity.RESULT_OK, fallbackIntent)
+                    }
+                    finish()
+                }
+            }
+    }
+
+    private fun initPagerPreviewActivityContract() {
+        this._pagerPreviewActivityContract =
+            registerForActivityResult(ApPagerPreviewResultContract()) {}
+    }
+
+    private fun initPreviewActivityContract() {
+        this._previewActivityContract = registerForActivityResult(ApPreviewResultContract()) {}
     }
     //TODO END FOR INITIAL CONTRACT API
 }
