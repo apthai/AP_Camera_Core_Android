@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModelProvider
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
 import com.apthai.apcameraxcore.common.model.ApPhoto
@@ -58,15 +59,7 @@ class ApTransitionPreviewActivity :
 
     private var viewModel: ApTransitionPreviewViewModel? = null
 
-    private val apEditorActivityContract =
-        registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
-            editedPhotoUri?.let { photoUriStr ->
-                val uri = Uri.parse(photoUriStr)
-                binding?.apPreviewTransitionView?.let { photoPreview ->
-                    Glide.with(this).load(uri).into(photoPreview)
-                }
-            }
-        }
+    private var _apEditorActivityContract: ActivityResultLauncher<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +71,7 @@ class ApTransitionPreviewActivity :
             ViewModelProvider.NewInstanceFactory().create(ApTransitionPreviewViewModel::class.java)
         viewModel?.setNavigator(this)
 
+        this.initApEditorActivityContract()
         if (savedInstanceState == null) {
             setUpView()
             initial()
@@ -99,6 +93,7 @@ class ApTransitionPreviewActivity :
                     }
                 }
             }
+
             else -> {
                 binding?.apPreviewTransitionConsoleView?.visibility = View.GONE
                 getSelectedApPhotoPayload()?.let { selectedApPhoto ->
@@ -117,6 +112,7 @@ class ApTransitionPreviewActivity :
                 binding?.apPreviewTransitionConsoleCancelButton?.setOnClickListener(this)
                 binding?.apPreviewTransitionConsoleOkButton?.setOnClickListener(this)
             }
+
             else -> {
                 binding?.apPreviewTransitionConsoleCancelButton?.setOnClickListener(null)
                 binding?.apPreviewTransitionConsoleOkButton?.setOnClickListener(null)
@@ -139,7 +135,7 @@ class ApTransitionPreviewActivity :
             android.R.id.home -> finish()
             R.id.ap_preview_action_editor -> {
                 getSelectedApPhotoPayload()?.let { selectedApPhoto ->
-                    apEditorActivityContract.launch(selectedApPhoto.uriPath.toString())
+                    this._apEditorActivityContract?.launch(selectedApPhoto.uriPath.toString())
                 }
             }
         }
@@ -164,9 +160,22 @@ class ApTransitionPreviewActivity :
                 setResult(Activity.RESULT_OK, fallbackIntent)
                 finish()
             }
+
             else -> {
                 finish()
             }
         }
+    }
+
+    private fun initApEditorActivityContract() {
+        this._apEditorActivityContract =
+            registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+                editedPhotoUri?.let { photoUriStr ->
+                    val uri = Uri.parse(photoUriStr)
+                    binding?.apPreviewTransitionView?.let { photoPreview ->
+                        Glide.with(this).load(uri).into(photoPreview)
+                    }
+                }
+            }
     }
 }
