@@ -9,6 +9,7 @@ import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.apthai.apcameraxcore.common.ApCameraBaseActivity
@@ -42,26 +43,10 @@ class ApPagerPreviewActivity :
 
     private var currentSelectedPhotoUri: Uri? = null
 
-    private val apEditorActivityContract =
-        registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
-            editedPhotoUri?.let { _ ->
-                fetchCurrentPhotos()
-            }
-        }
+    private var _apEditorActivityContract: ActivityResultLauncher<String>? = null
 
     private val viewPagerListener: ViewPager2.OnPageChangeCallback =
         object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageScrollStateChanged(state: Int) {
-                super.onPageScrollStateChanged(state)
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-            }
 
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -81,6 +66,7 @@ class ApPagerPreviewActivity :
             ViewModelProvider.NewInstanceFactory().create(ApPagerPreviewViewModel::class.java)
         apPagerPreviewViewModel?.setNavigator(this)
 
+        this.initApEditorActivityContract()
         if (savedInstanceState == null) {
             setUpView()
             initial()
@@ -169,10 +155,11 @@ class ApPagerPreviewActivity :
             android.R.id.home -> {
                 finish()
             }
+
             R.id.ap_preview_action_editor -> {
                 currentSelectedPhotoUri?.let { photoUri ->
                     val photoUriRaw = photoUri.toString()
-                    apEditorActivityContract.launch(photoUriRaw)
+                    this._apEditorActivityContract?.launch(photoUriRaw)
                 } ?: kotlin.run {
                     Toast.makeText(this, "Current selected Photo unavailable", Toast.LENGTH_SHORT)
                         .show()
@@ -180,5 +167,14 @@ class ApPagerPreviewActivity :
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun initApEditorActivityContract() {
+        this._apEditorActivityContract =
+            registerForActivityResult(ApEditorResultContract()) { editedPhotoUri ->
+                editedPhotoUri?.let {
+                    fetchCurrentPhotos()
+                }
+            }
     }
 }

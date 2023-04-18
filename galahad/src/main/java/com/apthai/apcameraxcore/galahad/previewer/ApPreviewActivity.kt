@@ -1,6 +1,5 @@
 package com.apthai.apcameraxcore.galahad.previewer
 
-import android.R
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Context

@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
@@ -47,12 +48,8 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
     private var mainViewModel: MainViewModel? = null
     private var simpleImageUriAdapter: SimpleImageViewPagerAdapter? = null
-
-    private val apCameraContract =
-        registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStrList ->
-            if (fallbackImageUriStrList.isEmpty()) return@registerForActivityResult
-            this.setUpViewPagerAdapter(fallbackImageUriStrList)
-        }
+    private var _apCameraContract: ActivityResultLauncher<Bundle>? = null
+    private var _chooseGalleryActResultContract: ActivityResultLauncher<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +58,8 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
 
         mainViewModel = ViewModelProvider.NewInstanceFactory().create(MainViewModel::class.java)
         mainViewModel?.setNavigator(this)
-
+        this.initChooseGalleryActResultContract()
+        this.initApCameraContract()
         if (savedInstanceState == null) {
             setUpView()
             initial()
@@ -129,8 +127,9 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                                         ApCameraConst.ApCameraMode.AP_CAMERA_VAL_IS_ONLY_CAMERA_APC_MODE
                                     )
                                 }
-                                apCameraContract.launch(cameraBundle)
+                                _apCameraContract?.launch(cameraBundle)
                             }
+
                             1 -> {
                                 dialog.dismiss()
                                 val cameraBundle = Bundle().apply {
@@ -139,8 +138,9 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                                         ApCameraConst.ApCameraMode.AP_CAMERA_VAL_VIEW_GALLERY_MODE
                                     )
                                 }
-                                apCameraContract.launch(cameraBundle)
+                                _apCameraContract?.launch(cameraBundle)
                             }
+
                             2 -> {
                                 dialog.dismiss()
                                 val cameraBundle = Bundle().apply {
@@ -149,11 +149,12 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                                         ApCameraConst.ApCameraMode.AP_CAMERA_VAL_MULTIPLE_SHOT_PREVIEW_MODE
                                     )
                                 }
-                                apCameraContract.launch(cameraBundle)
+                                _apCameraContract?.launch(cameraBundle)
                             }
+
                             else -> {
                                 dialog.dismiss()
-                                chooseGalleryActResultContract.launch("image/*")
+                                _chooseGalleryActResultContract?.launch("image/*")
                             }
                         }
                     }
@@ -177,60 +178,69 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
     private fun isCameraPermissionsGranted(): Boolean =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             (
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.RECORD_AUDIO
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_MEDIA_IMAGES
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_MEDIA_VIDEO
-                ) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-                )
+                        this,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.RECORD_AUDIO
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_MEDIA_IMAGES
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_MEDIA_VIDEO
+                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED
+                    )
         } else {
             (
-                ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.CAMERA
-                ) == PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-                )
+                        this,
+                        Manifest.permission.CAMERA
+                    ) == PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                    )
         }
 
-    private val chooseGalleryActResultContract =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { rsList ->
-            rsList?.let { uriList ->
-                if (uriList.isNotEmpty()) {
-                    if (rsList.isEmpty()) return@registerForActivityResult
-                    val cameraBundle = Bundle().apply {
-                        putInt(
-                            ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
-                            ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE
-                        )
-                        putStringArrayList(
-                            ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME,
-                            rsList.map { it.toString() } as ArrayList<String>
-                        )
+    private fun initChooseGalleryActResultContract() {
+        this._chooseGalleryActResultContract =
+            registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { rsList ->
+                rsList?.let { uriList ->
+                    if (uriList.isNotEmpty()) {
+                        val cameraBundle = Bundle().apply {
+                            putInt(
+                                ApCameraConst.ApCameraMode.AP_CAMERA_CONST_MODE_NAME,
+                                ApCameraConst.ApCameraMode.AP_CAMERA_VAL_ONLY_EDIT_PHOTO_MODE
+                            )
+                            putStringArrayList(
+                                ApCameraConst.ApCameraPayload.AP_CAMERA_INPUT_IMAGE_PATH_LIST_CONST_NAME,
+                                rsList.map { it.toString() } as ArrayList<String>
+                            )
+                        }
+                        this._apCameraContract?.launch(cameraBundle)
                     }
-                    apCameraContract.launch(cameraBundle)
                 }
             }
-        }
+    }
+
+    private fun initApCameraContract() {
+        this._apCameraContract =
+            registerForActivityResult(ApCameraContract(tag())) { fallbackImageUriStrList ->
+                if (fallbackImageUriStrList.isEmpty()) return@registerForActivityResult
+                this.setUpViewPagerAdapter(fallbackImageUriStrList)
+            }
+    }
 }
