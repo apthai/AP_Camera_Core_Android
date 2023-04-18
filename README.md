@@ -4,9 +4,9 @@ AP Camera Library for open camera on android is easy using  with various feature
 
 ![](image/img-gif-1.gif)
 
-## LAST VERSION 1.1.4
+## LAST VERSION 1.1.5
 
-- fixed bugs
+- fixed bugs and improve performance for ActivityResultContract API
 
 ## New Features
 
