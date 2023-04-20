@@ -20,8 +20,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     namespace 'com.apthai.apcameraxcore.common'
 }
@@ -31,7 +35,7 @@ configurations {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.10") {
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.20") {
         because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
     }
     implementation "androidx.core:core-ktx:$core_ktx_version"
