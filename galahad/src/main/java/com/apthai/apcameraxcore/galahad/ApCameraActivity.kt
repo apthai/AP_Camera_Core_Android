@@ -1,6 +1,11 @@
 package com.apthai.apcameraxcore.galahad
 
 import android.Manifest
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.READ_MEDIA_VIDEO
+import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -8,13 +13,14 @@ import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.media.AudioManager
 import android.media.MediaActionSound
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.OrientationEventListener
@@ -25,10 +31,13 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.camera.core.AspectRatio
 import androidx.camera.core.Camera
+import androidx.camera.core.CameraInfo
 import androidx.camera.core.CameraInfoUnavailableException
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.CameraState
 import androidx.camera.core.FocusMeteringAction
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
@@ -37,6 +46,8 @@ import androidx.camera.core.ImageProxy
 import androidx.camera.core.MeteringPointFactory
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceOrientedMeteringPointFactory
+import androidx.camera.core.resolutionselector.AspectRatioStrategy
+import androidx.camera.core.resolutionselector.ResolutionSelector
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -67,21 +78,29 @@ class ApCameraActivity :
 
     companion object {
 
-        private const val REQUEST_CODE_PERMISSIONS = 112
+//        private const val REQUEST_CODE_PERMISSIONS = 112
         private val REQUIRED_PERMISSIONS =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO
+                    CAMERA,
+                    READ_MEDIA_IMAGES,
+                    READ_MEDIA_VIDEO,
+                    READ_MEDIA_VISUAL_USER_SELECTED
                 )
-            } else {
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-            }
+            } else
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    arrayOf(
+                        CAMERA,
+                        READ_MEDIA_IMAGES,
+                        READ_MEDIA_VIDEO
+                    )
+                } else {
+                    arrayOf(
+                        CAMERA,
+                        READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                }
 
         fun getInstance(context: Context, payload: Bundle, fromScreenTag: String): Intent =
             Intent(context, ApCameraActivity::class.java).apply {
@@ -230,9 +249,8 @@ class ApCameraActivity :
         if (isCameraPermissionsGranted()) {
             startCamera()
         } else {
-            requestPermissions(
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
+            requestPermissions.launch(
+                REQUIRED_PERMISSIONS
             )
         }
 
@@ -246,42 +264,69 @@ class ApCameraActivity :
     }
 
     override fun isCameraPermissionsGranted(): Boolean =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             (
                     ActivityCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.CAMERA
-                    ) == PackageManager.PERMISSION_GRANTED &&
+                        CAMERA
+                    ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
                                 Manifest.permission.RECORD_AUDIO
-                            ) == PackageManager.PERMISSION_GRANTED &&
+                            ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
-                                Manifest.permission.READ_MEDIA_IMAGES
-                            ) == PackageManager.PERMISSION_GRANTED &&
+                                READ_MEDIA_IMAGES
+                            ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
-                                Manifest.permission.READ_MEDIA_VIDEO
-                            ) == PackageManager.PERMISSION_GRANTED &&
+                                READ_MEDIA_VIDEO
+                            ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) == PackageManager.PERMISSION_GRANTED
+                            ) == PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                READ_MEDIA_VISUAL_USER_SELECTED
+                            ) == PERMISSION_GRANTED
+                    )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            (
+                    ActivityCompat.checkSelfPermission(
+                        this,
+                        CAMERA
+                    ) == PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.RECORD_AUDIO
+                            ) == PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                READ_MEDIA_IMAGES
+                            ) == PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                READ_MEDIA_VIDEO
+                            ) == PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                            ) == PERMISSION_GRANTED
                     )
         } else {
             (
                     ActivityCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.CAMERA
-                    ) == PackageManager.PERMISSION_GRANTED &&
+                        CAMERA
+                    ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
-                                Manifest.permission.READ_EXTERNAL_STORAGE
-                            ) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                READ_EXTERNAL_STORAGE
+                            ) == PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                         this,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) == PackageManager.PERMISSION_GRANTED
+                    ) == PERMISSION_GRANTED
                     )
         }
 
@@ -298,6 +343,10 @@ class ApCameraActivity :
                 val cameraPreview = initializePreviewSurface()
                 currentCameraImageAnalysis = initializeImageAnalysis()
                 currentCameraImageCapture = initializeImageCapture()
+                val cameraInfo = currentCamera?.cameraInfo
+                cameraInfo?.let { info ->
+                    observeCameraState(info)
+                }
 
                 provider.unbindAll()
                 currentCamera = provider.bindToLifecycle(
@@ -346,7 +395,7 @@ class ApCameraActivity :
                             cameraLensFacing == CameraSelector.LENS_FACING_FRONT
                         )
 
-                        imageBitmap?.let { itemBitmap ->
+                        imageBitmap.let { itemBitmap ->
                             apCameraViewModel?.saveImageToLocal(
                                 "$rootDir/${ImageUtil.BASE_IMAGE_FOLDER}",
                                 "ap_camera_make.jpeg",
@@ -516,28 +565,61 @@ class ApCameraActivity :
         cameraExecutor.shutdown()
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        val permissionOK: MutableList<Int> = mutableListOf()
-        for (item in grantResults) {
-            if (item != PackageManager.PERMISSION_GRANTED) {
-                permissionOK.add(item)
+    private val requestPermissions =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
+            Log.e("TAG", "requestPermissions: ${results.map { it }}")
+            if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                (
+                        ContextCompat.checkSelfPermission(
+                            this,
+                            READ_MEDIA_IMAGES
+                        ) == PERMISSION_GRANTED ||
+                                ContextCompat.checkSelfPermission(
+                                    this,
+                                    READ_MEDIA_VIDEO
+                                ) == PERMISSION_GRANTED
+                        ) && ContextCompat.checkSelfPermission(
+                    this,
+                    CAMERA
+                ) == PERMISSION_GRANTED
+            ) {
+                // Full access on Android 13 (API level 33) or higher
+                startCamera()
+            } else if (
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE &&
+                ContextCompat.checkSelfPermission(
+                    this,
+                    READ_MEDIA_VISUAL_USER_SELECTED
+                ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                    this,
+                    CAMERA
+                ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                    this,
+                    CAMERA
+                ) == PERMISSION_GRANTED
+            ) {
+                // Partial access on Android 14 (API level 34) or higher
+                startCamera()
+            } else if (ContextCompat.checkSelfPermission(
+                    this,
+                    READ_EXTERNAL_STORAGE
+                ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                    this,
+                    CAMERA
+                ) == PERMISSION_GRANTED
+            ) {
+                // Full access up to Android 12 (API level 32)
+                startCamera()
+            } else {
+                // Access denied
+                Toast.makeText(
+                    this,
+                    "Permissions not granted by the user.",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-        if (permissionOK.isEmpty()) {
-            startCamera()
-        } else {
-            Toast.makeText(
-                this,
-                "Permissions not granted by the user.",
-                Toast.LENGTH_LONG
-            ).show()
-        }
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -549,8 +631,14 @@ class ApCameraActivity :
     }
 
     override fun initializePreviewSurface(): Preview = Preview.Builder()
-        .setTargetAspectRatio(cameraAspectRatio).build().also { preview ->
-            preview.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
+        .setResolutionSelector(
+            ResolutionSelector.Builder()
+                .setAllowedResolutionMode(ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
+                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                .build()
+        )
+        .build().also {
+            it.setSurfaceProvider(binding?.apCameraViewPreview?.surfaceProvider)
         }
 
     override fun initializeImageAnalysis(): ImageAnalysis = ImageAnalysis.Builder()
@@ -558,7 +646,12 @@ class ApCameraActivity :
         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST).build()
 
     override fun initializeImageCapture(): ImageCapture = ImageCapture.Builder()
-        .setTargetAspectRatio(cameraAspectRatio)
+        .setResolutionSelector(
+            ResolutionSelector.Builder()
+                .setAllowedResolutionMode(ResolutionSelector.PREFER_HIGHER_RESOLUTION_OVER_CAPTURE_RATE)
+                .setAspectRatioStrategy(AspectRatioStrategy.RATIO_4_3_FALLBACK_AUTO_STRATEGY)
+                .build()
+        )
         .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY).build().also { imgCapture ->
             imgCapture.flashMode = cameraFlashMode
         }
@@ -886,4 +979,126 @@ class ApCameraActivity :
         this._previewActivityContract = registerForActivityResult(ApPreviewResultContract()) {}
     }
     //TODO END FOR INITIAL CONTRACT API
+
+    private fun observeCameraState(cameraInfo: CameraInfo) {
+        cameraInfo.cameraState.observe(this) { cameraState ->
+            run {
+                when (cameraState.type) {
+                    CameraState.Type.PENDING_OPEN -> {
+                        // Ask the user to close other camera apps
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "CameraState: Pending Open",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.Type.OPENING -> {
+                        // Show the Camera UI
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "CameraState: Opening",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.Type.OPEN -> {
+                        // Setup Camera resources and begin processing
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "CameraState: Open",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.Type.CLOSING -> {
+                        // Close camera UI
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "CameraState: Closing",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.Type.CLOSED -> {
+                        // Free camera resources
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "CameraState: Closed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
+            cameraState.error?.let { error ->
+                when (error.code) {
+                    // Open errors
+                    CameraState.ERROR_STREAM_CONFIG -> {
+                        // Make sure to setup the use cases properly
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Stream config error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    // Opening errors
+                    CameraState.ERROR_CAMERA_IN_USE -> {
+                        // Close the camera or ask user to close another camera app that's using the
+                        // camera
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Camera in use",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.ERROR_MAX_CAMERAS_IN_USE -> {
+                        // Close another open camera in the app, or ask the user to close another
+                        // camera app that's using the camera
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Max cameras in use",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.ERROR_OTHER_RECOVERABLE_ERROR -> {
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Other recoverable error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    // Closing errors
+                    CameraState.ERROR_CAMERA_DISABLED -> {
+                        // Ask the user to enable the device's cameras
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Camera disabled",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+
+                    CameraState.ERROR_CAMERA_FATAL_ERROR -> {
+                        // Ask the user to reboot the device to restore camera function
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Fatal error",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    // Closed errors
+                    CameraState.ERROR_DO_NOT_DISTURB_MODE_ENABLED -> {
+                        // Ask the user to disable the "Do Not Disturb" mode, then reopen the camera
+                        Toast.makeText(
+                            this@ApCameraActivity,
+                            "Do not disturb mode enabled",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+    }
 }

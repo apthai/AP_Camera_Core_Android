@@ -13,7 +13,7 @@ object ImageUtil {
 
     const val BASE_IMAGE_FOLDER: String = "ApCamera-Image"
 
-    fun convertImagePoxyToBitmap(image: Image, flipNeeded: Boolean): Bitmap? {
+    fun convertImagePoxyToBitmap(image: Image, flipNeeded: Boolean): Bitmap {
         val byteBuffer: ByteBuffer = image.planes[0].buffer
         byteBuffer.rewind()
         val bytes = ByteArray(byteBuffer.capacity())
@@ -36,7 +36,7 @@ object ImageUtil {
         return Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true)
     }
 
-    fun bitmapFromFilePath(fullPathFile: String, flipNeeded: Boolean = false): Bitmap? {
+    fun bitmapFromFilePath(fullPathFile: String, flipNeeded: Boolean = false): Bitmap {
         val mFile = File(fullPathFile)
         val option = BitmapFactory.Options()
         option.inPreferredConfig = Bitmap.Config.ARGB_8888
