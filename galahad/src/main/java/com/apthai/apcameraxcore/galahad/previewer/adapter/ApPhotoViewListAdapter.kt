@@ -34,7 +34,7 @@ class ApPhotoViewListAdapter(private val context: Context) : RecyclerView.Adapte
         event: (position: Int, type: Int) -> Unit
     ): T {
         itemView.setOnClickListener {
-            event.invoke(adapterPosition, itemViewType)
+            event.invoke(bindingAdapterPosition, itemViewType)
         }
         return this
     }

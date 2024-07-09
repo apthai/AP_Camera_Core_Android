@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk 35
 
     defaultConfig {
         minSdk 25
-        targetSdk 33
+        targetSdkVersion 35
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -64,17 +64,17 @@ dependencies {
             attribute(Bundling.BUNDLING_ATTRIBUTE, getObjects().named(Bundling, Bundling.EXTERNAL))
         }
     }
-    implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
+    implementation 'androidx.activity:activity-ktx:1.9.0'
+    implementation 'androidx.fragment:fragment-ktx:1.8.1'
     implementation "com.github.bumptech.glide:glide:$glide_version"
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
     implementation 'com.burhanrashid52:photoeditor:2.0.0'
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation "androidx.viewpager2:viewpager2:1.1.0"
     implementation "com.afollestad.material-dialogs:core:$material_dialog_version"
 }
 
-task ktlint(type: JavaExec, group: "verification") {
+tasks.register('ktlint', JavaExec) {
     jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
     description = "Check Kotlin code style."
     classpath = configurations.ktlint
@@ -88,7 +88,7 @@ task ktlint(type: JavaExec, group: "verification") {
 }
 check.dependsOn ktlint
 
-task ktlintFormat(type: JavaExec, group: "formatting") {
+tasks.register('ktlintFormat', JavaExec) {
     jvmArgs("--add-opens", "java.base/java.lang=ALL-UNNAMED")
     description = "Fix Kotlin code style deviations."
     classpath = configurations.ktlint

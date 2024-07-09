@@ -2,6 +2,7 @@ package com.apthai.apcameraxcore.galahad.editor
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.ActivityOptions
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -96,10 +97,15 @@ class ApEditorActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(
+        ActivityOptions.makeCustomAnimation(
+            this,
             R.anim.ap_anim_transition_fade_in,
             R.anim.ap_anim_transition_fade_out
         )
+//        overridePendingTransition(
+//            R.anim.ap_anim_transition_fade_in,
+//            R.anim.ap_anim_transition_fade_out
+//        )
         activityApEditorBinding = ActivityGalahadEditorBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
