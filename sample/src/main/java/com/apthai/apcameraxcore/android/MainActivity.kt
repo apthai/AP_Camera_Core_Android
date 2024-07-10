@@ -31,7 +31,7 @@ import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.OnClickListener {
 
     companion object {
-        private const val REQUEST_CODE_PERMISSIONS = 112
+//        private const val REQUEST_CODE_PERMISSIONS = 112
         private val REQUIRED_PERMISSIONS =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 arrayOf(
@@ -89,10 +89,6 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
         } else {
             requestPermissions.launch(
                 REQUIRED_PERMISSIONS
-            )
-            requestPermissions(
-                REQUIRED_PERMISSIONS,
-                REQUEST_CODE_PERMISSIONS
             )
         }
     }
