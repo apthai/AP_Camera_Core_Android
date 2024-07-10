@@ -31,14 +31,14 @@ import com.apthai.apcameraxcore.galahad.util.ApCameraConst
 class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.OnClickListener {
 
     companion object {
-//        private const val REQUEST_CODE_PERMISSIONS = 112
+        //        private const val REQUEST_CODE_PERMISSIONS = 112
         private val REQUIRED_PERMISSIONS =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 arrayOf(
                     CAMERA,
+                    READ_MEDIA_VISUAL_USER_SELECTED,
                     READ_MEDIA_IMAGES,
                     READ_MEDIA_VIDEO,
-                    READ_MEDIA_VISUAL_USER_SELECTED
                 )
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 arrayOf(
@@ -122,9 +122,6 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                 ContextCompat.checkSelfPermission(
                     this,
                     READ_MEDIA_VISUAL_USER_SELECTED
-                ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                    this,
-                    CAMERA
                 ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                     this,
                     CAMERA
@@ -234,22 +231,6 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                     ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
-                                Manifest.permission.RECORD_AUDIO
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                READ_MEDIA_IMAGES
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                READ_MEDIA_VIDEO
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                Manifest.permission.WRITE_EXTERNAL_STORAGE
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
                                 READ_MEDIA_VISUAL_USER_SELECTED
                             ) == PERMISSION_GRANTED
                     )
@@ -259,10 +240,6 @@ class MainActivity : ApCameraBaseActivity<MainViewModel>(), MainNavigator, View.
                         this,
                         CAMERA
                     ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                Manifest.permission.RECORD_AUDIO
-                            ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
                                 READ_MEDIA_IMAGES

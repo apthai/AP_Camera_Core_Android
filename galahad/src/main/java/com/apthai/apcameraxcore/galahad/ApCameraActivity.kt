@@ -20,7 +20,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.OrientationEventListener
@@ -78,14 +77,14 @@ class ApCameraActivity :
 
     companion object {
 
-//        private const val REQUEST_CODE_PERMISSIONS = 112
+        //        private const val REQUEST_CODE_PERMISSIONS = 112
         private val REQUIRED_PERMISSIONS =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
                 arrayOf(
                     CAMERA,
+                    READ_MEDIA_VISUAL_USER_SELECTED,
                     READ_MEDIA_IMAGES,
                     READ_MEDIA_VIDEO,
-                    READ_MEDIA_VISUAL_USER_SELECTED
                 )
             } else
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -273,14 +272,6 @@ class ApCameraActivity :
                             ActivityCompat.checkSelfPermission(
                                 this,
                                 Manifest.permission.RECORD_AUDIO
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                READ_MEDIA_IMAGES
-                            ) == PERMISSION_GRANTED &&
-                            ActivityCompat.checkSelfPermission(
-                                this,
-                                READ_MEDIA_VIDEO
                             ) == PERMISSION_GRANTED &&
                             ActivityCompat.checkSelfPermission(
                                 this,
@@ -567,7 +558,6 @@ class ApCameraActivity :
 
     private val requestPermissions =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
-            Log.e("TAG", "requestPermissions: ${results.map { it }}")
             if (
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
                 (
@@ -591,9 +581,6 @@ class ApCameraActivity :
                 ContextCompat.checkSelfPermission(
                     this,
                     READ_MEDIA_VISUAL_USER_SELECTED
-                ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
-                    this,
-                    CAMERA
                 ) == PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                     this,
                     CAMERA
