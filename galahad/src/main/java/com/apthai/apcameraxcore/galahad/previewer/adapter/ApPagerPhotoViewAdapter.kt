@@ -33,7 +33,7 @@ class ApPagerPhotoViewAdapter(private val context: Context) : RecyclerView.Adapt
         event: (position: Int, type: Int) -> Unit
     ): T {
         itemView.setOnClickListener {
-            event.invoke(adapterPosition, itemViewType)
+            event.invoke(bindingAdapterPosition, itemViewType)
         }
         return this
     }
